@@ -131,19 +131,25 @@ create policy profiles_select_same_org on public.profiles
 create policy profiles_insert_admin on public.profiles
   for insert with check (
     organization_id = (auth.jwt() ->> 'organization_id')::uuid
-    and (auth.jwt() ->> 'role') in ('ADMIN', 'SUPER_ADMIN')
+    and (auth.jwt() ->> 'app_role') in ('ADMIN', 'SUPER_ADMIN')
   );
 
 create policy profiles_update_admin on public.profiles
   for update using (
     organization_id = (auth.jwt() ->> 'organization_id')::uuid
-    and (auth.jwt() ->> 'role') in ('ADMIN', 'SUPER_ADMIN')
+    and (auth.jwt() ->> 'app_role') in ('ADMIN', 'SUPER_ADMIN')
   );
 
 -- ------------------------------------------------------------
 -- Custom Access Token Hook
--- Agrega organization_id, role y active al JWT para que las policies de
--- las demás tablas puedan filtrar por tenant sin re-consultar profiles.
+-- Agrega organization_id, app_role y active al JWT para que las policies
+-- de las demás tablas puedan filtrar por tenant sin re-consultar profiles.
+--
+-- IMPORTANTE: el claim se llama "app_role", NUNCA "role" a secas.
+-- "role" es un claim reservado que usa PostgREST/Supabase para decidir a
+-- qué rol de Postgres cambiar (normalmente "authenticated"). Sobrescribirlo
+-- con nuestro rol de negocio (ej. "SUPER_ADMIN") rompe todas las queries,
+-- porque Postgres intenta hacer SET ROLE "SUPER_ADMIN", que no existe.
 -- ------------------------------------------------------------
 
 create or replace function public.custom_access_token_hook(event jsonb)
@@ -166,11 +172,11 @@ begin
 
   if profile is null then
     claims := jsonb_set(claims, '{organization_id}', 'null');
-    claims := jsonb_set(claims, '{role}', 'null');
+    claims := jsonb_set(claims, '{app_role}', 'null');
     claims := jsonb_set(claims, '{active}', 'false');
   else
     claims := jsonb_set(claims, '{organization_id}', to_jsonb(profile.organization_id::text));
-    claims := jsonb_set(claims, '{role}', to_jsonb(profile.role::text));
+    claims := jsonb_set(claims, '{app_role}', to_jsonb(profile.role::text));
     claims := jsonb_set(claims, '{active}', to_jsonb(profile.active));
   end if;
 

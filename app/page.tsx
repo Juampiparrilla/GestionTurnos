@@ -3,6 +3,8 @@ import { getCurrentProfile } from "@/lib/auth/session";
 import { signOut } from "@/lib/auth/actions";
 import { Button } from "@/components/ui/button";
 
+export const runtime = "nodejs";
+
 const ROLE_LABEL: Record<string, string> = {
   SUPER_ADMIN: "Super Administrador",
   ADMIN: "Administrador",

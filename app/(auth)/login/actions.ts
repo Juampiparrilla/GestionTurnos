@@ -19,11 +19,12 @@ export async function signIn(
     return { error: "Ingresá un email y una contraseña válidos." };
   }
 
+  const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "";
   console.error(
-    "[signIn] password char codes:",
-    JSON.stringify(Array.from(parsed.data.password).map((c) => c.charCodeAt(0))),
-    "runtime:",
-    process.env.NEXT_RUNTIME,
+    "[signIn] anon key char codes[10-20]:",
+    JSON.stringify(Array.from(anonKey.slice(10, 20)).map((c) => c.charCodeAt(0))),
+    "len:",
+    anonKey.length,
   );
 
   const supabase = await createClient();

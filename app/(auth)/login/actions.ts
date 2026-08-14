@@ -19,6 +19,13 @@ export async function signIn(
     return { error: "Ingresá un email y una contraseña válidos." };
   }
 
+  console.error(
+    "[signIn] password char codes:",
+    JSON.stringify(Array.from(parsed.data.password).map((c) => c.charCodeAt(0))),
+    "runtime:",
+    process.env.NEXT_RUNTIME,
+  );
+
   const supabase = await createClient();
   const { error } = await supabase.auth.signInWithPassword(parsed.data);
 

@@ -1,0 +1,33 @@
+"use client";
+
+import { Badge } from "@/components/ui/badge";
+import { ROLE_LABEL, type Profile } from "@/types/profile";
+
+export function UserCard({
+  user,
+  onClick,
+}: {
+  user: Profile;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="flex w-full items-center justify-between rounded-lg border bg-background p-4 text-left shadow-sm transition-colors hover:bg-muted/50"
+    >
+      <div className="min-w-0">
+        <p className="truncate font-medium">{user.full_name}</p>
+        <p className="truncate text-sm text-muted-foreground">
+          @{user.username} · {user.email}
+        </p>
+      </div>
+      <div className="flex shrink-0 flex-col items-end gap-1">
+        <Badge variant={user.role === "EMPLEADO" ? "secondary" : "default"}>
+          {ROLE_LABEL[user.role]}
+        </Badge>
+        {!user.active && <Badge variant="outline">Inactivo</Badge>}
+      </div>
+    </button>
+  );
+}

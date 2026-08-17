@@ -1,5 +1,11 @@
 export type UserRole = "SUPER_ADMIN" | "ADMIN" | "EMPLEADO";
 
+export const ROLE_LABEL: Record<UserRole, string> = {
+  SUPER_ADMIN: "Super Administrador",
+  ADMIN: "Administrador",
+  EMPLEADO: "Empleado",
+};
+
 export type Profile = {
   id: string;
   organization_id: string;

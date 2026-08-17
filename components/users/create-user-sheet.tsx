@@ -1,0 +1,124 @@
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetDescription,
+  SheetFooter,
+} from "@/components/ui/sheet";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { ROLE_LABEL, type UserRole } from "@/types/profile";
+
+export function CreateUserSheet({
+  open,
+  onOpenChange,
+  assignableRoles,
+}: {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  assignableRoles: UserRole[];
+}) {
+  const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function handleSubmit(formData: FormData) {
+    setIsSubmitting(true);
+    setError(null);
+
+    const payload = {
+      username: formData.get("username"),
+      full_name: formData.get("full_name"),
+      dni: formData.get("dni"),
+      email: formData.get("email"),
+      role: formData.get("role"),
+    };
+
+    const res = await fetch("/api/users", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      setError(data.error ?? "No se pudo crear el usuario.");
+      setIsSubmitting(false);
+      return;
+    }
+
+    setIsSubmitting(false);
+    onOpenChange(false);
+    router.refresh();
+  }
+
+  return (
+    <Sheet open={open} onOpenChange={onOpenChange}>
+      <SheetContent side="right" className="w-full sm:max-w-md">
+        <SheetHeader>
+          <SheetTitle>Crear usuario</SheetTitle>
+          <SheetDescription>
+            Se le va a enviar un email de invitación para que elija su propia contraseña.
+          </SheetDescription>
+        </SheetHeader>
+        <form action={handleSubmit} className="flex flex-col gap-4 px-4">
+          <div className="space-y-2">
+            <Label htmlFor="full_name">Nombre completo</Label>
+            <Input id="full_name" name="full_name" required />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="username">Usuario</Label>
+            <Input id="username" name="username" required />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="dni">DNI</Label>
+            <Input id="dni" name="dni" required />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="email">Email</Label>
+            <Input id="email" name="email" type="email" required />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="role">Rol</Label>
+            <Select name="role" defaultValue="EMPLEADO">
+              <SelectTrigger id="role">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {assignableRoles.map((role) => (
+                  <SelectItem key={role} value={role}>
+                    {ROLE_LABEL[role]}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          {error && (
+            <p role="alert" className="text-sm text-destructive">
+              {error}
+            </p>
+          )}
+          <SheetFooter className="px-0">
+            <Button type="submit" disabled={isSubmitting}>
+              {isSubmitting ? "Creando..." : "Crear usuario"}
+            </Button>
+          </SheetFooter>
+        </form>
+      </SheetContent>
+    </Sheet>
+  );
+}

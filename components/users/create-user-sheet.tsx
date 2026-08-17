@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { Loader2 } from "lucide-react";
 import {
   Sheet,
   SheetContent,
@@ -136,6 +137,7 @@ export function CreateUserSheet({
           )}
           <SheetFooter className="px-0">
             <Button type="submit" disabled={isSubmitting}>
+              {isSubmitting && <Loader2 className="size-4 animate-spin" />}
               {isSubmitting ? "Creando..." : "Crear usuario"}
             </Button>
           </SheetFooter>

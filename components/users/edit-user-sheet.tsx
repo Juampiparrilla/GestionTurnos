@@ -79,15 +79,40 @@ export function EditUserSheet({
         <form action={handleSubmit} className="flex flex-col gap-4 px-4">
           <div className="space-y-2">
             <Label htmlFor="full_name">Nombre completo</Label>
-            <Input id="full_name" name="full_name" defaultValue={user.full_name} required />
+            <Input
+              id="full_name"
+              name="full_name"
+              defaultValue={user.full_name}
+              maxLength={80}
+              pattern="[\p{L}\s'-]+"
+              title="Solo letras, espacios, apóstrofes y guiones"
+              required
+            />
           </div>
           <div className="space-y-2">
             <Label htmlFor="username">Usuario</Label>
-            <Input id="username" name="username" defaultValue={user.username} required />
+            <Input
+              id="username"
+              name="username"
+              defaultValue={user.username}
+              maxLength={30}
+              pattern="[a-zA-Z0-9._-]+"
+              title="Solo letras, números, puntos, guiones y guiones bajos"
+              required
+            />
           </div>
           <div className="space-y-2">
             <Label htmlFor="dni">DNI</Label>
-            <Input id="dni" name="dni" defaultValue={user.dni} required />
+            <Input
+              id="dni"
+              name="dni"
+              defaultValue={user.dni}
+              inputMode="numeric"
+              maxLength={8}
+              pattern="\d{8}"
+              title="8 números, sin puntos ni espacios"
+              required
+            />
           </div>
 
           {isSelf ? (

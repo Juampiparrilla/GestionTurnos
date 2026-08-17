@@ -47,9 +47,12 @@ export async function POST(request: Request) {
   );
 
   if (inviteError || !invited.user) {
-    const message = inviteError?.message.includes("already been registered")
-      ? "Ya existe un usuario con ese email."
-      : "No se pudo invitar al usuario por email.";
+    let message = "No se pudo invitar al usuario por email.";
+    if (inviteError?.message.includes("already been registered")) {
+      message = "Ya existe un usuario con ese email.";
+    } else if (inviteError?.code === "over_email_send_rate_limit") {
+      message = "Se alcanzó el límite de emails por ahora. Esperá unos minutos e intentá de nuevo.";
+    }
     return NextResponse.json({ error: message }, { status: 400 });
   }
 

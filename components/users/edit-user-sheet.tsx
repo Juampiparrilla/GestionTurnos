@@ -23,6 +23,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ROLE_LABEL, type Profile, type UserRole } from "@/types/profile";
+import { sanitizeDni, sanitizeFullName, sanitizeUsername } from "@/lib/sanitize-input";
+import type { ChangeEvent } from "react";
 
 export function EditUserSheet({
   user,
@@ -85,8 +87,10 @@ export function EditUserSheet({
               name="full_name"
               defaultValue={user.full_name}
               maxLength={80}
-              pattern="[\p{L}\s'-]+"
               title="Solo letras, espacios, apóstrofes y guiones"
+              onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                e.target.value = sanitizeFullName(e.target.value);
+              }}
               required
             />
           </div>
@@ -97,8 +101,10 @@ export function EditUserSheet({
               name="username"
               defaultValue={user.username}
               maxLength={30}
-              pattern="[a-zA-Z0-9._-]+"
               title="Solo letras, números, puntos, guiones y guiones bajos"
+              onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                e.target.value = sanitizeUsername(e.target.value);
+              }}
               required
             />
           </div>
@@ -110,8 +116,10 @@ export function EditUserSheet({
               defaultValue={user.dni}
               inputMode="numeric"
               maxLength={8}
-              pattern="\d{8}"
               title="8 números, sin puntos ni espacios"
+              onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                e.target.value = sanitizeDni(e.target.value);
+              }}
               required
             />
           </div>

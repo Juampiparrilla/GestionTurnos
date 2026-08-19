@@ -36,6 +36,30 @@ create index idx_board_members_board_id on public.board_members (board_id);
 create index idx_board_members_user_id on public.board_members (user_id);
 
 -- ------------------------------------------------------------
+-- Helper security definer: evita recursión de RLS al chequear
+-- membresía activa en un tablero (una policy de board_members no
+-- puede consultar board_members directamente sin recursión infinita).
+-- ------------------------------------------------------------
+
+create or replace function public.is_active_board_member(p_board_id uuid)
+returns boolean
+language sql
+security definer
+set search_path = public
+stable
+as $$
+  select exists (
+    select 1 from public.board_members bm
+    where bm.board_id = p_board_id
+      and bm.user_id = auth.uid()
+      and bm.active = true
+  );
+$$;
+
+revoke all on function public.is_active_board_member(uuid) from public;
+grant execute on function public.is_active_board_member(uuid) to authenticated;
+
+-- ------------------------------------------------------------
 -- Row Level Security
 -- ------------------------------------------------------------
 
@@ -52,13 +76,7 @@ create policy boards_select_admin on public.boards
 -- Boards: cualquier usuario ve los tableros activos donde es miembro activo
 create policy boards_select_member on public.boards
   for select using (
-    active = true
-    and exists (
-      select 1 from public.board_members bm
-      where bm.board_id = boards.id
-        and bm.user_id = auth.uid()
-        and bm.active = true
-    )
+    active = true and public.is_active_board_member(boards.id)
   );
 
 create policy boards_insert_admin on public.boards
@@ -86,14 +104,7 @@ create policy board_members_select_self on public.board_members
 
 -- board_members: un usuario ve a sus compañeros en los tableros donde es miembro activo
 create policy board_members_select_board_peers on public.board_members
-  for select using (
-    exists (
-      select 1 from public.board_members bm2
-      where bm2.board_id = board_members.board_id
-        and bm2.user_id = auth.uid()
-        and bm2.active = true
-    )
-  );
+  for select using (public.is_active_board_member(board_members.board_id));
 
 create policy board_members_insert_admin on public.board_members
   for insert with check (

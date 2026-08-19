@@ -33,9 +33,8 @@ export async function POST(request: Request) {
     .single();
 
   if (error) {
-    console.error("[boards.POST] error:", error);
     return NextResponse.json(
-      { error: `DEBUG: ${error.message} (${error.code ?? "sin code"})` },
+      { error: "No se pudo crear el tablero. Intentá de nuevo." },
       { status: 400 },
     );
   }

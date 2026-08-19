@@ -18,6 +18,12 @@ export function NavHeader({ profile }: { profile: Profile }) {
           </p>
         </div>
         <nav className="flex items-center gap-3">
+          <Link
+            href="/tableros"
+            className="text-sm text-muted-foreground hover:text-foreground"
+          >
+            {isAdmin ? "Tableros" : "Mis tableros"}
+          </Link>
           {isAdmin && (
             <Link
               href="/usuarios"

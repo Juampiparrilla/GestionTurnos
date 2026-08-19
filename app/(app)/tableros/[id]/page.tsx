@@ -3,6 +3,7 @@ import { getCurrentProfile } from "@/lib/auth/session";
 import { createClient } from "@/lib/supabase/server";
 import { BoardDetail } from "@/components/boards/board-detail";
 import type { Board, BoardMember, OrgDirectoryEntry } from "@/types/board";
+import type { ShiftConfiguration } from "@/types/shift";
 
 export default async function BoardDetailPage({
   params,
@@ -29,11 +30,18 @@ export default async function BoardDetailPage({
 
   const { data: directory } = await supabase.rpc("list_org_profiles_directory");
 
+  const { data: shifts } = await supabase
+    .from("shift_configurations")
+    .select("*")
+    .eq("board_id", id)
+    .order("sort_order");
+
   return (
     <BoardDetail
       board={board as Board}
       members={(members as BoardMember[] | null) ?? []}
       directory={(directory as OrgDirectoryEntry[] | null) ?? []}
+      shifts={(shifts as ShiftConfiguration[] | null) ?? []}
       isAdmin={isAdmin}
     />
   );

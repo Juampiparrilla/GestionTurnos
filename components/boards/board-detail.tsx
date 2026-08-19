@@ -7,17 +7,21 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { EditBoardSheet } from "./edit-board-sheet";
 import { MemberManagement } from "./member-management";
+import { ShiftsManagement } from "./shifts-management";
 import type { Board, BoardMember, OrgDirectoryEntry } from "@/types/board";
+import type { ShiftConfiguration } from "@/types/shift";
 
 export function BoardDetail({
   board,
   members,
   directory,
+  shifts,
   isAdmin,
 }: {
   board: Board;
   members: BoardMember[];
   directory: OrgDirectoryEntry[];
+  shifts: ShiftConfiguration[];
   isAdmin: boolean;
 }) {
   const [editOpen, setEditOpen] = useState(false);
@@ -48,6 +52,8 @@ export function BoardDetail({
           </Button>
         )}
       </div>
+
+      <ShiftsManagement boardId={board.id} shifts={shifts} isAdmin={isAdmin} />
 
       <MemberManagement
         boardId={board.id}

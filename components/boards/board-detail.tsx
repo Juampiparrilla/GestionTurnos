@@ -29,11 +29,11 @@ export function BoardDetail({
   return (
     <div className="space-y-6">
       <Link
-        href="/tableros"
+        href={`/tableros/${board.id}`}
         className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
       >
         <ArrowLeft className="size-4" />
-        Volver a tableros
+        Volver al calendario
       </Link>
 
       <div className="flex items-start justify-between gap-4">
@@ -42,6 +42,7 @@ export function BoardDetail({
             <h1 className="text-xl font-semibold">{board.name}</h1>
             {!board.active && <Badge variant="outline">Inactivo</Badge>}
           </div>
+          <p className="text-sm text-muted-foreground">Configuración del tablero</p>
           {board.description && (
             <p className="mt-1 text-sm text-muted-foreground">{board.description}</p>
           )}

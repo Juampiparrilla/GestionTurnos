@@ -52,7 +52,7 @@ export function CreateBoardSheet({
 
     setIsSubmitting(false);
     onOpenChange(false);
-    router.push(`/tableros/${data.id}`);
+    router.push(`/tableros/${data.id}/configuracion`);
   }
 
   return (

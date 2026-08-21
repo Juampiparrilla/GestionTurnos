@@ -314,12 +314,20 @@ export function BoardCalendar({
         )}
       </div>
 
-      <Link
-        href={`/tableros/${board.id}/feriados`}
-        className={buttonVariants({ variant: "outline", className: "w-full" })}
-      >
-        Feriados
-      </Link>
+      <div className="flex gap-2">
+        <Link
+          href={`/tableros/${board.id}/feriados`}
+          className={buttonVariants({ variant: "outline", className: "flex-1" })}
+        >
+          Feriados
+        </Link>
+        <Link
+          href={`/tableros/${board.id}/domingos`}
+          className={buttonVariants({ variant: "outline", className: "flex-1" })}
+        >
+          Domingos
+        </Link>
+      </div>
 
       {editingCell && (
         <AssignmentSheet

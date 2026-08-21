@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { UserCard } from "./user-card";
 import { CreateUserSheet } from "./create-user-sheet";
 import { EditUserSheet } from "./edit-user-sheet";
@@ -20,12 +22,14 @@ export function UsersList({
   actorId,
   boardsByUser,
   invitationByUser,
+  mode = "active",
 }: {
   users: Profile[];
   actorRole: UserRole;
   actorId: string;
   boardsByUser: Record<string, string[]>;
   invitationByUser: Record<string, Invitation>;
+  mode?: "active" | "inactive";
 }) {
   const [createOpen, setCreateOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<Profile | null>(null);
@@ -33,7 +37,26 @@ export function UsersList({
 
   return (
     <div className="space-y-4">
-      <Button onClick={() => setCreateOpen(true)}>+ Crear usuario</Button>
+      {mode === "active" ? (
+        <div className="flex items-center gap-2">
+          <Button onClick={() => setCreateOpen(true)}>+ Crear usuario</Button>
+          <Link href="/usuarios/inactivos" className={buttonVariants({ variant: "outline" })}>
+            Inactivos
+          </Link>
+        </div>
+      ) : (
+        <Link
+          href="/usuarios"
+          className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
+        >
+          <ArrowLeft className="size-4" />
+          Volver a Usuarios
+        </Link>
+      )}
+
+      {users.length === 0 && mode === "inactive" && (
+        <p className="text-sm text-muted-foreground">No hay usuarios inactivos.</p>
+      )}
 
       <div className="grid gap-3">
         {users.map((user) => (

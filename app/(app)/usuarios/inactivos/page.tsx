@@ -5,7 +5,7 @@ import { UsersList } from "@/components/users/users-list";
 import type { Profile } from "@/types/profile";
 import type { Invitation } from "@/types/invitation";
 
-export default async function UsuariosPage() {
+export default async function InactiveUsersPage() {
   const actor = await requireAdmin();
   if (!actor) {
     redirect("/");
@@ -15,25 +15,8 @@ export default async function UsuariosPage() {
   const { data: users } = await supabase
     .from("profiles")
     .select("*")
-    .eq("active", true)
+    .eq("active", false)
     .order("full_name");
-
-  const { data: activeAssignments } = await supabase
-    .from("shift_assignments")
-    .select("user_id, board:boards(name)")
-    .eq("status", "EMPLEADO")
-    .is("valid_to", null);
-
-  const boardsByUser: Record<string, string[]> = {};
-  for (const row of activeAssignments ?? []) {
-    const boardEntry = row.board as { name: string }[] | { name: string } | null;
-    const boardName = Array.isArray(boardEntry) ? boardEntry[0]?.name : boardEntry?.name;
-    if (!row.user_id || !boardName) continue;
-    const existing = boardsByUser[row.user_id] ?? [];
-    if (!existing.includes(boardName)) {
-      boardsByUser[row.user_id] = [...existing, boardName];
-    }
-  }
 
   const { data: invitations } = await supabase
     .from("invitations")
@@ -41,8 +24,6 @@ export default async function UsuariosPage() {
     .eq("kind", "ACTIVATION")
     .order("created_at", { ascending: false });
 
-  // Ya vienen ordenadas por mas reciente primero: la primera que
-  // encontramos para cada usuario es la relevante para mostrar.
   const invitationByUser: Record<string, Invitation> = {};
   for (const invitation of (invitations as Invitation[] | null) ?? []) {
     if (!invitationByUser[invitation.user_id]) {
@@ -53,17 +34,18 @@ export default async function UsuariosPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-xl font-semibold">Usuarios</h1>
+        <h1 className="text-xl font-semibold">Usuarios inactivos</h1>
         <p className="text-sm text-muted-foreground">
-          Gestioná los usuarios de tu organización.
+          Usuarios desactivados de tu organización.
         </p>
       </div>
       <UsersList
         users={(users as Profile[] | null) ?? []}
         actorRole={actor.role}
         actorId={actor.id}
-        boardsByUser={boardsByUser}
+        boardsByUser={{}}
         invitationByUser={invitationByUser}
+        mode="inactive"
       />
     </div>
   );

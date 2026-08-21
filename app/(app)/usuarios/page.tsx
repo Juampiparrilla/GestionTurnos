@@ -13,6 +13,23 @@ export default async function UsuariosPage() {
   const supabase = await createClient();
   const { data: users } = await supabase.from("profiles").select("*").order("full_name");
 
+  const { data: activeAssignments } = await supabase
+    .from("shift_assignments")
+    .select("user_id, board:boards(name)")
+    .eq("status", "EMPLEADO")
+    .is("valid_to", null);
+
+  const boardsByUser: Record<string, string[]> = {};
+  for (const row of activeAssignments ?? []) {
+    const boardEntry = row.board as { name: string }[] | { name: string } | null;
+    const boardName = Array.isArray(boardEntry) ? boardEntry[0]?.name : boardEntry?.name;
+    if (!row.user_id || !boardName) continue;
+    const existing = boardsByUser[row.user_id] ?? [];
+    if (!existing.includes(boardName)) {
+      boardsByUser[row.user_id] = [...existing, boardName];
+    }
+  }
+
   return (
     <div className="space-y-6">
       <div>
@@ -25,6 +42,7 @@ export default async function UsuariosPage() {
         users={(users as Profile[] | null) ?? []}
         actorRole={actor.role}
         actorId={actor.id}
+        boardsByUser={boardsByUser}
       />
     </div>
   );

@@ -31,11 +31,13 @@ export function EditUserSheet({
   onOpenChange,
   assignableRoles,
   isSelf,
+  assignedBoards,
 }: {
   user: Profile;
   onOpenChange: (open: boolean) => void;
   assignableRoles: UserRole[];
   isSelf: boolean;
+  assignedBoards: string[];
 }) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -154,6 +156,13 @@ export function EditUserSheet({
                 </div>
                 <Switch id="active" checked={active} onCheckedChange={setActive} />
               </div>
+
+              {!active && assignedBoards.length > 0 && (
+                <p className="rounded-lg border border-amber-500/30 bg-amber-500/10 p-3 text-sm text-amber-800 dark:text-amber-400">
+                  Este usuario está asignado en: <strong>{assignedBoards.join(", ")}</strong>.
+                  Si lo desactivás, esas asignaciones van a desaparecer del calendario.
+                </p>
+              )}
             </>
           )}
 

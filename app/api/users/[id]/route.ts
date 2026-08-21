@@ -71,5 +71,9 @@ export async function PATCH(
     return NextResponse.json({ error: "Usuario no encontrado." }, { status: 404 });
   }
 
+  if (parsed.data.active === false) {
+    await supabase.rpc("clear_user_assignments", { p_user_id: id });
+  }
+
   return NextResponse.json({ ok: true });
 }

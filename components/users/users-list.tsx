@@ -17,10 +17,12 @@ export function UsersList({
   users,
   actorRole,
   actorId,
+  boardsByUser,
 }: {
   users: Profile[];
   actorRole: UserRole;
   actorId: string;
+  boardsByUser: Record<string, string[]>;
 }) {
   const [createOpen, setCreateOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<Profile | null>(null);
@@ -50,6 +52,7 @@ export function UsersList({
           }}
           assignableRoles={assignableRoles}
           isSelf={editingUser.id === actorId}
+          assignedBoards={boardsByUser[editingUser.id] ?? []}
         />
       )}
     </div>

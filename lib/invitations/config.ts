@@ -1,0 +1,1 @@
+export const INVITATION_EXPIRATION_HOURS = 48;

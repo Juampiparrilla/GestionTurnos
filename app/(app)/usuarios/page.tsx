@@ -3,6 +3,7 @@ import { requireAdmin } from "@/lib/auth/require-role";
 import { createClient } from "@/lib/supabase/server";
 import { UsersList } from "@/components/users/users-list";
 import type { Profile } from "@/types/profile";
+import type { Invitation } from "@/types/invitation";
 
 export default async function UsuariosPage() {
   const actor = await requireAdmin();
@@ -30,6 +31,20 @@ export default async function UsuariosPage() {
     }
   }
 
+  const { data: invitations } = await supabase
+    .from("invitations")
+    .select("*")
+    .order("created_at", { ascending: false });
+
+  // Ya vienen ordenadas por mas reciente primero: la primera que
+  // encontramos para cada usuario es la relevante para mostrar.
+  const invitationByUser: Record<string, Invitation> = {};
+  for (const invitation of (invitations as Invitation[] | null) ?? []) {
+    if (!invitationByUser[invitation.user_id]) {
+      invitationByUser[invitation.user_id] = invitation;
+    }
+  }
+
   return (
     <div className="space-y-6">
       <div>
@@ -43,6 +58,7 @@ export default async function UsuariosPage() {
         actorRole={actor.role}
         actorId={actor.id}
         boardsByUser={boardsByUser}
+        invitationByUser={invitationByUser}
       />
     </div>
   );

@@ -11,26 +11,37 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { setPassword, type SetPasswordState } from "./actions";
+import { activateAccount, type ActivateAccountState } from "./actions";
 
-const initialState: SetPasswordState = { error: null };
+const initialState: ActivateAccountState = { error: null };
 
-export default function SetPasswordPage() {
-  const [state, formAction, isPending] = useActionState(setPassword, initialState);
+export function InvitationForm({
+  token,
+  fullName,
+  email,
+}: {
+  token: string;
+  fullName: string;
+  email: string;
+}) {
+  const boundAction = activateAccount.bind(null, token);
+  const [state, formAction, isPending] = useActionState(boundAction, initialState);
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-muted/30 px-4">
       <Card className="w-full max-w-sm">
         <CardHeader>
-          <CardTitle>Creá tu contraseña</CardTitle>
+          <CardTitle>Activá tu cuenta</CardTitle>
           <CardDescription>
-            Elegí una contraseña para poder ingresar a Gestión de Turnos.
+            Hola, {fullName} 👋. Fuiste invitado a utilizar la aplicación de gestión de
+            turnos.
           </CardDescription>
         </CardHeader>
         <CardContent>
+          <p className="mb-4 text-sm text-muted-foreground">{email}</p>
           <form action={formAction} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="password">Contraseña</Label>
+              <Label htmlFor="password">Nueva contraseña</Label>
               <Input
                 id="password"
                 name="password"
@@ -41,7 +52,7 @@ export default function SetPasswordPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Repetir contraseña</Label>
+              <Label htmlFor="confirmPassword">Confirmar contraseña</Label>
               <Input
                 id="confirmPassword"
                 name="confirmPassword"
@@ -57,7 +68,7 @@ export default function SetPasswordPage() {
               </p>
             )}
             <Button type="submit" className="w-full" disabled={isPending}>
-              {isPending ? "Guardando..." : "Guardar y continuar"}
+              {isPending ? "Activando..." : "Activar cuenta"}
             </Button>
           </form>
         </CardContent>

@@ -2,14 +2,20 @@
 
 import { Badge } from "@/components/ui/badge";
 import { ROLE_LABEL, type Profile } from "@/types/profile";
+import { getInvitationStatus, INVITATION_STATUS_LABEL, type Invitation } from "@/types/invitation";
 
 export function UserCard({
   user,
+  invitation,
   onClick,
 }: {
   user: Profile;
+  invitation: Invitation | null;
   onClick: () => void;
 }) {
+  const invitationStatus = getInvitationStatus(invitation);
+  const showInvitationBadge = invitationStatus !== "NONE" && invitationStatus !== "USED";
+
   return (
     <button
       type="button"
@@ -27,6 +33,12 @@ export function UserCard({
           {ROLE_LABEL[user.role]}
         </Badge>
         {!user.active && <Badge variant="outline">Inactivo</Badge>}
+        {showInvitationBadge && (
+          <Badge variant="outline">
+            {invitationStatus === "PENDING" ? "⏳ " : ""}
+            {INVITATION_STATUS_LABEL[invitationStatus]}
+          </Badge>
+        )}
       </div>
     </button>
   );

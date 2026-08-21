@@ -122,7 +122,7 @@ export function AssignmentSheet({
                 <SelectContent>
                   {members.length === 0 ? (
                     <div className="px-2 py-1.5 text-sm text-muted-foreground">
-                      Este tablero no tiene personas asignadas todavía.
+                      Este horario no tiene personas asignadas todavía.
                     </div>
                   ) : (
                     members.map((m) => (

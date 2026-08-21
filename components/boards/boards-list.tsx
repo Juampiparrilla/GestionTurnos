@@ -20,11 +20,11 @@ export function BoardsList({
   if (boards.length === 0) {
     return (
       <div className="space-y-4">
-        {isAdmin && <Button onClick={() => setCreateOpen(true)}>+ Crear tablero</Button>}
+        {isAdmin && <Button onClick={() => setCreateOpen(true)}>+ Crear horario</Button>}
         <div className="rounded-lg border border-dashed p-8 text-center text-sm text-muted-foreground">
           {isAdmin
-            ? "Todavía no tenés tableros. Creá tu primer tablero para comenzar."
-            : "No tenés tableros asignados todavía."}
+            ? "Todavía no tenés horarios. Creá tu primer horario para comenzar."
+            : "No tenés horarios asignados todavía."}
         </div>
         <CreateBoardSheet open={createOpen} onOpenChange={setCreateOpen} />
       </div>
@@ -33,7 +33,7 @@ export function BoardsList({
 
   return (
     <div className="space-y-4">
-      {isAdmin && <Button onClick={() => setCreateOpen(true)}>+ Crear tablero</Button>}
+      {isAdmin && <Button onClick={() => setCreateOpen(true)}>+ Crear horario</Button>}
       <div className="grid gap-3">
         {boards.map((board) => (
           <BoardCard key={board.id} board={board} memberCount={memberCounts[board.id]} />

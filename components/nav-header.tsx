@@ -22,7 +22,7 @@ export function NavHeader({ profile }: { profile: Profile }) {
             href="/tableros"
             className="text-sm text-muted-foreground hover:text-foreground"
           >
-            {isAdmin ? "Tableros" : "Mis tableros"}
+            {isAdmin ? "Horarios" : "Mis horarios"}
           </Link>
           {isAdmin && (
             <Link

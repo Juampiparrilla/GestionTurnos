@@ -32,11 +32,11 @@ export default async function TablerosPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-xl font-semibold">{isAdmin ? "Tableros" : "Mis tableros"}</h1>
+        <h1 className="text-xl font-semibold">{isAdmin ? "Horarios" : "Mis horarios"}</h1>
         <p className="text-sm text-muted-foreground">
           {isAdmin
             ? "Gestioná los locales de tu organización."
-            : "Los tableros a los que estás asignado."}
+            : "Los horarios a los que estás asignado."}
         </p>
       </div>
       <BoardsList boards={boardList} memberCounts={memberCounts} isAdmin={isAdmin} />

@@ -42,7 +42,7 @@ export function BoardDetail({
             <h1 className="text-xl font-semibold">{board.name}</h1>
             {!board.active && <Badge variant="outline">Inactivo</Badge>}
           </div>
-          <p className="text-sm text-muted-foreground">Configuración del tablero</p>
+          <p className="text-sm text-muted-foreground">Configuración del horario</p>
           {board.description && (
             <p className="mt-1 text-sm text-muted-foreground">{board.description}</p>
           )}

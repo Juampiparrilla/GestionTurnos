@@ -6,7 +6,7 @@ import { Settings } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import { AssignmentSheet } from "./assignment-sheet";
-import { DAY_LABELS_MINI } from "@/types/assignment";
+import { DAY_LABELS_SHORT } from "@/types/assignment";
 import type { ShiftAssignment } from "@/types/assignment";
 import type { Board, BoardMember, OrgDirectoryEntry } from "@/types/board";
 import type { ShiftConfiguration } from "@/types/shift";
@@ -101,7 +101,7 @@ export function BoardCalendar({
         {isAdmin && (
           <Link
             href={`/tableros/${board.id}/configuracion`}
-            aria-label="Configurar tablero"
+            aria-label="Configurar horario"
             className={buttonVariants({ variant: "outline", size: "icon" })}
           >
             <Settings className="size-4" />
@@ -111,21 +111,21 @@ export function BoardCalendar({
 
       {shifts.length === 0 ? (
         <p className="text-sm text-muted-foreground">
-          Este tablero todavía no tiene turnos configurados.
+          Este horario todavía no tiene turnos configurados.
         </p>
       ) : (
         <div className="rounded-lg border">
           <table className="w-full table-fixed border-collapse text-xs sm:text-sm">
             <colgroup>
-              <col className="w-[30%] sm:w-[22%]" />
-              {DAY_LABELS_MINI.map((label) => (
+              <col className="w-[24%] sm:w-[20%]" />
+              {DAY_LABELS_SHORT.map((label) => (
                 <col key={label} />
               ))}
             </colgroup>
             <thead>
               <tr className="border-b bg-muted/50">
                 <th className="p-1.5 text-left font-medium sm:p-3">Turno</th>
-                {DAY_LABELS_MINI.map((label) => (
+                {DAY_LABELS_SHORT.map((label) => (
                   <th key={label} className="p-1 text-center font-medium sm:p-3">
                     {label}
                   </th>
@@ -145,7 +145,7 @@ export function BoardCalendar({
                         </p>
                       )}
                     </td>
-                    {DAY_LABELS_MINI.map((_, dayIndex) => {
+                    {DAY_LABELS_SHORT.map((_, dayIndex) => {
                       const assignment = assignmentsByKey.get(`${shift.id}:${dayIndex}`);
                       const person = assignment?.user_id
                         ? directoryById.get(assignment.user_id)

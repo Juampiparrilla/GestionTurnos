@@ -64,7 +64,7 @@ export function EditBoardSheet({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent side="right" className="w-full sm:max-w-md">
         <SheetHeader>
-          <SheetTitle>Editar tablero</SheetTitle>
+          <SheetTitle>Editar horario</SheetTitle>
         </SheetHeader>
         <form action={handleSubmit} className="flex flex-col gap-4 px-4">
           <div className="space-y-2">
@@ -83,9 +83,9 @@ export function EditBoardSheet({
           </div>
           <div className="flex items-center justify-between rounded-lg border p-3">
             <div>
-              <Label htmlFor="active">Tablero activo</Label>
+              <Label htmlFor="active">Horario activo</Label>
               <p className="text-xs text-muted-foreground">
-                Un tablero inactivo deja de estar disponible para sus miembros.
+                Un horario inactivo deja de estar disponible para sus miembros.
               </p>
             </div>
             <Switch id="active" checked={active} onCheckedChange={setActive} />

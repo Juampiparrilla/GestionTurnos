@@ -45,7 +45,7 @@ export function CreateBoardSheet({
     const data = await res.json();
 
     if (!res.ok) {
-      setError(data.error ?? "No se pudo crear el tablero.");
+      setError(data.error ?? "No se pudo crear el horario.");
       setIsSubmitting(false);
       return;
     }
@@ -59,7 +59,7 @@ export function CreateBoardSheet({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent side="right" className="w-full sm:max-w-md">
         <SheetHeader>
-          <SheetTitle>Crear tablero</SheetTitle>
+          <SheetTitle>Crear horario</SheetTitle>
           <SheetDescription>
             Representa un local o unidad de trabajo. Después vas a poder asignar
             personas y configurar sus turnos.
@@ -82,7 +82,7 @@ export function CreateBoardSheet({
           <SheetFooter className="px-0">
             <Button type="submit" disabled={isSubmitting}>
               {isSubmitting && <Loader2 className="size-4 animate-spin" />}
-              {isSubmitting ? "Creando..." : "Crear tablero"}
+              {isSubmitting ? "Creando..." : "Crear horario"}
             </Button>
           </SheetFooter>
         </form>

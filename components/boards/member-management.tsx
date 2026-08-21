@@ -112,7 +112,7 @@ export function MemberManagement({
                     variant="ghost"
                     size="icon"
                     onClick={() => setRemovingUserId(member.user_id)}
-                    aria-label={`Quitar a ${person?.full_name ?? "usuario"} del tablero`}
+                    aria-label={`Quitar a ${person?.full_name ?? "usuario"} del horario`}
                   >
                     <X className="size-4" />
                   </Button>
@@ -166,10 +166,10 @@ export function MemberManagement({
       <AlertDialog open={removingUserId !== null} onOpenChange={(open) => !open && setRemovingUserId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>¿Quitar del tablero?</AlertDialogTitle>
+            <AlertDialogTitle>¿Quitar del horario?</AlertDialogTitle>
             <AlertDialogDescription>
               {directoryById.get(removingUserId ?? "")?.full_name ?? "Esta persona"} va a dejar
-              de tener acceso a este tablero. Podés volver a agregarla cuando quieras.
+              de tener acceso a este horario. Podés volver a agregarla cuando quieras.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

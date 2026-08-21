@@ -53,8 +53,8 @@ export function ShiftsManagement({
       {sorted.length === 0 ? (
         <p className="text-sm text-muted-foreground">
           {isAdmin
-            ? "Todavía no configuraste turnos para este tablero."
-            : "Este tablero todavía no tiene turnos configurados."}
+            ? "Todavía no configuraste turnos para este horario."
+            : "Este horario todavía no tiene turnos configurados."}
         </p>
       ) : (
         <ul className="space-y-2">

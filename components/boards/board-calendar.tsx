@@ -7,7 +7,7 @@ import { Download, Loader2, Settings } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { AssignmentSheet } from "./assignment-sheet";
-import { LinkIconOrSpinner, LinkPendingSpinner } from "@/components/link-pending-spinner";
+import { LinkPendingSpinner } from "@/components/link-pending-spinner";
 import { cn } from "@/lib/utils";
 import { buildPersonColorMap, type PersonColor } from "@/lib/person-colors";
 import { DAY_LABELS_SHORT } from "@/types/assignment";
@@ -179,9 +179,8 @@ export function BoardCalendar({
               aria-label="Configurar horario"
               className={buttonVariants({ variant: "outline", size: "icon" })}
             >
-              <LinkIconOrSpinner>
-                <Settings className="size-4" />
-              </LinkIconOrSpinner>
+              <Settings className="size-4" />
+              <LinkPendingSpinner />
             </Link>
           )}
         </div>
@@ -300,20 +299,14 @@ export function BoardCalendar({
         <div className="flex gap-2">
           <Link
             href={`/tableros/${board.id}/domingos`}
-            className={cn(
-              buttonVariants({ variant: "default" }),
-              "flex-1 gap-1.5 bg-violet-600 text-white hover:bg-violet-600/90",
-            )}
+            className={cn(buttonVariants({ variant: "default" }), "flex-1 gap-1.5")}
           >
             Domingos
             <LinkPendingSpinner />
           </Link>
           <Link
             href={`/tableros/${board.id}/feriados`}
-            className={cn(
-              buttonVariants({ variant: "default" }),
-              "flex-1 gap-1.5 bg-amber-600 text-white hover:bg-amber-600/90",
-            )}
+            className={cn(buttonVariants({ variant: "default" }), "flex-1 gap-1.5")}
           >
             Feriados
             <LinkPendingSpinner />

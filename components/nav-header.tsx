@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { signOut } from "@/lib/auth/actions";
-import { Button } from "@/components/ui/button";
+import { SignOutButton } from "@/components/sign-out-button";
 import { ROLE_LABEL, type Profile } from "@/types/profile";
 
 export function NavHeader({ profile }: { profile: Profile }) {
@@ -33,9 +33,7 @@ export function NavHeader({ profile }: { profile: Profile }) {
             </Link>
           )}
           <form action={signOut}>
-            <Button type="submit" variant="ghost" size="sm">
-              Salir
-            </Button>
+            <SignOutButton />
           </form>
         </nav>
       </div>

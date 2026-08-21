@@ -7,6 +7,7 @@ import { Download, Loader2, Settings } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { AssignmentSheet } from "./assignment-sheet";
+import { cn } from "@/lib/utils";
 import { buildPersonColorMap, type PersonColor } from "@/lib/person-colors";
 import { DAY_LABELS_SHORT } from "@/types/assignment";
 import type { ShiftAssignment } from "@/types/assignment";
@@ -296,21 +297,19 @@ export function BoardCalendar({
         <div className="flex gap-2">
           <Link
             href={`/tableros/${board.id}/domingos`}
-            className={buttonVariants({
-              variant: "outline",
-              className:
-                "flex-1 border-violet-500/40 bg-violet-500/10 text-violet-700 hover:bg-violet-500/20 dark:text-violet-400",
-            })}
+            className={cn(
+              buttonVariants({ variant: "outline" }),
+              "flex-1 border-2 border-violet-500/60 bg-violet-500/20 font-semibold text-foreground hover:bg-violet-500/30",
+            )}
           >
             Domingos
           </Link>
           <Link
             href={`/tableros/${board.id}/feriados`}
-            className={buttonVariants({
-              variant: "outline",
-              className:
-                "flex-1 border-amber-500/40 bg-amber-500/10 text-amber-700 hover:bg-amber-500/20 dark:text-amber-400",
-            })}
+            className={cn(
+              buttonVariants({ variant: "outline" }),
+              "flex-1 border-2 border-amber-500/60 bg-amber-500/20 font-semibold text-foreground hover:bg-amber-500/30",
+            )}
           >
             Feriados
           </Link>

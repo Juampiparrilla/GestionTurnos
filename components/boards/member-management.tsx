@@ -39,6 +39,7 @@ export function MemberManagement({
   const [selectedUserId, setSelectedUserId] = useState<string>("");
   const [isAdding, setIsAdding] = useState(false);
   const [removingUserId, setRemovingUserId] = useState<string | null>(null);
+  const [isRemoving, setIsRemoving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const directoryById = new Map(directory.map((d) => [d.id, d]));
@@ -70,6 +71,7 @@ export function MemberManagement({
 
   async function handleRemove(userId: string) {
     setError(null);
+    setIsRemoving(true);
     const res = await fetch(`/api/boards/${boardId}/members/${userId}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
@@ -81,6 +83,7 @@ export function MemberManagement({
       setError(data.error ?? "No se pudo quitar al usuario.");
     }
 
+    setIsRemoving(false);
     setRemovingUserId(null);
     router.refresh();
   }
@@ -173,8 +176,12 @@ export function MemberManagement({
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction onClick={() => removingUserId && handleRemove(removingUserId)}>
+            <AlertDialogCancel disabled={isRemoving}>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => removingUserId && handleRemove(removingUserId)}
+              disabled={isRemoving}
+            >
+              {isRemoving && <Loader2 className="size-4 animate-spin" />}
               Quitar
             </AlertDialogAction>
           </AlertDialogFooter>

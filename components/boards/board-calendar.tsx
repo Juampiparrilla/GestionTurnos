@@ -95,6 +95,13 @@ export function BoardCalendar({
     assignments.map((a) => [`${a.shift_configuration_id}:${a.day_of_week}`, a]),
   );
 
+  const shiftCountByPersonId = new Map<string, number>();
+  for (const a of assignments) {
+    if (a.status === "EMPLEADO" && a.user_id) {
+      shiftCountByPersonId.set(a.user_id, (shiftCountByPersonId.get(a.user_id) ?? 0) + 1);
+    }
+  }
+
   return (
     <div className="space-y-4">
       <div className="flex items-start justify-between gap-4">
@@ -218,6 +225,42 @@ export function BoardCalendar({
             </span>
             Cerrado
           </span>
+        </div>
+      )}
+
+      {shifts.length > 0 && memberDirectory.length > 0 && (
+        <div className="rounded-lg border">
+          <table className="w-full border-collapse text-sm">
+            <thead>
+              <tr className="border-b bg-muted/50">
+                <th className="p-2 text-left font-medium">Persona</th>
+                <th className="p-2 text-right font-medium">Turnos</th>
+              </tr>
+            </thead>
+            <tbody>
+              {memberDirectory.map((person) => {
+                const color = colorByPersonId.get(person.id) ?? NEUTRAL_COLOR;
+                const count = shiftCountByPersonId.get(person.id) ?? 0;
+                return (
+                  <tr key={person.id} className="border-b last:border-0">
+                    <td className="p-2">
+                      <span className="inline-flex items-center gap-2">
+                        <span
+                          className={`inline-flex size-5 shrink-0 items-center justify-center rounded-full text-[9px] font-semibold ${color.bg} ${color.text}`}
+                        >
+                          {initials(person.full_name)}
+                        </span>
+                        {person.full_name}
+                      </span>
+                    </td>
+                    <td className="p-2 text-right text-muted-foreground">
+                      {count} {count === 1 ? "turno" : "turnos"}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
         </div>
       )}
 

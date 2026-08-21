@@ -4,6 +4,8 @@ import { useState } from "react";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { Button, buttonVariants } from "@/components/ui/button";
+import { LinkPendingSpinner } from "@/components/link-pending-spinner";
+import { cn } from "@/lib/utils";
 import { UserCard } from "./user-card";
 import { CreateUserSheet } from "./create-user-sheet";
 import { EditUserSheet } from "./edit-user-sheet";
@@ -40,8 +42,12 @@ export function UsersList({
       {mode === "active" ? (
         <div className="flex items-center gap-2">
           <Button onClick={() => setCreateOpen(true)}>+ Crear usuario</Button>
-          <Link href="/usuarios/inactivos" className={buttonVariants({ variant: "outline" })}>
+          <Link
+            href="/usuarios/inactivos"
+            className={cn(buttonVariants({ variant: "outline" }), "gap-1.5")}
+          >
             Inactivos
+            <LinkPendingSpinner />
           </Link>
         </div>
       ) : (
@@ -51,6 +57,7 @@ export function UsersList({
         >
           <ArrowLeft className="size-4" />
           Volver a Usuarios
+          <LinkPendingSpinner />
         </Link>
       )}
 

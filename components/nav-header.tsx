@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { signOut } from "@/lib/auth/actions";
 import { SignOutButton } from "@/components/sign-out-button";
+import { LinkPendingSpinner } from "@/components/link-pending-spinner";
 import { ROLE_LABEL, type Profile } from "@/types/profile";
 
 export function NavHeader({ profile }: { profile: Profile }) {
@@ -20,16 +21,18 @@ export function NavHeader({ profile }: { profile: Profile }) {
         <nav className="flex items-center gap-3">
           <Link
             href="/tableros"
-            className="text-sm text-muted-foreground hover:text-foreground"
+            className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"
           >
             {isAdmin ? "Horarios" : "Mis horarios"}
+            <LinkPendingSpinner />
           </Link>
           {isAdmin && (
             <Link
               href="/usuarios"
-              className="text-sm text-muted-foreground hover:text-foreground"
+              className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"
             >
               Usuarios
+              <LinkPendingSpinner />
             </Link>
           )}
           <form action={signOut}>

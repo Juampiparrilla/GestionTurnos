@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
+import { LinkPendingSpinner } from "@/components/link-pending-spinner";
 import type { Board } from "@/types/board";
 
 export function BoardCard({
@@ -25,11 +26,10 @@ export function BoardCard({
           </p>
         )}
       </div>
-      {!board.active && (
-        <Badge variant="outline" className="shrink-0">
-          Inactivo
-        </Badge>
-      )}
+      <div className="flex shrink-0 items-center gap-2">
+        {!board.active && <Badge variant="outline">Inactivo</Badge>}
+        <LinkPendingSpinner />
+      </div>
     </Link>
   );
 }

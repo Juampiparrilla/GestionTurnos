@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { LinkPendingSpinner } from "@/components/link-pending-spinner";
 import { CreateSundaySheet } from "./create-sunday-sheet";
 import { EditSundaySheet } from "./edit-sunday-sheet";
 import { formatDateOnly, formatDateTime } from "@/lib/format-date";
@@ -45,6 +46,7 @@ export function SundaysManagement({
       >
         <ArrowLeft className="size-4" />
         Volver al calendario
+        <LinkPendingSpinner />
       </Link>
 
       <div className="flex items-start justify-between gap-4">

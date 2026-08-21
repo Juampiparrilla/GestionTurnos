@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { LinkPendingSpinner } from "@/components/link-pending-spinner";
 import { EditBoardSheet } from "./edit-board-sheet";
 import { MemberManagement } from "./member-management";
 import { ShiftsManagement } from "./shifts-management";
@@ -34,6 +35,7 @@ export function BoardDetail({
       >
         <ArrowLeft className="size-4" />
         Volver al calendario
+        <LinkPendingSpinner />
       </Link>
 
       <div className="flex items-start justify-between gap-4">

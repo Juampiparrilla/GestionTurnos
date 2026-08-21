@@ -32,7 +32,7 @@ function AssignmentCellContent({
   person: OrgDirectoryEntry | null | undefined;
   colorByPersonId: Map<string, PersonColor>;
 }) {
-  if (!assignment) {
+  if (!assignment || assignment.status === "SIN_ASIGNAR") {
     return <span className="text-muted-foreground">–</span>;
   }
   if (assignment.status === "EMPLEADO") {

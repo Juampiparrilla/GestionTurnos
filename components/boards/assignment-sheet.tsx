@@ -45,7 +45,9 @@ export function AssignmentSheet({
   onOpenChange: (open: boolean) => void;
 }) {
   const router = useRouter();
-  const [status, setStatus] = useState<AssignmentStatus>(currentAssignment?.status ?? "EMPLEADO");
+  const [status, setStatus] = useState<AssignmentStatus>(
+    currentAssignment?.status ?? "SIN_ASIGNAR",
+  );
   const [userId, setUserId] = useState<string>(currentAssignment?.user_id ?? "");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);

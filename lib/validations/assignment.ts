@@ -4,7 +4,7 @@ export const setAssignmentSchema = z
   .object({
     shiftConfigurationId: z.string().uuid(),
     dayOfWeek: z.number().int().min(0).max(6),
-    status: z.enum(["EMPLEADO", "FERIADO", "CERRADO"]),
+    status: z.enum(["EMPLEADO", "FERIADO", "CERRADO", "SIN_ASIGNAR"]),
     userId: z.string().uuid().nullable().optional(),
   })
   .refine((data) => (data.status === "EMPLEADO" ? !!data.userId : true), {

@@ -1,4 +1,4 @@
-export type AssignmentStatus = "EMPLEADO" | "FERIADO" | "CERRADO";
+export type AssignmentStatus = "EMPLEADO" | "FERIADO" | "CERRADO" | "SIN_ASIGNAR";
 
 export type ShiftAssignment = {
   id: string;
@@ -32,6 +32,7 @@ export const ASSIGNMENT_STATUS_LABEL: Record<AssignmentStatus, string> = {
   EMPLEADO: "Trabajado",
   FERIADO: "Feriado",
   CERRADO: "Cerrado",
+  SIN_ASIGNAR: "Sin asignar",
 };
 
 // Date.getDay() usa 0=Domingo; nuestro day_of_week usa 0=Lunes.

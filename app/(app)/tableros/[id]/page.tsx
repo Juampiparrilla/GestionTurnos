@@ -5,6 +5,8 @@ import { BoardCalendar } from "@/components/boards/board-calendar";
 import type { Board, BoardMember, OrgDirectoryEntry } from "@/types/board";
 import type { ShiftConfiguration } from "@/types/shift";
 import type { ShiftAssignment } from "@/types/assignment";
+import type { Holiday } from "@/types/holiday";
+import type { Sunday } from "@/types/sunday";
 
 export default async function BoardCalendarPage({
   params,
@@ -44,6 +46,16 @@ export default async function BoardCalendarPage({
 
   const { data: directory } = await supabase.rpc("list_org_profiles_directory");
 
+  const { data: holidays } = await supabase
+    .from("holidays")
+    .select("*")
+    .eq("board_id", id);
+
+  const { data: sundays } = await supabase
+    .from("sundays")
+    .select("*")
+    .eq("board_id", id);
+
   return (
     <BoardCalendar
       board={board as Board}
@@ -51,6 +63,8 @@ export default async function BoardCalendarPage({
       assignments={(assignments as ShiftAssignment[] | null) ?? []}
       members={(members as BoardMember[] | null) ?? []}
       directory={(directory as OrgDirectoryEntry[] | null) ?? []}
+      holidays={(holidays as Holiday[] | null) ?? []}
+      sundays={(sundays as Sunday[] | null) ?? []}
       isAdmin={isAdmin}
     />
   );

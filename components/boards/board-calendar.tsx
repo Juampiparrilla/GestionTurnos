@@ -12,6 +12,8 @@ import { DAY_LABELS_SHORT } from "@/types/assignment";
 import type { ShiftAssignment } from "@/types/assignment";
 import type { Board, BoardMember, OrgDirectoryEntry } from "@/types/board";
 import type { ShiftConfiguration } from "@/types/shift";
+import type { Holiday } from "@/types/holiday";
+import type { Sunday } from "@/types/sunday";
 
 type EditingCell = { shift: ShiftConfiguration; day: number };
 
@@ -73,6 +75,8 @@ export function BoardCalendar({
   assignments,
   members,
   directory,
+  holidays,
+  sundays,
   isAdmin,
 }: {
   board: Board;
@@ -80,6 +84,8 @@ export function BoardCalendar({
   assignments: ShiftAssignment[];
   members: BoardMember[];
   directory: OrgDirectoryEntry[];
+  holidays: Holiday[];
+  sundays: Sunday[];
   isAdmin: boolean;
 }) {
   const [editingCell, setEditingCell] = useState<EditingCell | null>(null);
@@ -124,6 +130,16 @@ export function BoardCalendar({
     if (a.status === "EMPLEADO" && a.user_id) {
       shiftCountByPersonId.set(a.user_id, (shiftCountByPersonId.get(a.user_id) ?? 0) + 1);
     }
+  }
+
+  const sundayCountByPersonId = new Map<string, number>();
+  for (const s of sundays) {
+    sundayCountByPersonId.set(s.user_id, (sundayCountByPersonId.get(s.user_id) ?? 0) + 1);
+  }
+
+  const holidayCountByPersonId = new Map<string, number>();
+  for (const h of holidays) {
+    holidayCountByPersonId.set(h.user_id, (holidayCountByPersonId.get(h.user_id) ?? 0) + 1);
   }
 
   return (
@@ -277,6 +293,29 @@ export function BoardCalendar({
           </div>
         )}
 
+        <div className="flex gap-2">
+          <Link
+            href={`/tableros/${board.id}/domingos`}
+            className={buttonVariants({
+              variant: "outline",
+              className:
+                "flex-1 border-violet-500/40 bg-violet-500/10 text-violet-700 hover:bg-violet-500/20 dark:text-violet-400",
+            })}
+          >
+            Domingos
+          </Link>
+          <Link
+            href={`/tableros/${board.id}/feriados`}
+            className={buttonVariants({
+              variant: "outline",
+              className:
+                "flex-1 border-amber-500/40 bg-amber-500/10 text-amber-700 hover:bg-amber-500/20 dark:text-amber-400",
+            })}
+          >
+            Feriados
+          </Link>
+        </div>
+
         {shifts.length > 0 && memberDirectory.length > 0 && (
           <div className="rounded-lg border">
             <table className="w-full border-collapse text-sm">
@@ -284,12 +323,16 @@ export function BoardCalendar({
                 <tr className="border-b bg-muted/50">
                   <th className="p-2 text-left font-medium">Persona</th>
                   <th className="p-2 text-right font-medium">Turnos</th>
+                  <th className="p-2 text-right font-medium">Domingos</th>
+                  <th className="p-2 text-right font-medium">Feriados</th>
                 </tr>
               </thead>
               <tbody>
                 {memberDirectory.map((person) => {
                   const color = colorByPersonId.get(person.id) ?? NEUTRAL_COLOR;
-                  const count = shiftCountByPersonId.get(person.id) ?? 0;
+                  const shiftCount = shiftCountByPersonId.get(person.id) ?? 0;
+                  const sundayCount = sundayCountByPersonId.get(person.id) ?? 0;
+                  const holidayCount = holidayCountByPersonId.get(person.id) ?? 0;
                   return (
                     <tr key={person.id} className="border-b last:border-0">
                       <td className="p-2">
@@ -302,9 +345,9 @@ export function BoardCalendar({
                           {person.full_name}
                         </span>
                       </td>
-                      <td className="p-2 text-right text-muted-foreground">
-                        {count} {count === 1 ? "turno" : "turnos"}
-                      </td>
+                      <td className="p-2 text-right text-muted-foreground">{shiftCount}</td>
+                      <td className="p-2 text-right text-muted-foreground">{sundayCount}</td>
+                      <td className="p-2 text-right text-muted-foreground">{holidayCount}</td>
                     </tr>
                   );
                 })}
@@ -312,21 +355,6 @@ export function BoardCalendar({
             </table>
           </div>
         )}
-      </div>
-
-      <div className="flex gap-2">
-        <Link
-          href={`/tableros/${board.id}/feriados`}
-          className={buttonVariants({ variant: "outline", className: "flex-1" })}
-        >
-          Feriados
-        </Link>
-        <Link
-          href={`/tableros/${board.id}/domingos`}
-          className={buttonVariants({ variant: "outline", className: "flex-1" })}
-        >
-          Domingos
-        </Link>
       </div>
 
       {editingCell && (

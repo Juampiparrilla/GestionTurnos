@@ -165,7 +165,11 @@ export function EditUserSheet({
   const canResend =
     !isSelf && (invitationStatus === "PENDING" || invitationStatus === "EXPIRED" || invitationStatus === "REVOKED");
   const canRevoke = !isSelf && invitationStatus === "PENDING";
-  const canResetPassword = !isSelf && invitationStatus === "USED";
+  // "NONE" incluye cuentas sin fila de invitación (el SUPER_ADMIN del
+  // bootstrap, o cualquier perfil creado a mano): ya tienen contraseña,
+  // así que también se les puede restablecer.
+  const canResetPassword =
+    !isSelf && (invitationStatus === "USED" || invitationStatus === "NONE");
 
   return (
     <>

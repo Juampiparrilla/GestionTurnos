@@ -6,13 +6,15 @@ import { Settings } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import { AssignmentSheet } from "./assignment-sheet";
-import { getPersonColor } from "@/lib/person-colors";
+import { buildPersonColorMap, type PersonColor } from "@/lib/person-colors";
 import { DAY_LABELS_SHORT } from "@/types/assignment";
 import type { ShiftAssignment } from "@/types/assignment";
 import type { Board, BoardMember, OrgDirectoryEntry } from "@/types/board";
 import type { ShiftConfiguration } from "@/types/shift";
 
 type EditingCell = { shift: ShiftConfiguration; day: number };
+
+const NEUTRAL_COLOR: PersonColor = { bg: "bg-muted", text: "text-muted-foreground" };
 
 function initials(fullName: string): string {
   const parts = fullName.trim().split(/\s+/);
@@ -24,15 +26,17 @@ function initials(fullName: string): string {
 function AssignmentCellContent({
   assignment,
   person,
+  colorByPersonId,
 }: {
   assignment: ShiftAssignment | undefined;
   person: OrgDirectoryEntry | null | undefined;
+  colorByPersonId: Map<string, PersonColor>;
 }) {
   if (!assignment) {
     return <span className="text-muted-foreground">–</span>;
   }
   if (assignment.status === "EMPLEADO") {
-    const color = person ? getPersonColor(person.id) : { bg: "bg-muted", text: "text-muted-foreground" };
+    const color = person ? (colorByPersonId.get(person.id) ?? NEUTRAL_COLOR) : NEUTRAL_COLOR;
     return (
       <span
         title={person?.full_name}
@@ -82,7 +86,10 @@ export function BoardCalendar({
   const directoryById = new Map(directory.map((d) => [d.id, d]));
   const memberDirectory = members
     .map((m) => directoryById.get(m.user_id))
-    .filter((d): d is OrgDirectoryEntry => !!d);
+    .filter((d): d is OrgDirectoryEntry => !!d)
+    .sort((a, b) => a.full_name.localeCompare(b.full_name));
+
+  const colorByPersonId = buildPersonColorMap(memberDirectory.map((p) => p.id));
 
   const assignmentsByKey = new Map(
     assignments.map((a) => [`${a.shift_configuration_id}:${a.day_of_week}`, a]),
@@ -160,10 +167,18 @@ export function BoardCalendar({
                               onClick={() => setEditingCell({ shift, day: dayIndex })}
                               className="inline-flex rounded-md p-0.5 transition-colors hover:bg-muted/50"
                             >
-                              <AssignmentCellContent assignment={assignment} person={person} />
+                              <AssignmentCellContent
+                                assignment={assignment}
+                                person={person}
+                                colorByPersonId={colorByPersonId}
+                              />
                             </button>
                           ) : (
-                            <AssignmentCellContent assignment={assignment} person={person} />
+                            <AssignmentCellContent
+                              assignment={assignment}
+                              person={person}
+                              colorByPersonId={colorByPersonId}
+                            />
                           )}
                         </td>
                       );
@@ -179,7 +194,7 @@ export function BoardCalendar({
       {shifts.length > 0 && (
         <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
           {memberDirectory.map((person) => {
-            const color = getPersonColor(person.id);
+            const color = colorByPersonId.get(person.id) ?? NEUTRAL_COLOR;
             return (
               <span key={person.id} className="inline-flex items-center gap-1">
                 <span

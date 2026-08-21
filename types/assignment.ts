@@ -26,6 +26,8 @@ export const DAY_LABELS = [
 
 export const DAY_LABELS_SHORT = ["LUN", "MAR", "MIÉ", "JUE", "VIE", "SÁB", "DOM"] as const;
 
+export const DAY_LABELS_MINI = ["L", "M", "X", "J", "V", "S", "D"] as const;
+
 export const ASSIGNMENT_STATUS_LABEL: Record<AssignmentStatus, string> = {
   EMPLEADO: "Empleado",
   FERIADO: "Feriado",

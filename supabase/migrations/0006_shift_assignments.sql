@@ -81,21 +81,26 @@ security definer
 set search_path = public
 as $$
 declare
-  v_org_id uuid;
-  v_actor_role text;
+  v_board_org_id uuid;
+  v_actor_org_id uuid;
+  v_actor_role public.user_role;
   v_new_row public.shift_assignments;
 begin
-  select organization_id into v_org_id from public.boards where id = p_board_id;
-  if v_org_id is null then
+  select organization_id into v_board_org_id from public.boards where id = p_board_id;
+  if v_board_org_id is null then
     raise exception 'Tablero no encontrado';
   end if;
 
-  if v_org_id is distinct from (auth.jwt() ->> 'organization_id')::uuid then
+  -- Se lee el rol/organización actuales de profiles (no del JWT, que
+  -- puede tardar hasta ~30 min en reflejar un cambio de rol reciente).
+  select organization_id, role into v_actor_org_id, v_actor_role
+  from public.profiles where id = auth.uid();
+
+  if v_actor_org_id is distinct from v_board_org_id then
     raise exception 'No autorizado';
   end if;
 
-  v_actor_role := auth.jwt() ->> 'app_role';
-  if v_actor_role not in ('ADMIN', 'SUPER_ADMIN') then
+  if v_actor_role is null or v_actor_role not in ('ADMIN', 'SUPER_ADMIN') then
     raise exception 'No autorizado';
   end if;
 
@@ -122,7 +127,7 @@ begin
     organization_id, board_id, shift_configuration_id, day_of_week,
     status, user_id, created_by
   ) values (
-    v_org_id, p_board_id, p_shift_configuration_id, p_day_of_week,
+    v_board_org_id, p_board_id, p_shift_configuration_id, p_day_of_week,
     p_status, p_user_id, auth.uid()
   )
   returning * into v_new_row;

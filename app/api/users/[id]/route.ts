@@ -71,9 +71,8 @@ export async function PATCH(
     return NextResponse.json({ error: "Usuario no encontrado." }, { status: 404 });
   }
 
-  if (parsed.data.active === false) {
-    await supabase.rpc("clear_user_assignments", { p_user_id: id });
-  }
+  // Si active pasó a false, un trigger de base de datos limpia
+  // automáticamente sus asignaciones vigentes en todos los tableros.
 
   return NextResponse.json({ ok: true });
 }

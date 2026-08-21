@@ -11,19 +11,23 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import type { InvitationKind } from "@/types/invitation";
 import { activateAccount, type ActivateAccountState } from "./actions";
 
 const initialState: ActivateAccountState = { error: null };
 
 export function InvitationForm({
   token,
+  kind,
   fullName,
   email,
 }: {
   token: string;
+  kind: InvitationKind;
   fullName: string;
   email: string;
 }) {
+  const isReset = kind === "PASSWORD_RESET";
   const boundAction = activateAccount.bind(null, token);
   const [state, formAction, isPending] = useActionState(boundAction, initialState);
 
@@ -31,10 +35,11 @@ export function InvitationForm({
     <main className="flex min-h-screen items-center justify-center bg-muted/30 px-4">
       <Card className="w-full max-w-sm">
         <CardHeader>
-          <CardTitle>Activá tu cuenta</CardTitle>
+          <CardTitle>{isReset ? "Restablecé tu contraseña" : "Activá tu cuenta"}</CardTitle>
           <CardDescription>
-            Hola, {fullName} 👋. Fuiste invitado a utilizar la aplicación de gestión de
-            turnos.
+            {isReset
+              ? `Hola, ${fullName} 👋. Elegí una contraseña nueva para tu cuenta.`
+              : `Hola, ${fullName} 👋. Fuiste invitado a utilizar la aplicación de gestión de turnos.`}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -68,7 +73,13 @@ export function InvitationForm({
               </p>
             )}
             <Button type="submit" className="w-full" disabled={isPending}>
-              {isPending ? "Activando..." : "Activar cuenta"}
+              {isPending
+                ? isReset
+                  ? "Guardando..."
+                  : "Activando..."
+                : isReset
+                  ? "Guardar contraseña"
+                  : "Activar cuenta"}
             </Button>
           </form>
         </CardContent>

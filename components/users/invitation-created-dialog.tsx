@@ -11,19 +11,28 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { shareInvitationViaWhatsApp } from "@/lib/invitations/share";
+import {
+  INVITATION_EXPIRATION_HOURS,
+  PASSWORD_RESET_EXPIRATION_HOURS,
+} from "@/lib/invitations/config";
+import { shareInvitationViaWhatsApp, sharePasswordResetViaWhatsApp } from "@/lib/invitations/share";
+import type { InvitationKind } from "@/types/invitation";
 
 export function InvitationCreatedDialog({
   open,
   onOpenChange,
   invitationUrl,
   fullName,
+  kind = "ACTIVATION",
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   invitationUrl: string | null;
   fullName: string;
+  kind?: InvitationKind;
 }) {
+  const isReset = kind === "PASSWORD_RESET";
+  const expirationHours = isReset ? PASSWORD_RESET_EXPIRATION_HOURS : INVITATION_EXPIRATION_HOURS;
   const [copied, setCopied] = useState(false);
 
   async function handleCopy() {
@@ -51,10 +60,14 @@ export function InvitationCreatedDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Invitación creada correctamente</DialogTitle>
+          <DialogTitle>
+            {isReset ? "Enlace de restablecimiento creado" : "Invitación creada correctamente"}
+          </DialogTitle>
           <DialogDescription>
-            Compartí este enlace con {fullName} para que active su cuenta. Es personal y
-            vence en 48 horas.
+            {isReset
+              ? `Compartí este enlace con ${fullName} para que elija una contraseña nueva.`
+              : `Compartí este enlace con ${fullName} para que active su cuenta.`}{" "}
+            Es personal y vence en {expirationHours} horas.
           </DialogDescription>
         </DialogHeader>
         <div className="rounded-lg border bg-muted/30 p-3 text-sm break-all">
@@ -65,7 +78,11 @@ export function InvitationCreatedDialog({
             type="button"
             variant="outline"
             className="w-full"
-            onClick={() => shareInvitationViaWhatsApp(fullName, invitationUrl)}
+            onClick={() =>
+              isReset
+                ? sharePasswordResetViaWhatsApp(fullName, invitationUrl)
+                : shareInvitationViaWhatsApp(fullName, invitationUrl)
+            }
           >
             <MessageCircle className="size-4" />
             Compartir por WhatsApp

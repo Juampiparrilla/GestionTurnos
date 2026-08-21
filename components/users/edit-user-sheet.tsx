@@ -71,6 +71,11 @@ export function EditUserSheet({
   const [newInvitation, setNewInvitation] = useState<{ url: string; fullName: string } | null>(
     null,
   );
+  const [isResettingPassword, setIsResettingPassword] = useState(false);
+  const [newPasswordReset, setNewPasswordReset] = useState<{
+    url: string;
+    fullName: string;
+  } | null>(null);
 
   async function handleSubmit(formData: FormData) {
     setIsSubmitting(true);
@@ -140,9 +145,27 @@ export function EditUserSheet({
     router.refresh();
   }
 
+  async function handlePasswordReset() {
+    setIsResettingPassword(true);
+    setActionError(null);
+
+    const res = await fetch(`/api/users/${user.id}/password-reset`, { method: "POST" });
+    const data = await res.json();
+
+    if (!res.ok) {
+      setActionError(data.error ?? "No se pudo generar el enlace de restablecimiento.");
+      setIsResettingPassword(false);
+      return;
+    }
+
+    setIsResettingPassword(false);
+    setNewPasswordReset({ url: data.invitationUrl, fullName: data.fullName });
+  }
+
   const canResend =
     !isSelf && (invitationStatus === "PENDING" || invitationStatus === "EXPIRED" || invitationStatus === "REVOKED");
   const canRevoke = !isSelf && invitationStatus === "PENDING";
+  const canResetPassword = !isSelf && invitationStatus === "USED";
 
   return (
     <>
@@ -189,6 +212,27 @@ export function EditUserSheet({
               </div>
             </div>
           )}
+          {canResetPassword && (
+            <div className="mx-4 flex items-center justify-between gap-2 rounded-lg border p-3">
+              <div>
+                <p className="text-sm font-medium">Contraseña</p>
+                <p className="text-xs text-muted-foreground">
+                  Generá un enlace para que {user.full_name} elija una contraseña nueva.
+                </p>
+              </div>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={handlePasswordReset}
+                disabled={isResettingPassword}
+              >
+                {isResettingPassword && <Loader2 className="size-4 animate-spin" />}
+                Restablecer
+              </Button>
+            </div>
+          )}
+
           {actionError && (
             <p role="alert" className="mx-4 text-sm text-destructive">
               {actionError}
@@ -321,6 +365,16 @@ export function EditUserSheet({
         }}
         invitationUrl={newInvitation?.url ?? null}
         fullName={newInvitation?.fullName ?? ""}
+      />
+
+      <InvitationCreatedDialog
+        open={newPasswordReset !== null}
+        onOpenChange={(isOpen) => {
+          if (!isOpen) setNewPasswordReset(null);
+        }}
+        invitationUrl={newPasswordReset?.url ?? null}
+        fullName={newPasswordReset?.fullName ?? ""}
+        kind="PASSWORD_RESET"
       />
     </>
   );

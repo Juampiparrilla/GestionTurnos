@@ -26,5 +26,7 @@ export async function signIn(
     return { error: "Email o contraseña incorrectos." };
   }
 
+  await supabase.rpc("touch_last_login");
+
   redirect("/");
 }

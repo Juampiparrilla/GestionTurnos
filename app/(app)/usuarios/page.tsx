@@ -34,6 +34,7 @@ export default async function UsuariosPage() {
   const { data: invitations } = await supabase
     .from("invitations")
     .select("*")
+    .eq("kind", "ACTIVATION")
     .order("created_at", { ascending: false });
 
   // Ya vienen ordenadas por mas reciente primero: la primera que

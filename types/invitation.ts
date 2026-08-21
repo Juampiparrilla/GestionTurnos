@@ -1,8 +1,11 @@
+export type InvitationKind = "ACTIVATION" | "PASSWORD_RESET";
+
 export type Invitation = {
   id: string;
   organization_id: string;
   user_id: string;
   token_hash: string;
+  kind: InvitationKind;
   expires_at: string;
   used_at: string | null;
   revoked_at: string | null;

@@ -314,6 +314,13 @@ export function BoardCalendar({
         )}
       </div>
 
+      <Link
+        href={`/tableros/${board.id}/feriados`}
+        className={buttonVariants({ variant: "outline", className: "w-full" })}
+      >
+        Feriados
+      </Link>
+
       {editingCell && (
         <AssignmentSheet
           boardId={board.id}

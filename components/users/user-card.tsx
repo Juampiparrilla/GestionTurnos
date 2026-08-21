@@ -3,6 +3,7 @@
 import { Badge } from "@/components/ui/badge";
 import { ROLE_LABEL, type Profile } from "@/types/profile";
 import { getInvitationStatus, INVITATION_STATUS_LABEL, type Invitation } from "@/types/invitation";
+import { formatDateTime } from "@/lib/format-date";
 
 export function UserCard({
   user,
@@ -26,6 +27,9 @@ export function UserCard({
         <p className="truncate font-medium">{user.full_name}</p>
         <p className="truncate text-sm text-muted-foreground">
           @{user.username} · {user.email}
+        </p>
+        <p className="truncate text-xs text-muted-foreground">
+          Último ingreso: {user.last_login_at ? formatDateTime(user.last_login_at) : "nunca"}
         </p>
       </div>
       <div className="flex shrink-0 flex-col items-end gap-1">

@@ -6,6 +6,7 @@ import { Settings } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import { AssignmentSheet } from "./assignment-sheet";
+import { getPersonColor } from "@/lib/person-colors";
 import { DAY_LABELS_SHORT } from "@/types/assignment";
 import type { ShiftAssignment } from "@/types/assignment";
 import type { Board, BoardMember, OrgDirectoryEntry } from "@/types/board";
@@ -31,10 +32,11 @@ function AssignmentCellContent({
     return <span className="text-muted-foreground">–</span>;
   }
   if (assignment.status === "EMPLEADO") {
+    const color = person ? getPersonColor(person.id) : { bg: "bg-muted", text: "text-muted-foreground" };
     return (
       <span
         title={person?.full_name}
-        className="inline-flex size-6 items-center justify-center rounded-full bg-primary/10 text-[10px] font-semibold text-primary sm:size-7 sm:text-xs"
+        className={`inline-flex size-6 items-center justify-center rounded-full text-[10px] font-semibold sm:size-7 sm:text-xs ${color.bg} ${color.text}`}
       >
         {person ? initials(person.full_name) : "?"}
       </span>
@@ -53,7 +55,7 @@ function AssignmentCellContent({
   return (
     <span
       title="Cerrado"
-      className="inline-flex size-6 items-center justify-center rounded-full bg-muted text-[10px] font-semibold text-muted-foreground sm:size-7 sm:text-xs"
+      className="inline-flex size-6 items-center justify-center rounded-full bg-red-500/15 text-[10px] font-semibold text-red-700 dark:text-red-400 sm:size-7 sm:text-xs"
     >
       C
     </span>
@@ -176,14 +178,19 @@ export function BoardCalendar({
 
       {shifts.length > 0 && (
         <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
-          {memberDirectory.map((person) => (
-            <span key={person.id} className="inline-flex items-center gap-1">
-              <span className="inline-flex size-5 items-center justify-center rounded-full bg-primary/10 text-[9px] font-semibold text-primary">
-                {initials(person.full_name)}
+          {memberDirectory.map((person) => {
+            const color = getPersonColor(person.id);
+            return (
+              <span key={person.id} className="inline-flex items-center gap-1">
+                <span
+                  className={`inline-flex size-5 items-center justify-center rounded-full text-[9px] font-semibold ${color.bg} ${color.text}`}
+                >
+                  {initials(person.full_name)}
+                </span>
+                {person.full_name}
               </span>
-              {person.full_name}
-            </span>
-          ))}
+            );
+          })}
           <span className="inline-flex items-center gap-1">
             <span className="inline-flex size-5 items-center justify-center rounded-full bg-amber-500/15 text-[9px] font-semibold text-amber-700 dark:text-amber-400">
               F
@@ -191,7 +198,7 @@ export function BoardCalendar({
             Feriado
           </span>
           <span className="inline-flex items-center gap-1">
-            <span className="inline-flex size-5 items-center justify-center rounded-full bg-muted text-[9px] font-semibold text-muted-foreground">
+            <span className="inline-flex size-5 items-center justify-center rounded-full bg-red-500/15 text-[9px] font-semibold text-red-700 dark:text-red-400">
               C
             </span>
             Cerrado

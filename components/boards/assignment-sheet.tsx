@@ -94,7 +94,9 @@ export function AssignmentSheet({
             <Label htmlFor="status">Estado</Label>
             <Select value={status} onValueChange={(v) => v && setStatus(v as AssignmentStatus)}>
               <SelectTrigger id="status">
-                <SelectValue />
+                <SelectValue>
+                  {(value: AssignmentStatus) => ASSIGNMENT_STATUS_LABEL[value]}
+                </SelectValue>
               </SelectTrigger>
               <SelectContent>
                 {(Object.keys(ASSIGNMENT_STATUS_LABEL) as AssignmentStatus[]).map((s) => (
@@ -111,7 +113,11 @@ export function AssignmentSheet({
               <Label htmlFor="user">Persona</Label>
               <Select value={userId} onValueChange={(v) => setUserId(v ?? "")}>
                 <SelectTrigger id="user">
-                  <SelectValue placeholder="Elegir persona..." />
+                  <SelectValue placeholder="Elegir persona...">
+                    {(value: string) =>
+                      members.find((m) => m.id === value)?.full_name ?? "Elegir persona..."
+                    }
+                  </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
                   {members.length === 0 ? (

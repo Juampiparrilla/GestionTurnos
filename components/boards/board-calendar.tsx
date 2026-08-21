@@ -174,6 +174,31 @@ export function BoardCalendar({
         </div>
       )}
 
+      {shifts.length > 0 && (
+        <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
+          {memberDirectory.map((person) => (
+            <span key={person.id} className="inline-flex items-center gap-1">
+              <span className="inline-flex size-5 items-center justify-center rounded-full bg-primary/10 text-[9px] font-semibold text-primary">
+                {initials(person.full_name)}
+              </span>
+              {person.full_name}
+            </span>
+          ))}
+          <span className="inline-flex items-center gap-1">
+            <span className="inline-flex size-5 items-center justify-center rounded-full bg-amber-500/15 text-[9px] font-semibold text-amber-700 dark:text-amber-400">
+              F
+            </span>
+            Feriado
+          </span>
+          <span className="inline-flex items-center gap-1">
+            <span className="inline-flex size-5 items-center justify-center rounded-full bg-muted text-[9px] font-semibold text-muted-foreground">
+              C
+            </span>
+            Cerrado
+          </span>
+        </div>
+      )}
+
       {editingCell && (
         <AssignmentSheet
           boardId={board.id}

@@ -134,7 +134,7 @@ export function EditUserSheet({
                 <Label htmlFor="role">Rol</Label>
                 <Select name="role" defaultValue={user.role}>
                   <SelectTrigger id="role">
-                    <SelectValue />
+                    <SelectValue>{(value: UserRole) => ROLE_LABEL[value]}</SelectValue>
                   </SelectTrigger>
                   <SelectContent>
                     {assignableRoles.map((role) => (

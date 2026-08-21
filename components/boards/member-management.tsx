@@ -130,7 +130,11 @@ export function MemberManagement({
             onValueChange={(value) => setSelectedUserId(value ?? "")}
           >
             <SelectTrigger className="flex-1">
-              <SelectValue placeholder="Elegir persona..." />
+              <SelectValue placeholder="Elegir persona...">
+                {(value: string) =>
+                  directory.find((d) => d.id === value)?.full_name ?? "Elegir persona..."
+                }
+              </SelectValue>
             </SelectTrigger>
             <SelectContent>
               {availableToAdd.length === 0 ? (

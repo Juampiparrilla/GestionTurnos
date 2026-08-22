@@ -25,10 +25,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="min-h-full flex flex-col">
         {children}
-        <div
-          id="nav-status-overlay"
-          className="pointer-events-none fixed inset-0 z-50 flex items-center justify-center"
-        />
+        <div id="nav-status-overlay" />
       </body>
     </html>
   );

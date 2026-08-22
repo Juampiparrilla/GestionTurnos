@@ -12,6 +12,12 @@ function friendlyAssignmentError(message: string): string {
   if (message.includes("No autorizado")) {
     return "No autorizado.";
   }
+  if (message.includes("usuario inactivo")) {
+    return "No se puede asignar un usuario inactivo.";
+  }
+  if (message.includes("ya está asignada a otro turno")) {
+    return "Esta persona ya está asignada a otro turno en ese horario.";
+  }
   return "No se pudo guardar la asignación. Intentá de nuevo.";
 }
 

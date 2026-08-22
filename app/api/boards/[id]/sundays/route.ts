@@ -9,6 +9,9 @@ function friendlySundayError(message: string): string {
   if (message.includes("uq_sundays_board_date_user")) {
     return "Esa persona ya está asignada a ese domingo.";
   }
+  if (message.includes("usuario inactivo")) {
+    return "No se puede asignar un usuario inactivo.";
+  }
   return "No se pudo guardar el domingo. Intentá de nuevo.";
 }
 

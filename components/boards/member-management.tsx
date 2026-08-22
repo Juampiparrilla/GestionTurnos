@@ -44,7 +44,7 @@ export function MemberManagement({
 
   const directoryById = new Map(directory.map((d) => [d.id, d]));
   const memberUserIds = new Set(members.map((m) => m.user_id));
-  const availableToAdd = directory.filter((d) => !memberUserIds.has(d.id));
+  const availableToAdd = directory.filter((d) => d.active && !memberUserIds.has(d.id));
 
   async function handleAdd() {
     if (!selectedUserId) return;

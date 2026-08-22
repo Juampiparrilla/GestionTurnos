@@ -9,6 +9,9 @@ function friendlyHolidayError(message: string): string {
   if (message.includes("uq_holidays_board_date_user")) {
     return "Esa persona ya está asignada a ese feriado.";
   }
+  if (message.includes("usuario inactivo")) {
+    return "No se puede asignar un usuario inactivo.";
+  }
   return "No se pudo guardar el cambio. Intentá de nuevo.";
 }
 

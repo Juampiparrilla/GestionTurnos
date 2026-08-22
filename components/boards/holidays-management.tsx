@@ -32,6 +32,9 @@ export function HolidaysManagement({
     .map((m) => directoryById.get(m.user_id))
     .filter((d): d is OrgDirectoryEntry => !!d)
     .sort((a, b) => a.full_name.localeCompare(b.full_name));
+  // Un usuario inactivo puede seguir apareciendo en el historial
+  // (nameOf), pero no debe poder elegirse para un feriado nuevo.
+  const assignableMembers = memberDirectory.filter((p) => p.active);
 
   function nameOf(id: string | null): string {
     if (!id) return "—";
@@ -98,7 +101,7 @@ export function HolidaysManagement({
       {isAdmin && (
         <CreateHolidaySheet
           boardId={board.id}
-          members={memberDirectory}
+          members={assignableMembers}
           open={createOpen}
           onOpenChange={setCreateOpen}
         />
@@ -108,7 +111,7 @@ export function HolidaysManagement({
         <EditHolidaySheet
           boardId={board.id}
           holiday={editingHoliday}
-          members={memberDirectory}
+          members={assignableMembers}
           onOpenChange={(open) => {
             if (!open) setEditingHoliday(null);
           }}

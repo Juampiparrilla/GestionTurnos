@@ -40,10 +40,10 @@ export async function POST(
     );
 
   if (error) {
-    return NextResponse.json(
-      { error: "No se pudo asignar el usuario al tablero." },
-      { status: 400 },
-    );
+    const message = error.message.includes("usuario inactivo")
+      ? "No se puede asignar un usuario inactivo."
+      : "No se pudo asignar el usuario al tablero.";
+    return NextResponse.json({ error: message }, { status: 400 });
   }
 
   return NextResponse.json({ ok: true });

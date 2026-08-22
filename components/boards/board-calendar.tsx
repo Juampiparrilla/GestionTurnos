@@ -122,6 +122,9 @@ export function BoardCalendar({
     .sort((a, b) => a.full_name.localeCompare(b.full_name));
 
   const colorByPersonId = buildPersonColorMap(memberDirectory.map((p) => p.id));
+  // Un usuario inactivo puede seguir en la leyenda/resumen (historial),
+  // pero no debe poder elegirse para una asignación nueva.
+  const assignableMembers = memberDirectory.filter((p) => p.active);
 
   const assignmentsByKey = new Map(
     assignments.map((a) => [`${a.shift_configuration_id}:${a.day_of_week}`, a]),
@@ -362,7 +365,7 @@ export function BoardCalendar({
           currentAssignment={
             assignmentsByKey.get(`${editingCell.shift.id}:${editingCell.day}`) ?? null
           }
-          members={memberDirectory}
+          members={assignableMembers}
           onOpenChange={(open) => {
             if (!open) setEditingCell(null);
           }}

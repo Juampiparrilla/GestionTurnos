@@ -2,11 +2,12 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, Loader2 } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { LinkPendingSpinner } from "@/components/link-pending-spinner";
+import { PendingOverlay } from "@/components/pending-overlay";
 import { InvitationCreatedDialog } from "@/components/users/invitation-created-dialog";
 import { getInvitationStatus, INVITATION_STATUS_LABEL } from "@/types/invitation";
 import type { PlatformOrganizationDetail } from "@/types/organization";
@@ -79,6 +80,7 @@ export function OrganizationDetail({
 
   return (
     <div className="space-y-6">
+      <PendingOverlay pending={isTogglingActive || isResending} />
       <Link
         href="/platform"
         className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
@@ -106,10 +108,7 @@ export function OrganizationDetail({
             Una organización inactiva no puede ser usada por sus usuarios.
           </p>
         </div>
-        <div className="flex items-center gap-2">
-          {isTogglingActive && <Loader2 className="size-4 animate-spin text-muted-foreground" />}
-          <Switch checked={active} onCheckedChange={handleToggleActive} disabled={isTogglingActive} />
-        </div>
+        <Switch checked={active} onCheckedChange={handleToggleActive} disabled={isTogglingActive} />
       </div>
 
       <div className="space-y-3 rounded-lg border bg-background p-4">
@@ -132,7 +131,6 @@ export function OrganizationDetail({
                     onClick={handleResend}
                     disabled={isResending}
                   >
-                    {isResending && <Loader2 className="size-4 animate-spin" />}
                     Reenviar invitación
                   </Button>
                 )}

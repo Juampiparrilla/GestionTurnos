@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Loader2 } from "lucide-react";
+import { PendingOverlay } from "@/components/pending-overlay";
 import {
   Sheet,
   SheetContent,
@@ -83,7 +83,9 @@ export function AssignmentSheet({
   }
 
   return (
-    <Sheet open onOpenChange={onOpenChange}>
+    <>
+      <PendingOverlay pending={isSubmitting} />
+      <Sheet open onOpenChange={onOpenChange}>
       <SheetContent side="bottom" className="mx-auto w-full max-w-md">
         <SheetHeader>
           <SheetTitle>
@@ -150,11 +152,11 @@ export function AssignmentSheet({
             onClick={handleSubmit}
             disabled={isSubmitting || (status === "EMPLEADO" && !userId)}
           >
-            {isSubmitting && <Loader2 className="size-4 animate-spin" />}
             {isSubmitting ? "Guardando..." : "Guardar"}
           </Button>
         </SheetFooter>
       </SheetContent>
-    </Sheet>
+      </Sheet>
+    </>
   );
 }

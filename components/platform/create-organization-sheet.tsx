@@ -2,7 +2,7 @@
 
 import { useState, type ChangeEvent } from "react";
 import { useRouter } from "next/navigation";
-import { Loader2 } from "lucide-react";
+import { PendingOverlay } from "@/components/pending-overlay";
 import {
   Sheet,
   SheetContent,
@@ -60,6 +60,7 @@ export function CreateOrganizationSheet({
 
   return (
     <>
+      <PendingOverlay pending={isSubmitting} />
       <Sheet open={open} onOpenChange={onOpenChange}>
         <SheetContent side="right" className="w-full sm:max-w-md">
           <SheetHeader>
@@ -132,7 +133,6 @@ export function CreateOrganizationSheet({
             )}
             <SheetFooter className="px-0">
               <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting && <Loader2 className="size-4 animate-spin" />}
                 {isSubmitting ? "Creando..." : "Crear organización"}
               </Button>
             </SheetFooter>

@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Loader2, X } from "lucide-react";
+import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { PendingOverlay } from "@/components/pending-overlay";
 import {
   Select,
   SelectContent,
@@ -90,6 +91,7 @@ export function MemberManagement({
 
   return (
     <div className="space-y-3">
+      <PendingOverlay pending={isAdding || isRemoving} />
       <h2 className="font-medium">Personas asignadas</h2>
 
       {members.length === 0 ? (
@@ -154,7 +156,6 @@ export function MemberManagement({
             </SelectContent>
           </Select>
           <Button type="button" onClick={handleAdd} disabled={!selectedUserId || isAdding}>
-            {isAdding && <Loader2 className="size-4 animate-spin" />}
             Agregar
           </Button>
         </div>
@@ -181,7 +182,6 @@ export function MemberManagement({
               onClick={() => removingUserId && handleRemove(removingUserId)}
               disabled={isRemoving}
             >
-              {isRemoving && <Loader2 className="size-4 animate-spin" />}
               Quitar
             </AlertDialogAction>
           </AlertDialogFooter>

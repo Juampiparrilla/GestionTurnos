@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Loader2 } from "lucide-react";
+import { PendingOverlay } from "@/components/pending-overlay";
 import {
   Sheet,
   SheetContent,
@@ -173,6 +173,9 @@ export function EditUserSheet({
 
   return (
     <>
+      <PendingOverlay
+        pending={isSubmitting || isResending || isRevoking || isResettingPassword}
+      />
       <Sheet open onOpenChange={onOpenChange}>
         <SheetContent side="right" className="w-full sm:max-w-md">
           <SheetHeader>
@@ -209,7 +212,6 @@ export function EditUserSheet({
                     onClick={handleResend}
                     disabled={isResending}
                   >
-                    {isResending && <Loader2 className="size-4 animate-spin" />}
                     Reenviar invitación
                   </Button>
                 )}
@@ -231,7 +233,6 @@ export function EditUserSheet({
                 onClick={handlePasswordReset}
                 disabled={isResettingPassword}
               >
-                {isResettingPassword && <Loader2 className="size-4 animate-spin" />}
                 Restablecer
               </Button>
             </div>
@@ -335,7 +336,6 @@ export function EditUserSheet({
             )}
             <SheetFooter className="px-0">
               <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting && <Loader2 className="size-4 animate-spin" />}
                 {isSubmitting ? "Guardando..." : "Guardar cambios"}
               </Button>
             </SheetFooter>

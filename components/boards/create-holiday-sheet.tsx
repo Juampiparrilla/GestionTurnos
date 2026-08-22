@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Loader2 } from "lucide-react";
+import { PendingOverlay } from "@/components/pending-overlay";
 import {
   Sheet,
   SheetContent,
@@ -66,7 +66,9 @@ export function CreateHolidaySheet({
   }
 
   return (
-    <Sheet open={open} onOpenChange={onOpenChange}>
+    <>
+      <PendingOverlay pending={isSubmitting} />
+      <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent side="bottom" className="mx-auto w-full max-w-md">
         <SheetHeader>
           <SheetTitle>Asignar feriado</SheetTitle>
@@ -120,11 +122,11 @@ export function CreateHolidaySheet({
             onClick={handleSubmit}
             disabled={isSubmitting || !date || !userId}
           >
-            {isSubmitting && <Loader2 className="size-4 animate-spin" />}
             {isSubmitting ? "Guardando..." : "Guardar"}
           </Button>
         </SheetFooter>
       </SheetContent>
-    </Sheet>
+      </Sheet>
+    </>
   );
 }

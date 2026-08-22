@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Loader2 } from "lucide-react";
+import { PendingOverlay } from "@/components/pending-overlay";
 import {
   Sheet,
   SheetContent,
@@ -58,7 +58,9 @@ export function CreateShiftSheet({
   }
 
   return (
-    <Sheet open={open} onOpenChange={onOpenChange}>
+    <>
+      <PendingOverlay pending={isSubmitting} />
+      <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent side="right" className="w-full sm:max-w-md">
         <SheetHeader>
           <SheetTitle>Agregar turno</SheetTitle>
@@ -88,12 +90,12 @@ export function CreateShiftSheet({
           )}
           <SheetFooter className="px-0">
             <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting && <Loader2 className="size-4 animate-spin" />}
               {isSubmitting ? "Guardando..." : "Agregar turno"}
             </Button>
           </SheetFooter>
         </form>
       </SheetContent>
-    </Sheet>
+      </Sheet>
+    </>
   );
 }

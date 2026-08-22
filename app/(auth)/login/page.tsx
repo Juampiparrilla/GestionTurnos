@@ -11,6 +11,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { PendingOverlay } from "@/components/pending-overlay";
 import { signIn, type LoginState } from "./actions";
 
 const initialState: LoginState = { error: null };
@@ -20,6 +21,7 @@ export default function LoginPage() {
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-muted/30 px-4">
+      <PendingOverlay pending={isPending} />
       <Card className="w-full max-w-sm">
         <CardHeader>
           <CardTitle>Gestión de Turnos</CardTitle>

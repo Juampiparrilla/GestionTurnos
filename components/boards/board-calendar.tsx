@@ -3,11 +3,12 @@
 import { useRef, useState } from "react";
 import Link from "next/link";
 import { toPng } from "html-to-image";
-import { Download, Loader2, Settings } from "lucide-react";
+import { Download, Settings } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { AssignmentSheet } from "./assignment-sheet";
 import { LinkPendingSpinner } from "@/components/link-pending-spinner";
+import { PendingOverlay } from "@/components/pending-overlay";
 import { cn } from "@/lib/utils";
 import { buildPersonColorMap, type PersonColor } from "@/lib/person-colors";
 import { DAY_LABELS_SHORT } from "@/types/assignment";
@@ -149,6 +150,7 @@ export function BoardCalendar({
 
   return (
     <div className="space-y-4">
+      <PendingOverlay pending={isDownloading} />
       <div className="flex items-start justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
@@ -169,11 +171,7 @@ export function BoardCalendar({
               onClick={handleDownload}
               disabled={isDownloading}
             >
-              {isDownloading ? (
-                <Loader2 className="size-4 animate-spin" />
-              ) : (
-                <Download className="size-4" />
-              )}
+              <Download className="size-4" />
             </Button>
           )}
           {isAdmin && (

@@ -20,10 +20,20 @@ export async function signIn(
   }
 
   const supabase = await createClient();
-  const { error } = await supabase.auth.signInWithPassword(parsed.data);
+  const { error, data } = await supabase.auth.signInWithPassword(parsed.data);
 
   if (error) {
     return { error: "Email o contraseña incorrectos." };
+  }
+
+  const { data: platformAdmin } = await supabase
+    .from("platform_admins")
+    .select("id")
+    .eq("id", data.user.id)
+    .maybeSingle();
+
+  if (platformAdmin) {
+    redirect("/platform");
   }
 
   await supabase.rpc("touch_last_login");

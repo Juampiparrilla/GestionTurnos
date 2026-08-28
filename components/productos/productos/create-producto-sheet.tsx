@@ -13,7 +13,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { uppercaseOnChange } from "@/lib/productos/uppercase-input";
 import { showSuccessToast } from "@/lib/toast";
 import { MoneyInput } from "@/components/productos/money-input";
 import type { Marca } from "@/types/marca";
@@ -44,6 +43,9 @@ export function CreateProductoSheet({
   const [marcaOptions, setMarcaOptions] = useState(marcas);
   const [categoriaOptions, setCategoriaOptions] = useState(categorias);
   const [proveedorOptions, setProveedorOptions] = useState(proveedores);
+
+  const [nombre, setNombre] = useState("");
+  const [descripcion, setDescripcion] = useState("");
   const [marcaId, setMarcaId] = useState("");
   const [categoriaId, setCategoriaId] = useState("");
   const [proveedorId, setProveedorId] = useState("");
@@ -60,16 +62,41 @@ export function CreateProductoSheet({
   const [manualPorMayor, setManualPorMayor] = useState(false);
   const [precioManualPorMayor, setPrecioManualPorMayor] = useState(0);
 
-  async function handleSubmit(formData: FormData) {
+  function resetForm() {
+    setNombre("");
+    setDescripcion("");
+    setMarcaId("");
+    setCategoriaId("");
+    setProveedorId("");
+    setKg(0);
+    setCosto(0);
+    setPorcentajeCerrada(0);
+    setManualCerrada(false);
+    setPrecioManualCerrada(0);
+    setPorcentajeAbierta(0);
+    setManualAbierta(false);
+    setPrecioManualAbierta(0);
+    setPorcentajePorMayor(0);
+    setManualPorMayor(false);
+    setPrecioManualPorMayor(0);
+    setError(null);
+  }
+
+  function handleOpenChange(next: boolean) {
+    if (next) resetForm();
+    onOpenChange(next);
+  }
+
+  async function handleSubmit() {
     setIsSubmitting(true);
     setError(null);
 
     const payload = {
-      nombre: formData.get("nombre"),
+      nombre,
       marcaId,
       categoriaId,
       proveedorId,
-      descripcion: formData.get("descripcion"),
+      descripcion,
       kg,
       costo,
       porcentajeCerrada,
@@ -98,6 +125,7 @@ export function CreateProductoSheet({
     }
 
     setIsSubmitting(false);
+    resetForm();
     onOpenChange(false);
     showSuccessToast("Producto creado con éxito");
     router.refresh();
@@ -106,7 +134,7 @@ export function CreateProductoSheet({
   return (
     <>
       <PendingOverlay pending={isSubmitting} />
-      <Sheet open={open} onOpenChange={onOpenChange}>
+      <Sheet open={open} onOpenChange={handleOpenChange}>
         <SheetContent side="right" className="w-full sm:max-w-md">
           <SheetHeader>
             <SheetTitle>Crear producto</SheetTitle>
@@ -119,7 +147,8 @@ export function CreateProductoSheet({
                 name="nombre"
                 maxLength={150}
                 placeholder="Ej. ADULTO RAZA PEQUEÑA"
-                onChange={uppercaseOnChange}
+                value={nombre}
+                onChange={(e) => setNombre(e.target.value.toUpperCase())}
                 required
               />
             </div>
@@ -149,7 +178,13 @@ export function CreateProductoSheet({
             />
             <div className="space-y-2">
               <Label htmlFor="descripcion">Descripción (opcional)</Label>
-              <Input id="descripcion" name="descripcion" maxLength={500} onChange={uppercaseOnChange} />
+              <Input
+                id="descripcion"
+                name="descripcion"
+                maxLength={500}
+                value={descripcion}
+                onChange={(e) => setDescripcion(e.target.value.toUpperCase())}
+              />
             </div>
 
             <div className="space-y-2">

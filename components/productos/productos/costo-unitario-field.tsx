@@ -34,6 +34,7 @@ export function CostoUnitarioField({
 
   const [precioLista, setPrecioLista] = useState(0);
   const [descuento, setDescuento] = useState(0);
+  const [cantidadPaquete, setCantidadPaquete] = useState(1);
 
   function activarModo(nuevoModo: Modo, activo: boolean) {
     setModo(activo ? nuevoModo : "directo");
@@ -47,10 +48,17 @@ export function CostoUnitarioField({
     }
   }
 
-  function actualizarDescuento(nuevoPrecioLista: number, nuevoDescuento: number) {
+  // El precio de lista con descuento puede venir de un paquete de varias
+  // unidades (ej. una caja de 12 con precio de lista $40.000 y 25% off:
+  // $30.000 la caja, $2.500 cada una) -- cantidadPaquete en 1 (default)
+  // da el mismo resultado que antes, sin paquete de por medio.
+  function actualizarDescuento(nuevoPrecioLista: number, nuevoDescuento: number, nuevaCantidadPaquete: number) {
     setPrecioLista(nuevoPrecioLista);
     setDescuento(nuevoDescuento);
-    onCostoChange(redondear(nuevoPrecioLista * (1 - nuevoDescuento / 100)));
+    setCantidadPaquete(nuevaCantidadPaquete);
+    if (nuevaCantidadPaquete > 0) {
+      onCostoChange(redondear((nuevoPrecioLista * (1 - nuevoDescuento / 100)) / nuevaCantidadPaquete));
+    }
   }
 
   return (
@@ -113,7 +121,7 @@ export function CostoUnitarioField({
               <MoneyInput
                 id="precio-lista"
                 value={precioLista}
-                onChange={(value) => actualizarDescuento(value, descuento)}
+                onChange={(value) => actualizarDescuento(value, descuento, cantidadPaquete)}
               />
             </div>
             <div className="space-y-1">
@@ -125,9 +133,22 @@ export function CostoUnitarioField({
                 min="0"
                 max="100"
                 value={descuento || ""}
-                onChange={(e) => actualizarDescuento(precioLista, Number(e.target.value) || 0)}
+                onChange={(e) => actualizarDescuento(precioLista, Number(e.target.value) || 0, cantidadPaquete)}
               />
             </div>
+          </div>
+          <div className="space-y-1">
+            <Label htmlFor="cantidad-paquete">
+              Ese precio es de un paquete de (dejá 1 si es por unidad)
+            </Label>
+            <Input
+              id="cantidad-paquete"
+              type="number"
+              step="1"
+              min="1"
+              value={cantidadPaquete || ""}
+              onChange={(e) => actualizarDescuento(precioLista, descuento, Number(e.target.value))}
+            />
           </div>
           <p className="text-xs text-muted-foreground">
             Precio de costo unitario: ${costo.toLocaleString("es-AR")}

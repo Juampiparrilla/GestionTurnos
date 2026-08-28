@@ -33,7 +33,7 @@ export function PriceTrackFields({
   const precioCalculado = costo > 0 ? Math.round(costo * (1 + porcentaje / 100) * 100) / 100 : 0;
 
   return (
-    <fieldset className="flex flex-col gap-3 rounded-lg border bg-muted/40 p-3">
+    <fieldset className="flex flex-col gap-3 rounded-lg border border-zinc-300 bg-zinc-100 p-3 dark:border-zinc-700 dark:bg-zinc-800">
       <legend className="px-1 text-sm font-medium">{label}</legend>
 
       <div className="flex items-center justify-between">

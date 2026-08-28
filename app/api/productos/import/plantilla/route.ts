@@ -1,7 +1,7 @@
 import ExcelJS from "exceljs";
 import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/auth/require-role";
-import { IMPORT_COLUMNAS, IMPORT_FILA_EJEMPLO } from "@/lib/productos/importar-excel";
+import { IMPORT_COLUMNAS } from "@/lib/productos/importar-excel";
 
 export const runtime = "nodejs";
 
@@ -15,7 +15,6 @@ export async function GET() {
   const sheet = workbook.addWorksheet("Productos");
   sheet.columns = [...IMPORT_COLUMNAS];
   sheet.getRow(1).font = { bold: true };
-  sheet.addRow(IMPORT_FILA_EJEMPLO);
 
   const buffer = await workbook.xlsx.writeBuffer();
 

@@ -2,9 +2,8 @@
 
 import { useState, type ChangeEvent } from "react";
 import { useRouter } from "next/navigation";
-import { Download, FileSpreadsheet } from "lucide-react";
-import { Button, buttonVariants } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Download, FileSpreadsheet, Upload } from "lucide-react";
+import { buttonVariants } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { PendingOverlay } from "@/components/pending-overlay";
@@ -21,12 +20,14 @@ export function ImportarExcelSheet() {
   const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [resultado, setResultado] = useState<ResultadoImportacion | null>(null);
+  const [nombreArchivo, setNombreArchivo] = useState<string | null>(null);
 
   function handleOpenChange(next: boolean) {
     setOpen(next);
     if (next) {
       setError(null);
       setResultado(null);
+      setNombreArchivo(null);
     }
   }
 
@@ -35,6 +36,7 @@ export function ImportarExcelSheet() {
     event.target.value = "";
     if (!file) return;
 
+    setNombreArchivo(file.name);
     setError(null);
     setResultado(null);
     setIsUploading(true);
@@ -59,10 +61,14 @@ export function ImportarExcelSheet() {
   return (
     <>
       <PendingOverlay pending={isUploading} />
-      <Button type="button" variant="outline" className="w-full" onClick={() => handleOpenChange(true)}>
-        <FileSpreadsheet className="size-4" aria-hidden="true" />
-        Importar Excel
-      </Button>
+      <button
+        type="button"
+        onClick={() => handleOpenChange(true)}
+        className="flex w-full items-center justify-center gap-2 rounded-lg bg-zinc-900 p-4 text-center text-white shadow-sm transition-colors hover:bg-zinc-800"
+      >
+        <FileSpreadsheet className="size-5" aria-hidden="true" />
+        <span className="font-medium">Importar Excel</span>
+      </button>
 
       <Sheet open={open} onOpenChange={handleOpenChange}>
         <SheetContent side="right" className="w-full sm:max-w-md">
@@ -86,13 +92,26 @@ export function ImportarExcelSheet() {
 
             <div className="space-y-2">
               <Label htmlFor="archivo-excel">Subir planilla completa</Label>
-              <Input
+              <label
+                htmlFor="archivo-excel"
+                className={cn(
+                  buttonVariants({ variant: "outline" }),
+                  "w-full cursor-pointer gap-1.5",
+                  isUploading && "pointer-events-none opacity-50",
+                )}
+              >
+                <Upload className="size-4" aria-hidden="true" />
+                Elegir archivo
+              </label>
+              <input
                 id="archivo-excel"
                 type="file"
                 accept=".xlsx"
                 onChange={handleFile}
                 disabled={isUploading}
+                className="sr-only"
               />
+              {nombreArchivo && <p className="truncate text-xs text-muted-foreground">{nombreArchivo}</p>}
             </div>
 
             {error && (

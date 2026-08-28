@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { requireAdmin } from "@/lib/auth/require-role";
 import { createClient } from "@/lib/supabase/server";
 import { ProductosList } from "@/components/productos/productos/productos-list";
+import { VolverAProductosLink } from "@/components/productos/volver-a-productos-link";
 import type { Categoria } from "@/types/categoria";
 import type { Proveedor } from "@/types/proveedor";
 import type { Producto } from "@/types/producto";
@@ -25,6 +26,7 @@ export default async function ProductosPage() {
 
   return (
     <div className="space-y-6">
+      <VolverAProductosLink />
       <div>
         <h1 className="text-xl font-semibold">Productos</h1>
         <p className="text-sm text-muted-foreground">Catálogo con costos, precios y presentaciones.</p>

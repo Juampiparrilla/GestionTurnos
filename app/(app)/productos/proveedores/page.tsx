@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { requireAdmin } from "@/lib/auth/require-role";
 import { createClient } from "@/lib/supabase/server";
 import { ProveedoresList } from "@/components/productos/proveedores/proveedores-list";
+import { VolverAProductosLink } from "@/components/productos/volver-a-productos-link";
 import type { Proveedor } from "@/types/proveedor";
 
 export default async function ProveedoresPage() {
@@ -15,6 +16,7 @@ export default async function ProveedoresPage() {
 
   return (
     <div className="space-y-6">
+      <VolverAProductosLink />
       <div>
         <h1 className="text-xl font-semibold">Proveedores</h1>
         <p className="text-sm text-muted-foreground">

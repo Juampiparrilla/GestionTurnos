@@ -36,13 +36,18 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
     manual: d.manualAbierta,
     precioManual: d.precioManualAbierta,
   });
+  const porMayor = calcularPrecioVenta({
+    costo: d.costo,
+    porcentaje: d.porcentajePorMayor,
+    manual: d.manualPorMayor,
+    precioManual: d.precioManualPorMayor,
+  });
 
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("presentaciones")
     .update({
       kg: d.kg,
-      sku: d.sku || null,
       costo: d.costo,
       porcentaje_ganancia_cerrada: cerrada.porcentaje,
       precio_venta_cerrada: cerrada.precio,
@@ -50,6 +55,9 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
       porcentaje_ganancia_abierta: abierta.porcentaje,
       precio_venta_abierta: abierta.precio,
       precio_manual_abierta: d.manualAbierta,
+      porcentaje_ganancia_por_mayor: porMayor.porcentaje,
+      precio_venta_por_mayor: porMayor.precio,
+      precio_manual_por_mayor: d.manualPorMayor,
       ...(d.active !== undefined ? { active: d.active } : {}),
     })
     .eq("id", id)
@@ -62,6 +70,24 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
 
   if (!data) {
     return NextResponse.json({ error: "Presentación no encontrada." }, { status: 404 });
+  }
+
+  return NextResponse.json({ ok: true });
+}
+
+export async function DELETE(_request: Request, { params }: { params: Promise<{ id: string }> }) {
+  const actor = await requireAdmin();
+  if (!actor) {
+    return NextResponse.json({ error: "No autorizado." }, { status: 403 });
+  }
+
+  const { id } = await params;
+
+  const supabase = await createClient();
+  const { error } = await supabase.from("presentaciones").delete().eq("id", id);
+
+  if (error) {
+    return NextResponse.json({ error: "No se pudo borrar la presentación. Intentá de nuevo." }, { status: 400 });
   }
 
   return NextResponse.json({ ok: true });

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import type { Marca } from "@/types/marca";
 import type { Categoria } from "@/types/categoria";
 import type { Proveedor } from "@/types/proveedor";
 import type { Producto } from "@/types/producto";
@@ -10,17 +11,18 @@ import { CreateProductoSheet } from "./create-producto-sheet";
 
 export function ProductosList({
   productos,
+  marcas,
   categorias,
   proveedores,
-  marcas,
 }: {
   productos: Producto[];
+  marcas: Marca[];
   categorias: Categoria[];
   proveedores: Proveedor[];
-  marcas: string[];
 }) {
   const [createOpen, setCreateOpen] = useState(false);
 
+  const marcaPorId = new Map(marcas.map((m) => [m.id, m.nombre]));
   const categoriaPorId = new Map(categorias.map((c) => [c.id, c.nombre]));
   const proveedorPorId = new Map(proveedores.map((p) => [p.id, p.nombre]));
 
@@ -37,6 +39,7 @@ export function ProductosList({
             <ProductoRow
               key={producto.id}
               producto={producto}
+              marcaNombre={producto.marca_id ? (marcaPorId.get(producto.marca_id) ?? null) : null}
               categoriaNombre={producto.categoria_id ? (categoriaPorId.get(producto.categoria_id) ?? null) : null}
               proveedorNombre={producto.proveedor_id ? (proveedorPorId.get(producto.proveedor_id) ?? null) : null}
             />
@@ -46,9 +49,9 @@ export function ProductosList({
       <CreateProductoSheet
         open={createOpen}
         onOpenChange={setCreateOpen}
+        marcas={marcas}
         categorias={categorias}
         proveedores={proveedores}
-        marcas={marcas}
       />
     </div>
   );

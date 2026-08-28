@@ -3,6 +3,7 @@ import { requireAdmin } from "@/lib/auth/require-role";
 import { createClient } from "@/lib/supabase/server";
 import { ProductosList } from "@/components/productos/productos/productos-list";
 import { VolverAProductosLink } from "@/components/productos/volver-a-productos-link";
+import type { Marca } from "@/types/marca";
 import type { Categoria } from "@/types/categoria";
 import type { Proveedor } from "@/types/proveedor";
 import type { Producto } from "@/types/producto";
@@ -14,15 +15,12 @@ export default async function ProductosPage() {
   }
 
   const supabase = await createClient();
-  const [{ data: productos }, { data: categorias }, { data: proveedores }, { data: marcasRows }] =
-    await Promise.all([
-      supabase.from("productos").select("*").order("nombre"),
-      supabase.from("categorias").select("*").eq("active", true).order("nombre"),
-      supabase.from("proveedores").select("*").eq("active", true).order("nombre"),
-      supabase.from("productos").select("marca").not("marca", "is", null),
-    ]);
-
-  const marcas = [...new Set((marcasRows ?? []).map((row) => row.marca as string))].sort();
+  const [{ data: productos }, { data: marcas }, { data: categorias }, { data: proveedores }] = await Promise.all([
+    supabase.from("productos").select("*").order("nombre"),
+    supabase.from("marcas").select("*").eq("active", true).order("nombre"),
+    supabase.from("categorias").select("*").eq("active", true).order("nombre"),
+    supabase.from("proveedores").select("*").eq("active", true).order("nombre"),
+  ]);
 
   return (
     <div className="space-y-6">
@@ -33,9 +31,9 @@ export default async function ProductosPage() {
       </div>
       <ProductosList
         productos={(productos as Producto[] | null) ?? []}
+        marcas={(marcas as Marca[] | null) ?? []}
         categorias={(categorias as Categoria[] | null) ?? []}
         proveedores={(proveedores as Proveedor[] | null) ?? []}
-        marcas={marcas}
       />
     </div>
   );

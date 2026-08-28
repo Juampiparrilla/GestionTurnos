@@ -52,3 +52,25 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
 
   return NextResponse.json({ ok: true });
 }
+
+export async function DELETE(_request: Request, { params }: { params: Promise<{ id: string }> }) {
+  const actor = await requireAdmin();
+  if (!actor) {
+    return NextResponse.json({ error: "No autorizado." }, { status: 403 });
+  }
+
+  const { id } = await params;
+
+  const supabase = await createClient();
+  const { error } = await supabase.from("proveedores").delete().eq("id", id);
+
+  if (error) {
+    const message =
+      error.code === "23503"
+        ? "No se puede borrar: hay productos que usan este proveedor. Desactivalo, o cambiales el proveedor primero."
+        : "No se pudo borrar el proveedor. Intentá de nuevo.";
+    return NextResponse.json({ error: message }, { status: 400 });
+  }
+
+  return NextResponse.json({ ok: true });
+}

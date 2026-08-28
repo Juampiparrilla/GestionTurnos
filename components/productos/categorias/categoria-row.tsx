@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { Pencil, RotateCcw, Trash2 } from "lucide-react";
+import { Ban, Pencil, RotateCcw, Trash2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import type { Categoria } from "@/types/categoria";
@@ -14,15 +14,31 @@ export function CategoriaRow({ categoria }: { categoria: Categoria }) {
   const [isPending, startTransition] = useTransition();
 
   function toggleActive() {
-    if (categoria.active && !confirm(`¿Eliminar la categoría "${categoria.nombre}"?`)) {
-      return;
-    }
+    const pregunta = categoria.active
+      ? `¿Desactivar la categoría "${categoria.nombre}"? Podés reactivarla después.`
+      : `¿Reactivar la categoría "${categoria.nombre}"?`;
+    if (!confirm(pregunta)) return;
+
     startTransition(async () => {
       await fetch(`/api/categorias/${categoria.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ active: !categoria.active }),
       });
+      router.refresh();
+    });
+  }
+
+  function deleteForever() {
+    if (!confirm(`Esto borra "${categoria.nombre}" para siempre y no se puede deshacer. ¿Continuar?`)) return;
+
+    startTransition(async () => {
+      const res = await fetch(`/api/categorias/${categoria.id}`, { method: "DELETE" });
+      if (!res.ok) {
+        const data = await res.json().catch(() => null);
+        alert(data?.error ?? "No se pudo borrar la categoría.");
+        return;
+      }
       router.refresh();
     });
   }
@@ -46,13 +62,23 @@ export function CategoriaRow({ categoria }: { categoria: Categoria }) {
             size="icon-sm"
             onClick={toggleActive}
             disabled={isPending}
-            aria-label={categoria.active ? "Eliminar" : "Reactivar"}
+            aria-label={categoria.active ? "Desactivar" : "Reactivar"}
           >
             {categoria.active ? (
-              <Trash2 className="size-4" aria-hidden="true" />
+              <Ban className="size-4" aria-hidden="true" />
             ) : (
               <RotateCcw className="size-4" aria-hidden="true" />
             )}
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            onClick={deleteForever}
+            disabled={isPending}
+            aria-label="Borrar definitivamente"
+            className="text-destructive hover:text-destructive"
+          >
+            <Trash2 className="size-4" aria-hidden="true" />
           </Button>
         </div>
       </div>

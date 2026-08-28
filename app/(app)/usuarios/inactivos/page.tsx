@@ -1,12 +1,12 @@
 import { redirect } from "next/navigation";
-import { requireAdmin } from "@/lib/auth/require-role";
+import { requireSuperAdmin } from "@/lib/auth/require-role";
 import { createClient } from "@/lib/supabase/server";
 import { UsersList } from "@/components/users/users-list";
 import type { Profile } from "@/types/profile";
 import type { Invitation } from "@/types/invitation";
 
 export default async function InactiveUsersPage() {
-  const actor = await requireAdmin();
+  const actor = await requireSuperAdmin();
   if (!actor) {
     redirect("/");
   }

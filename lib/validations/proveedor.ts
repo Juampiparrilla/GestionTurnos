@@ -36,7 +36,9 @@ export const bulkUpdatePorcentajeSchema = z
     proveedorId: z.string().uuid("Proveedor inválido"),
     porcentajeCerrada: z.number().min(0).max(1000).nullable(),
     porcentajeAbierta: z.number().min(0).max(1000).nullable(),
+    porcentajePorMayor: z.number().min(0).max(1000).nullable(),
   })
-  .refine((data) => data.porcentajeCerrada !== null || data.porcentajeAbierta !== null, {
-    message: "Cargá al menos un porcentaje para aplicar.",
-  });
+  .refine(
+    (data) => data.porcentajeCerrada !== null || data.porcentajeAbierta !== null || data.porcentajePorMayor !== null,
+    { message: "Cargá al menos un porcentaje para aplicar." },
+  );

@@ -29,7 +29,6 @@ export function CreatePresentacionSheet({
   const [error, setError] = useState<string | null>(null);
 
   const [kg, setKg] = useState(0);
-  const [sku, setSku] = useState("");
   const [costo, setCosto] = useState(0);
   const [porcentajeCerrada, setPorcentajeCerrada] = useState(30);
   const [manualCerrada, setManualCerrada] = useState(false);
@@ -37,6 +36,9 @@ export function CreatePresentacionSheet({
   const [porcentajeAbierta, setPorcentajeAbierta] = useState(45);
   const [manualAbierta, setManualAbierta] = useState(false);
   const [precioManualAbierta, setPrecioManualAbierta] = useState(0);
+  const [porcentajePorMayor, setPorcentajePorMayor] = useState(20);
+  const [manualPorMayor, setManualPorMayor] = useState(false);
+  const [precioManualPorMayor, setPrecioManualPorMayor] = useState(0);
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
@@ -46,7 +48,6 @@ export function CreatePresentacionSheet({
     const payload = {
       productoId,
       kg,
-      sku,
       costo,
       porcentajeCerrada,
       manualCerrada,
@@ -54,6 +55,9 @@ export function CreatePresentacionSheet({
       porcentajeAbierta,
       manualAbierta,
       precioManualAbierta,
+      porcentajePorMayor,
+      manualPorMayor,
+      precioManualPorMayor,
     };
 
     const res = await fetch("/api/presentaciones", {
@@ -84,23 +88,17 @@ export function CreatePresentacionSheet({
             <SheetTitle>Agregar presentación</SheetTitle>
           </SheetHeader>
           <form onSubmit={handleSubmit} className="flex flex-col gap-4 px-4">
-            <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-2">
-                <Label htmlFor="kg">Kg de la bolsa</Label>
-                <Input
-                  id="kg"
-                  type="number"
-                  step="0.01"
-                  min="0.01"
-                  required
-                  value={kg || ""}
-                  onChange={(e) => setKg(Number(e.target.value))}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="sku">SKU (opcional)</Label>
-                <Input id="sku" value={sku} onChange={(e) => setSku(e.target.value.toUpperCase())} />
-              </div>
+            <div className="space-y-2">
+              <Label htmlFor="kg">Kg de la bolsa</Label>
+              <Input
+                id="kg"
+                type="number"
+                step="0.01"
+                min="0.01"
+                required
+                value={kg || ""}
+                onChange={(e) => setKg(Number(e.target.value))}
+              />
             </div>
             <div className="space-y-2">
               <Label htmlFor="costo">Precio de costo</Label>
@@ -136,6 +134,17 @@ export function CreatePresentacionSheet({
               onManualChange={setManualAbierta}
               precioManual={precioManualAbierta}
               onPrecioManualChange={setPrecioManualAbierta}
+            />
+            <PriceTrackFields
+              label="Por mayor"
+              namePrefix="por-mayor"
+              costo={costo}
+              porcentaje={porcentajePorMayor}
+              onPorcentajeChange={setPorcentajePorMayor}
+              manual={manualPorMayor}
+              onManualChange={setManualPorMayor}
+              precioManual={precioManualPorMayor}
+              onPrecioManualChange={setPrecioManualPorMayor}
             />
 
             {error && (

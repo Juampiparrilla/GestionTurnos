@@ -27,6 +27,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
     p_proveedor_id: parsed.data.proveedorId,
     p_porcentaje_cerrada: parsed.data.porcentajeCerrada,
     p_porcentaje_abierta: parsed.data.porcentajeAbierta,
+    p_porcentaje_por_mayor: parsed.data.porcentajePorMayor,
   });
 
   if (error) {

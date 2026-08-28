@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { requireAdmin } from "@/lib/auth/require-role";
-import { createProductoSchema } from "@/lib/validations/producto";
+import { createMarcaSchema } from "@/lib/validations/marca";
 
 export const runtime = "nodejs";
 
@@ -12,7 +12,7 @@ export async function POST(request: Request) {
   }
 
   const body = await request.json().catch(() => null);
-  const parsed = createProductoSchema.safeParse(body);
+  const parsed = createMarcaSchema.safeParse(body);
   if (!parsed.success) {
     return NextResponse.json(
       { error: parsed.error.issues[0]?.message ?? "Datos inválidos." },
@@ -22,21 +22,18 @@ export async function POST(request: Request) {
 
   const supabase = await createClient();
   const { data, error } = await supabase
-    .from("productos")
+    .from("marcas")
     .insert({
       organization_id: actor.organization_id,
       nombre: parsed.data.nombre,
-      marca_id: parsed.data.marcaId || null,
-      categoria_id: parsed.data.categoriaId || null,
-      proveedor_id: parsed.data.proveedorId || null,
-      descripcion: parsed.data.descripcion || null,
       created_by: actor.id,
     })
     .select("id")
     .single();
 
   if (error) {
-    return NextResponse.json({ error: "No se pudo crear el producto. Intentá de nuevo." }, { status: 400 });
+    const message = error.code === "23505" ? "Ya existe una marca con ese nombre." : "No se pudo crear la marca. Intentá de nuevo.";
+    return NextResponse.json({ error: message }, { status: 400 });
   }
 
   return NextResponse.json({ ok: true, id: data.id });

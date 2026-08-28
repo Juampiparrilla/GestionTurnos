@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { requireAdmin } from "@/lib/auth/require-role";
+import { requireSuperAdmin } from "@/lib/auth/require-role";
 import { generateInvitationToken, hashInvitationToken } from "@/lib/invitations/token";
 import { PASSWORD_RESET_EXPIRATION_HOURS } from "@/lib/invitations/config";
 import { buildInvitationUrl } from "@/lib/invitations/share";
@@ -15,7 +15,7 @@ export async function POST(
   request: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
-  const actor = await requireAdmin();
+  const actor = await requireSuperAdmin();
   if (!actor) {
     return NextResponse.json({ error: "No autorizado." }, { status: 403 });
   }

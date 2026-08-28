@@ -18,7 +18,7 @@ const optionalUuid = z.union([z.string().uuid(), z.literal(""), z.null()]).optio
 
 export const createProductoSchema = z.object({
   nombre: nombreSchema,
-  marca: optionalText(100),
+  marcaId: optionalUuid,
   categoriaId: optionalUuid,
   proveedorId: optionalUuid,
   descripcion: optionalText(500),
@@ -26,7 +26,7 @@ export const createProductoSchema = z.object({
 
 export const updateProductoSchema = z.object({
   nombre: nombreSchema.optional(),
-  marca: optionalText(100),
+  marcaId: optionalUuid,
   categoriaId: optionalUuid,
   proveedorId: optionalUuid,
   descripcion: optionalText(500),
@@ -39,7 +39,6 @@ const precioSchema = z.number().min(0, "No puede ser negativo");
 export const createPresentacionSchema = z.object({
   productoId: z.string().uuid("Producto inválido"),
   kg: z.number().positive("Tiene que ser mayor a 0"),
-  sku: optionalText(50),
   costo: precioSchema,
   porcentajeCerrada: porcentajeSchema,
   manualCerrada: z.boolean(),
@@ -47,6 +46,9 @@ export const createPresentacionSchema = z.object({
   porcentajeAbierta: porcentajeSchema,
   manualAbierta: z.boolean(),
   precioManualAbierta: precioSchema,
+  porcentajePorMayor: porcentajeSchema,
+  manualPorMayor: z.boolean(),
+  precioManualPorMayor: precioSchema,
 });
 
 export const updatePresentacionSchema = createPresentacionSchema

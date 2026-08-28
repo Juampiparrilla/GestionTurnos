@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { requireAdmin } from "@/lib/auth/require-role";
-import { updateProductoSchema } from "@/lib/validations/producto";
+import { updateMarcaSchema } from "@/lib/validations/marca";
 
 export const runtime = "nodejs";
 
@@ -14,7 +14,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
   const { id } = await params;
 
   const body = await request.json().catch(() => null);
-  const parsed = updateProductoSchema.safeParse(body);
+  const parsed = updateMarcaSchema.safeParse(body);
   if (!parsed.success) {
     return NextResponse.json(
       { error: parsed.error.issues[0]?.message ?? "Datos inválidos." },
@@ -26,37 +26,21 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
     return NextResponse.json({ error: "No hay cambios para guardar." }, { status: 400 });
   }
 
-  const updatePayload: Record<string, unknown> = { ...parsed.data };
-  if ("categoriaId" in updatePayload) {
-    updatePayload.categoria_id = updatePayload.categoriaId || null;
-    delete updatePayload.categoriaId;
-  }
-  if ("proveedorId" in updatePayload) {
-    updatePayload.proveedor_id = updatePayload.proveedorId || null;
-    delete updatePayload.proveedorId;
-  }
-  if ("marcaId" in updatePayload) {
-    updatePayload.marca_id = updatePayload.marcaId || null;
-    delete updatePayload.marcaId;
-  }
-  if ("descripcion" in updatePayload) {
-    updatePayload.descripcion = updatePayload.descripcion || null;
-  }
-
   const supabase = await createClient();
   const { data, error } = await supabase
-    .from("productos")
-    .update(updatePayload)
+    .from("marcas")
+    .update(parsed.data)
     .eq("id", id)
     .select("id")
     .maybeSingle();
 
   if (error) {
-    return NextResponse.json({ error: "No se pudo guardar el cambio. Intentá de nuevo." }, { status: 400 });
+    const message = error.code === "23505" ? "Ya existe una marca con ese nombre." : "No se pudo guardar el cambio. Intentá de nuevo.";
+    return NextResponse.json({ error: message }, { status: 400 });
   }
 
   if (!data) {
-    return NextResponse.json({ error: "Producto no encontrado." }, { status: 404 });
+    return NextResponse.json({ error: "Marca no encontrada." }, { status: 404 });
   }
 
   return NextResponse.json({ ok: true });
@@ -71,10 +55,14 @@ export async function DELETE(_request: Request, { params }: { params: Promise<{ 
   const { id } = await params;
 
   const supabase = await createClient();
-  const { error } = await supabase.from("productos").delete().eq("id", id);
+  const { error } = await supabase.from("marcas").delete().eq("id", id);
 
   if (error) {
-    return NextResponse.json({ error: "No se pudo borrar el producto. Intentá de nuevo." }, { status: 400 });
+    const message =
+      error.code === "23503"
+        ? "No se puede borrar: hay productos que usan esta marca. Desactivala, o cambiales la marca primero."
+        : "No se pudo borrar la marca. Intentá de nuevo.";
+    return NextResponse.json({ error: message }, { status: 400 });
   }
 
   return NextResponse.json({ ok: true });

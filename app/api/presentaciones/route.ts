@@ -34,6 +34,12 @@ export async function POST(request: Request) {
     manual: d.manualAbierta,
     precioManual: d.precioManualAbierta,
   });
+  const porMayor = calcularPrecioVenta({
+    costo: d.costo,
+    porcentaje: d.porcentajePorMayor,
+    manual: d.manualPorMayor,
+    precioManual: d.precioManualPorMayor,
+  });
 
   const supabase = await createClient();
   const { data: producto } = await supabase
@@ -52,7 +58,6 @@ export async function POST(request: Request) {
       organization_id: producto.organization_id,
       producto_id: d.productoId,
       kg: d.kg,
-      sku: d.sku || null,
       costo: d.costo,
       porcentaje_ganancia_cerrada: cerrada.porcentaje,
       precio_venta_cerrada: cerrada.precio,
@@ -60,6 +65,9 @@ export async function POST(request: Request) {
       porcentaje_ganancia_abierta: abierta.porcentaje,
       precio_venta_abierta: abierta.precio,
       precio_manual_abierta: d.manualAbierta,
+      porcentaje_ganancia_por_mayor: porMayor.porcentaje,
+      precio_venta_por_mayor: porMayor.precio,
+      precio_manual_por_mayor: d.manualPorMayor,
       created_by: actor.id,
     })
     .select("id")

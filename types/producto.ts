@@ -2,7 +2,7 @@ export type Producto = {
   id: string;
   organization_id: string;
   nombre: string;
-  marca: string | null;
+  marca_id: string | null;
   categoria_id: string | null;
   proveedor_id: string | null;
   descripcion: string | null;
@@ -17,7 +17,6 @@ export type Presentacion = {
   organization_id: string;
   producto_id: string;
   kg: number;
-  sku: string | null;
   costo: number;
   porcentaje_ganancia_cerrada: number;
   precio_venta_cerrada: number;
@@ -25,6 +24,9 @@ export type Presentacion = {
   porcentaje_ganancia_abierta: number;
   precio_venta_abierta: number;
   precio_manual_abierta: boolean;
+  porcentaje_ganancia_por_mayor: number;
+  precio_venta_por_mayor: number;
+  precio_manual_por_mayor: boolean;
   precio_por_kg: number;
   active: boolean;
   created_by: string | null;
@@ -36,11 +38,13 @@ export type PresentacionPublico = {
   presentacion_id: string;
   producto_id: string;
   nombre: string;
+  marca_id: string | null;
   marca: string | null;
   categoria_id: string | null;
   proveedor_id: string | null;
   kg: number;
   precio_venta_cerrada: number;
   precio_venta_abierta: number;
+  precio_venta_por_mayor: number;
   precio_por_kg: number;
 };

@@ -7,6 +7,7 @@ import { ROLE_LABEL, type Profile } from "@/types/profile";
 
 export function NavHeader({ profile }: { profile: Profile }) {
   const isAdmin = profile.role === "ADMIN" || profile.role === "SUPER_ADMIN";
+  const isSuperAdmin = profile.role === "SUPER_ADMIN";
 
   return (
     <header className="border-b bg-background">
@@ -29,7 +30,7 @@ export function NavHeader({ profile }: { profile: Profile }) {
             <CalendarClock className="size-5" aria-hidden="true" />
             <LinkPendingSpinner />
           </Link>
-          {isAdmin && (
+          {isSuperAdmin && (
             <Link
               href="/usuarios"
               title="Usuarios"

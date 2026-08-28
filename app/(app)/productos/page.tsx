@@ -27,13 +27,20 @@ export default async function ProductosHomePage() {
         <h1 className="text-xl font-semibold">Productos</h1>
         <p className="text-sm text-muted-foreground">Catálogo, precios y proveedores de la forrajería.</p>
       </div>
-      <div className="grid gap-3 sm:grid-cols-3">
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <Link
           href="/productos/productos"
           className="rounded-lg border bg-background p-4 shadow-sm transition-colors hover:bg-muted/50"
         >
           <p className="font-medium">Productos</p>
           <p className="text-sm text-muted-foreground">Alta, edición y presentaciones con precios.</p>
+        </Link>
+        <Link
+          href="/productos/marcas"
+          className="rounded-lg border bg-background p-4 shadow-sm transition-colors hover:bg-muted/50"
+        >
+          <p className="font-medium">Marcas</p>
+          <p className="text-sm text-muted-foreground">Belcan, Agility, Agrocan, etc.</p>
         </Link>
         <Link
           href="/productos/categorias"

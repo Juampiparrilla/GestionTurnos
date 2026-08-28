@@ -5,10 +5,12 @@ import type { Producto } from "@/types/producto";
 
 export function ProductoRow({
   producto,
+  marcaNombre,
   categoriaNombre,
   proveedorNombre,
 }: {
   producto: Producto;
+  marcaNombre: string | null;
   categoriaNombre: string | null;
   proveedorNombre: string | null;
 }) {
@@ -20,7 +22,7 @@ export function ProductoRow({
       <div className="min-w-0">
         <p className="truncate font-medium">{producto.nombre}</p>
         <p className="truncate text-sm text-muted-foreground">
-          {[producto.marca, categoriaNombre, proveedorNombre].filter(Boolean).join(" · ") || "Sin datos"}
+          {[marcaNombre, categoriaNombre, proveedorNombre].filter(Boolean).join(" · ") || "Sin datos"}
         </p>
       </div>
       <div className="flex shrink-0 items-center gap-2">

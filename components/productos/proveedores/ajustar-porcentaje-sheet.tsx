@@ -37,10 +37,12 @@ export function AjustarPorcentajeSheet({
 
     const cerrada = formData.get("porcentajeCerrada");
     const abierta = formData.get("porcentajeAbierta");
+    const porMayor = formData.get("porcentajePorMayor");
 
     const payload = {
       porcentajeCerrada: cerrada ? Number(cerrada) : null,
       porcentajeAbierta: abierta ? Number(abierta) : null,
+      porcentajePorMayor: porMayor ? Number(porMayor) : null,
     };
 
     const res = await fetch(`/api/proveedores/${proveedor.id}/ajustar-porcentaje`, {
@@ -82,6 +84,10 @@ export function AjustarPorcentajeSheet({
             <div className="space-y-2">
               <Label htmlFor="porcentajeAbierta">% ganancia bolsa abierta</Label>
               <Input id="porcentajeAbierta" name="porcentajeAbierta" type="number" step="0.01" min="0" />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="porcentajePorMayor">% ganancia por mayor</Label>
+              <Input id="porcentajePorMayor" name="porcentajePorMayor" type="number" step="0.01" min="0" />
             </div>
             {result !== null && (
               <p className="text-sm text-muted-foreground">

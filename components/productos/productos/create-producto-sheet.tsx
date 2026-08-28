@@ -14,30 +14,34 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { uppercaseOnChange } from "@/lib/productos/uppercase-input";
+import type { Marca } from "@/types/marca";
 import type { Categoria } from "@/types/categoria";
 import type { Proveedor } from "@/types/proveedor";
+import { MarcaSelectField } from "./marca-select-field";
 import { CategoriaSelectField } from "./categoria-select-field";
 import { ProveedorSelectField } from "./proveedor-select-field";
 
 export function CreateProductoSheet({
   open,
   onOpenChange,
+  marcas,
   categorias,
   proveedores,
-  marcas,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  marcas: Marca[];
   categorias: Categoria[];
   proveedores: Proveedor[];
-  marcas: string[];
 }) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const [marcaOptions, setMarcaOptions] = useState(marcas);
   const [categoriaOptions, setCategoriaOptions] = useState(categorias);
   const [proveedorOptions, setProveedorOptions] = useState(proveedores);
+  const [marcaId, setMarcaId] = useState("");
   const [categoriaId, setCategoriaId] = useState("");
   const [proveedorId, setProveedorId] = useState("");
 
@@ -47,7 +51,7 @@ export function CreateProductoSheet({
 
     const payload = {
       nombre: formData.get("nombre"),
-      marca: formData.get("marca"),
+      marcaId,
       categoriaId,
       proveedorId,
       descripcion: formData.get("descripcion"),
@@ -92,22 +96,14 @@ export function CreateProductoSheet({
                 required
               />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="marca">Marca</Label>
-              <Input
-                id="marca"
-                name="marca"
-                list="marcas-list"
-                maxLength={100}
-                placeholder="Ej. BELCAN"
-                onChange={uppercaseOnChange}
-              />
-              <datalist id="marcas-list">
-                {marcas.map((marca) => (
-                  <option key={marca} value={marca} />
-                ))}
-              </datalist>
-            </div>
+            <MarcaSelectField
+              marcas={marcaOptions}
+              value={marcaId}
+              onChange={setMarcaId}
+              onMarcaCreated={(nueva) =>
+                setMarcaOptions((prev) => [...prev, nueva].sort((a, b) => a.nombre.localeCompare(b.nombre)))
+              }
+            />
             <CategoriaSelectField
               categorias={categoriaOptions}
               value={categoriaId}

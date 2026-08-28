@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { requireAdmin } from "@/lib/auth/require-role";
+import { requireSuperAdmin } from "@/lib/auth/require-role";
 import { updateUserSchema } from "@/lib/validations/user";
 
 export const runtime = "nodejs";
@@ -28,7 +28,7 @@ export async function PATCH(
   request: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
-  const actor = await requireAdmin();
+  const actor = await requireSuperAdmin();
   if (!actor) {
     return NextResponse.json({ error: "No autorizado." }, { status: 403 });
   }

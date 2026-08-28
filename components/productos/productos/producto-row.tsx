@@ -138,15 +138,10 @@ export function ProductoRow({
         </div>
         {expanded && (
           <div className="flex flex-col gap-1 border-t px-4 py-3 text-sm text-muted-foreground">
-            <span>
-              {[
-                marcaNombre ? `Marca: ${marcaNombre}` : null,
-                categoriaNombre ? `Categoría: ${categoriaNombre}` : null,
-                proveedorNombre ? `Proveedor: ${proveedorNombre}` : null,
-              ]
-                .filter(Boolean)
-                .join(" · ") || "Sin datos"}
-            </span>
+            {!marcaNombre && !categoriaNombre && !proveedorNombre && <span>Sin datos</span>}
+            {marcaNombre && <span>Marca: {marcaNombre}</span>}
+            {categoriaNombre && <span>Categoría: {categoriaNombre}</span>}
+            {proveedorNombre && <span>Proveedor: {proveedorNombre}</span>}
             <span>Costo: {currency(producto.costo)}</span>
             <span>
               Bolsa cerrada: {currency(producto.precio_venta_cerrada)}

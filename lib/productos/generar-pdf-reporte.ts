@@ -98,14 +98,21 @@ function filaProducto(p: Producto, contexto: ContextoPdf, opciones: OpcionesPdf)
 }
 
 function construirDocumentoPdf(productos: Producto[], contexto: ContextoPdf, opciones: OpcionesPdf): jsPDF {
-  const doc = new jsPDF();
+  const doc = new jsPDF({ orientation: "landscape" });
   const fecha = new Date().toLocaleDateString("es-AR");
+  const pageWidth = doc.internal.pageSize.getWidth();
 
   doc.setFontSize(14);
   doc.text(opciones.modo === "negocio" ? "Reporte de productos" : "Lista de precios", 14, 15);
   doc.setFontSize(10);
   doc.setTextColor(120);
   doc.text(fecha, 14, 21);
+
+  const datosOrganizacion = contexto.organization.phone
+    ? `${contexto.organization.name} - ${contexto.organization.phone}`
+    : contexto.organization.name;
+  doc.text(datosOrganizacion, pageWidth - 14, 15, { align: "right" });
+
   doc.setTextColor(0);
 
   const head: string[][] =

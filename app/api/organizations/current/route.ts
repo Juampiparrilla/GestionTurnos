@@ -23,7 +23,7 @@ export async function PATCH(request: Request) {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("organizations")
-    .update({ phone: parsed.data.phone || null })
+    .update({ name: parsed.data.name, phone: parsed.data.phone || null })
     .eq("id", actor.organization_id)
     .select()
     .single();

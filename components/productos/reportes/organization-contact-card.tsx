@@ -15,6 +15,7 @@ export function OrganizationContactCard({
   onUpdated: (organization: Organization) => void;
 }) {
   const [editing, setEditing] = useState(false);
+  const [name, setName] = useState(organization.name);
   const [phone, setPhone] = useState(organization.phone ?? "");
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
@@ -25,12 +26,12 @@ export function OrganizationContactCard({
       const res = await fetch("/api/organizations/current", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ phone }),
+        body: JSON.stringify({ name, phone }),
       });
       const data = await res.json();
 
       if (!res.ok) {
-        setError(data.error ?? "No se pudo guardar el teléfono.");
+        setError(data.error ?? "No se pudo guardar el cambio.");
         return;
       }
 
@@ -54,6 +55,10 @@ export function OrganizationContactCard({
       {editing ? (
         <div className="flex flex-col gap-2">
           <div className="space-y-1">
+            <Label htmlFor="org-name">Nombre del negocio</Label>
+            <Input id="org-name" value={name} onChange={(e) => setName(e.target.value)} />
+          </div>
+          <div className="space-y-1">
             <Label htmlFor="org-phone">Teléfono de contacto</Label>
             <Input
               id="org-phone"
@@ -75,6 +80,7 @@ export function OrganizationContactCard({
               type="button"
               variant="outline"
               onClick={() => {
+                setName(organization.name);
                 setPhone(organization.phone ?? "");
                 setEditing(false);
               }}

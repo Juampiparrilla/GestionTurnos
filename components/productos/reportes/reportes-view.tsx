@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { MoneyInput } from "@/components/productos/money-input";
-import { PRICE_TRACK_LABELS, precioPorTrack, type PriceTrack } from "@/lib/productos/price-track";
+import { precioPorTrack } from "@/lib/productos/price-track";
 import type { Marca } from "@/types/marca";
 import type { Categoria } from "@/types/categoria";
 import type { Proveedor } from "@/types/proveedor";
@@ -38,7 +38,6 @@ export function ReportesView({
   const [marcaIds, setMarcaIds] = useState<string[]>([]);
   const [kgFiltros, setKgFiltros] = useState<string[]>([]);
   const [ofertaFiltro, setOfertaFiltro] = useState("");
-  const [precioTrack, setPrecioTrack] = useState<PriceTrack>("cerrada");
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(0);
   const [pdfOpen, setPdfOpen] = useState(false);
@@ -58,7 +57,6 @@ export function ReportesView({
     marcaIds.length > 0 ||
     kgFiltros.length > 0 ||
     ofertaFiltro !== "" ||
-    precioTrack !== "cerrada" ||
     minPrice !== 0 ||
     maxPrice !== 0;
 
@@ -68,7 +66,6 @@ export function ReportesView({
     setMarcaIds([]);
     setKgFiltros([]);
     setOfertaFiltro("");
-    setPrecioTrack("cerrada");
     setMinPrice(0);
     setMaxPrice(0);
   }
@@ -80,12 +77,15 @@ export function ReportesView({
       if (marcaIds.length > 0 && !marcaIds.includes(p.marca_id ?? "")) return false;
       if (kgFiltros.length > 0 && !kgFiltros.includes(String(p.kg))) return false;
       if (ofertaFiltro && p.oferta !== (ofertaFiltro === "true")) return false;
-      const precio = precioPorTrack(p, precioTrack);
+      // El rango de precio siempre compara contra la bolsa cerrada -- el
+      // selector de qué precio usar (igual al de "Precio a mostrar" del PDF)
+      // resultaba confuso acá, se sacó de la UI.
+      const precio = precioPorTrack(p, "cerrada");
       if (minPrice && precio < minPrice) return false;
       if (maxPrice && precio > maxPrice) return false;
       return true;
     });
-  }, [productos, categoriaIds, proveedorIds, marcaIds, kgFiltros, ofertaFiltro, precioTrack, minPrice, maxPrice]);
+  }, [productos, categoriaIds, proveedorIds, marcaIds, kgFiltros, ofertaFiltro, minPrice, maxPrice]);
 
   return (
     <div className="space-y-4">
@@ -173,33 +173,13 @@ export function ReportesView({
           </Select>
         </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="filtro-precio-track">Precio a filtrar</Label>
-          <Select
-            name="filtro-precio-track"
-            value={precioTrack}
-            onValueChange={(v) => setPrecioTrack((v as PriceTrack) ?? "cerrada")}
-          >
-            <SelectTrigger id="filtro-precio-track" className="w-full">
-              <SelectValue>{(v: PriceTrack) => PRICE_TRACK_LABELS[v]}</SelectValue>
-            </SelectTrigger>
-            <SelectContent>
-              {(Object.keys(PRICE_TRACK_LABELS) as PriceTrack[]).map((track) => (
-                <SelectItem key={track} value={track}>
-                  {PRICE_TRACK_LABELS[track]}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-
         <div className="grid grid-cols-2 gap-3">
           <div className="space-y-2">
-            <Label htmlFor="filtro-min">Mayor a $</Label>
+            <Label htmlFor="filtro-min">Mayor a $ (bolsa cerrada)</Label>
             <MoneyInput id="filtro-min" value={minPrice} onChange={setMinPrice} />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="filtro-max">Menor a $</Label>
+            <Label htmlFor="filtro-max">Menor a $ (bolsa cerrada)</Label>
             <MoneyInput id="filtro-max" value={maxPrice} onChange={setMaxPrice} />
           </div>
         </div>
@@ -238,7 +218,7 @@ export function ReportesView({
         open={pdfOpen}
         onOpenChange={setPdfOpen}
         productos={filtrados}
-        precioTrackFiltro={precioTrack}
+        precioTrackFiltro="cerrada"
         marcaPorId={marcaPorId}
         categoriaPorId={categoriaPorId}
         proveedorPorId={proveedorPorId}

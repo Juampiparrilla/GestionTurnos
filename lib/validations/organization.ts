@@ -16,6 +16,7 @@ export const createOrganizationSchema = z.object({
 });
 
 export const updateOrganizationSchema = z.object({
+  name: orgNameSchema,
   phone: z
     .string()
     .trim()

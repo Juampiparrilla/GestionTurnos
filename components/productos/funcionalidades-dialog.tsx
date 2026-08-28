@@ -23,6 +23,11 @@ const FUNCIONALIDADES = [
       "Se administran desde sus propias pantallas, y también se pueden crear al vuelo sin salir del formulario de producto.",
   },
   {
+    titulo: "Costo por varias unidades",
+    descripcion:
+      "Si compraste varias unidades por un total (ej. 3 bolsas por $18.000), el formulario calcula solo el costo unitario en vez de tener que hacer la cuenta a mano.",
+  },
+  {
     titulo: "Ajuste masivo por proveedor",
     descripcion:
       "Desde la pantalla de un proveedor se actualiza el % de ganancia de todos sus productos de una sola vez, sin pisar los precios marcados como manuales.",
@@ -30,12 +35,12 @@ const FUNCIONALIDADES = [
   {
     titulo: "Reportes con filtros",
     descripcion:
-      "Filtrá productos por categoría, marca, proveedor, kg, oferta y precio (podés elegir varias opciones a la vez en cada filtro) y agrupalos por categoría, marca o proveedor.",
+      "Filtrá productos por categoría, marca, proveedor, kg, oferta y precio (podés elegir varias opciones a la vez en cada filtro), con un botón para limpiar todo, y agrupalos por categoría, marca o proveedor.",
   },
   {
     titulo: "PDF y WhatsApp",
     descripcion:
-      "Generá un PDF interno (con costos y porcentajes) o uno para el cliente (con los precios que elijas mostrar) y compartilo directo por WhatsApp desde el celular.",
+      "Generá un PDF horizontal interno (con costos y porcentajes) o uno para el cliente (con los precios que elijas mostrar y una fecha de validez opcional) y compartilo directo por WhatsApp desde el celular. Lleva el nombre y teléfono del negocio como marca de agua.",
   },
   {
     titulo: "Código de producto",

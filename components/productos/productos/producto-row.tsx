@@ -90,15 +90,12 @@ export function ProductoRow({
     <>
       <PendingOverlay pending={isPending} />
       <div className="min-w-0 rounded-lg border bg-background shadow-sm">
-        <div className="flex min-w-0 items-center justify-between gap-3 p-4">
-          <div className="flex min-w-0 items-center gap-3">
-            <span className="w-6 shrink-0 text-sm text-muted-foreground">{numero}.</span>
-            <p className="min-w-0 truncate font-medium">
-              {producto.nombre} · {producto.kg} kg
-            </p>
-          </div>
-          <div className="flex shrink-0 items-center gap-1">
-            {!producto.active && <Badge variant="outline">Inactivo</Badge>}
+        <div className="flex flex-col gap-2 p-4">
+          <p className="font-medium break-words">
+            {numero}. {producto.nombre} · {producto.kg} kg
+          </p>
+          <div className="flex items-center justify-end gap-1">
+            {!producto.active && <Badge variant="outline" className="mr-auto">Inactivo</Badge>}
             <Button
               variant="ghost"
               size="icon-sm"

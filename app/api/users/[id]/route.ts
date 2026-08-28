@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { requireSuperAdmin } from "@/lib/auth/require-role";
 import { updateUserSchema } from "@/lib/validations/user";
 
@@ -73,6 +74,44 @@ export async function PATCH(
 
   // Si active pasó a false, un trigger de base de datos limpia
   // automáticamente sus asignaciones vigentes en todos los tableros.
+
+  return NextResponse.json({ ok: true });
+}
+
+export async function DELETE(
+  _request: Request,
+  { params }: { params: Promise<{ id: string }> },
+) {
+  const actor = await requireSuperAdmin();
+  if (!actor) {
+    return NextResponse.json({ error: "No autorizado." }, { status: 403 });
+  }
+
+  const { id } = await params;
+
+  if (id === actor.id) {
+    return NextResponse.json({ error: "No podés borrar tu propio usuario." }, { status: 400 });
+  }
+
+  const supabase = await createClient();
+  const { data: target } = await supabase.from("profiles").select("active").eq("id", id).maybeSingle();
+
+  if (!target) {
+    return NextResponse.json({ error: "Usuario no encontrado." }, { status: 404 });
+  }
+  if (target.active) {
+    return NextResponse.json({ error: "Desactivá el usuario antes de borrarlo." }, { status: 400 });
+  }
+
+  // Se borra la cuenta de Auth directamente -- profiles.id referencia
+  // auth.users(id) on delete cascade, así que la fila de profiles
+  // desaparece sola. Evita dejar una cuenta de Auth huérfana.
+  const admin = createAdminClient();
+  const { error } = await admin.auth.admin.deleteUser(id);
+
+  if (error) {
+    return NextResponse.json({ error: "No se pudo borrar el usuario. Intentá de nuevo." }, { status: 400 });
+  }
 
   return NextResponse.json({ ok: true });
 }

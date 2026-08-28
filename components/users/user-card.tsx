@@ -21,7 +21,7 @@ export function UserCard({
     <button
       type="button"
       onClick={onClick}
-      className="flex w-full items-center justify-between rounded-lg border bg-background p-4 text-left shadow-sm transition-colors hover:bg-muted/50"
+      className="flex w-full flex-col gap-2 rounded-lg border bg-background p-4 text-left shadow-sm transition-colors hover:bg-muted/50"
     >
       <div className="min-w-0">
         <p className="truncate font-medium">{user.full_name}</p>
@@ -32,7 +32,7 @@ export function UserCard({
           Último ingreso: {user.last_login_at ? formatDateTime(user.last_login_at) : "nunca"}
         </p>
       </div>
-      <div className="flex shrink-0 flex-col items-end gap-1">
+      <div className="flex flex-wrap items-center gap-1">
         <Badge variant={user.role === "EMPLEADO" ? "secondary" : "default"}>
           {ROLE_LABEL[user.role]}
         </Badge>

@@ -76,6 +76,8 @@ export function EditUserSheet({
     url: string;
     fullName: string;
   } | null>(null);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   async function handleSubmit(formData: FormData) {
     setIsSubmitting(true);
@@ -145,6 +147,26 @@ export function EditUserSheet({
     router.refresh();
   }
 
+  async function handleDelete() {
+    setIsDeleting(true);
+    setActionError(null);
+
+    const res = await fetch(`/api/users/${user.id}`, { method: "DELETE" });
+
+    if (!res.ok) {
+      const data = await res.json();
+      setActionError(data.error ?? "No se pudo borrar el usuario.");
+      setIsDeleting(false);
+      setDeleteConfirmOpen(false);
+      return;
+    }
+
+    setIsDeleting(false);
+    setDeleteConfirmOpen(false);
+    onOpenChange(false);
+    router.refresh();
+  }
+
   async function handlePasswordReset() {
     setIsResettingPassword(true);
     setActionError(null);
@@ -174,7 +196,7 @@ export function EditUserSheet({
   return (
     <>
       <PendingOverlay
-        pending={isSubmitting || isResending || isRevoking || isResettingPassword}
+        pending={isSubmitting || isResending || isRevoking || isResettingPassword || isDeleting}
       />
       <Sheet open onOpenChange={onOpenChange}>
         <SheetContent side="right" className="w-full sm:max-w-md">
@@ -234,6 +256,26 @@ export function EditUserSheet({
                 disabled={isResettingPassword}
               >
                 Restablecer
+              </Button>
+            </div>
+          )}
+
+          {!isSelf && !user.active && (
+            <div className="mx-4 flex items-center justify-between gap-2 rounded-lg border border-destructive/30 bg-destructive/5 p-3">
+              <div>
+                <p className="text-sm font-medium">Borrar usuario</p>
+                <p className="text-xs text-muted-foreground">
+                  Elimina a {user.full_name} para siempre. No se puede deshacer.
+                </p>
+              </div>
+              <Button
+                type="button"
+                variant="destructive"
+                size="sm"
+                onClick={() => setDeleteConfirmOpen(true)}
+                disabled={isDeleting}
+              >
+                Borrar
               </Button>
             </div>
           )}
@@ -355,6 +397,24 @@ export function EditUserSheet({
           <AlertDialogFooter>
             <AlertDialogCancel>Cancelar</AlertDialogCancel>
             <AlertDialogAction onClick={handleRevoke}>Revocar</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>¿Borrar a {user.full_name} para siempre?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Esto borra su cuenta por completo, no se puede deshacer. Si más adelante vuelve a
+              trabajar con vos, vas a tener que crearlo de nuevo.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction variant="destructive" onClick={handleDelete}>
+              Borrar para siempre
+            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

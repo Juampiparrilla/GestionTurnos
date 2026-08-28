@@ -16,28 +16,15 @@ const optionalText = (max: number) =>
 
 const optionalUuid = z.union([z.string().uuid(), z.literal(""), z.null()]).optional();
 
+const porcentajeSchema = z.number().min(0, "No puede ser negativo").max(1000);
+const precioSchema = z.number().min(0, "No puede ser negativo");
+
 export const createProductoSchema = z.object({
   nombre: nombreSchema,
   marcaId: optionalUuid,
   categoriaId: optionalUuid,
   proveedorId: optionalUuid,
   descripcion: optionalText(500),
-});
-
-export const updateProductoSchema = z.object({
-  nombre: nombreSchema.optional(),
-  marcaId: optionalUuid,
-  categoriaId: optionalUuid,
-  proveedorId: optionalUuid,
-  descripcion: optionalText(500),
-  active: z.boolean().optional(),
-});
-
-const porcentajeSchema = z.number().min(0, "No puede ser negativo").max(1000);
-const precioSchema = z.number().min(0, "No puede ser negativo");
-
-export const createPresentacionSchema = z.object({
-  productoId: z.string().uuid("Producto inválido"),
   kg: z.number().positive("Tiene que ser mayor a 0"),
   costo: precioSchema,
   porcentajeCerrada: porcentajeSchema,
@@ -51,6 +38,6 @@ export const createPresentacionSchema = z.object({
   precioManualPorMayor: precioSchema,
 });
 
-export const updatePresentacionSchema = createPresentacionSchema
-  .omit({ productoId: true })
-  .extend({ active: z.boolean().optional() });
+export const updateProductoSchema = createProductoSchema.extend({
+  active: z.boolean().optional(),
+});

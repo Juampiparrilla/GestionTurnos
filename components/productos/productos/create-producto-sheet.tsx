@@ -20,6 +20,7 @@ import type { Proveedor } from "@/types/proveedor";
 import { MarcaSelectField } from "./marca-select-field";
 import { CategoriaSelectField } from "./categoria-select-field";
 import { ProveedorSelectField } from "./proveedor-select-field";
+import { PriceTrackFields } from "./price-track-fields";
 
 export function CreateProductoSheet({
   open,
@@ -45,6 +46,18 @@ export function CreateProductoSheet({
   const [categoriaId, setCategoriaId] = useState("");
   const [proveedorId, setProveedorId] = useState("");
 
+  const [kg, setKg] = useState(0);
+  const [costo, setCosto] = useState(0);
+  const [porcentajeCerrada, setPorcentajeCerrada] = useState(30);
+  const [manualCerrada, setManualCerrada] = useState(false);
+  const [precioManualCerrada, setPrecioManualCerrada] = useState(0);
+  const [porcentajeAbierta, setPorcentajeAbierta] = useState(45);
+  const [manualAbierta, setManualAbierta] = useState(false);
+  const [precioManualAbierta, setPrecioManualAbierta] = useState(0);
+  const [porcentajePorMayor, setPorcentajePorMayor] = useState(20);
+  const [manualPorMayor, setManualPorMayor] = useState(false);
+  const [precioManualPorMayor, setPrecioManualPorMayor] = useState(0);
+
   async function handleSubmit(formData: FormData) {
     setIsSubmitting(true);
     setError(null);
@@ -55,6 +68,17 @@ export function CreateProductoSheet({
       categoriaId,
       proveedorId,
       descripcion: formData.get("descripcion"),
+      kg,
+      costo,
+      porcentajeCerrada,
+      manualCerrada,
+      precioManualCerrada,
+      porcentajeAbierta,
+      manualAbierta,
+      precioManualAbierta,
+      porcentajePorMayor,
+      manualPorMayor,
+      precioManualPorMayor,
     };
 
     const res = await fetch("/api/productos", {
@@ -73,7 +97,7 @@ export function CreateProductoSheet({
 
     setIsSubmitting(false);
     onOpenChange(false);
-    router.push(`/productos/productos/${data.id}`);
+    router.refresh();
   }
 
   return (
@@ -124,6 +148,66 @@ export function CreateProductoSheet({
               <Label htmlFor="descripcion">Descripción (opcional)</Label>
               <Input id="descripcion" name="descripcion" maxLength={500} onChange={uppercaseOnChange} />
             </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="kg">Kg de la bolsa</Label>
+              <Input
+                id="kg"
+                type="number"
+                step="0.01"
+                min="0.01"
+                required
+                value={kg || ""}
+                onChange={(e) => setKg(Number(e.target.value))}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="costo">Precio de costo</Label>
+              <Input
+                id="costo"
+                type="number"
+                step="0.01"
+                min="0"
+                required
+                value={costo || ""}
+                onChange={(e) => setCosto(Number(e.target.value))}
+              />
+            </div>
+
+            <PriceTrackFields
+              label="Bolsa cerrada"
+              namePrefix="cerrada"
+              costo={costo}
+              porcentaje={porcentajeCerrada}
+              onPorcentajeChange={setPorcentajeCerrada}
+              manual={manualCerrada}
+              onManualChange={setManualCerrada}
+              precioManual={precioManualCerrada}
+              onPrecioManualChange={setPrecioManualCerrada}
+            />
+            <PriceTrackFields
+              label="Bolsa abierta (por kg)"
+              namePrefix="abierta"
+              costo={costo}
+              porcentaje={porcentajeAbierta}
+              onPorcentajeChange={setPorcentajeAbierta}
+              manual={manualAbierta}
+              onManualChange={setManualAbierta}
+              precioManual={precioManualAbierta}
+              onPrecioManualChange={setPrecioManualAbierta}
+            />
+            <PriceTrackFields
+              label="Por mayor"
+              namePrefix="por-mayor"
+              costo={costo}
+              porcentaje={porcentajePorMayor}
+              onPorcentajeChange={setPorcentajePorMayor}
+              manual={manualPorMayor}
+              onManualChange={setManualPorMayor}
+              precioManual={precioManualPorMayor}
+              onPrecioManualChange={setPrecioManualPorMayor}
+            />
+
             {error && (
               <p role="alert" className="text-sm text-destructive">
                 {error}

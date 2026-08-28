@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { requireAdmin } from "@/lib/auth/require-role";
 import { updateProductoSchema } from "@/lib/validations/producto";
+import { calcularPrecioVenta } from "@/lib/productos/calcular-precio";
 
 export const runtime = "nodejs";
 
@@ -22,31 +23,48 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
     );
   }
 
-  if (Object.keys(parsed.data).length === 0) {
-    return NextResponse.json({ error: "No hay cambios para guardar." }, { status: 400 });
-  }
-
-  const updatePayload: Record<string, unknown> = { ...parsed.data };
-  if ("categoriaId" in updatePayload) {
-    updatePayload.categoria_id = updatePayload.categoriaId || null;
-    delete updatePayload.categoriaId;
-  }
-  if ("proveedorId" in updatePayload) {
-    updatePayload.proveedor_id = updatePayload.proveedorId || null;
-    delete updatePayload.proveedorId;
-  }
-  if ("marcaId" in updatePayload) {
-    updatePayload.marca_id = updatePayload.marcaId || null;
-    delete updatePayload.marcaId;
-  }
-  if ("descripcion" in updatePayload) {
-    updatePayload.descripcion = updatePayload.descripcion || null;
-  }
+  const d = parsed.data;
+  const cerrada = calcularPrecioVenta({
+    costo: d.costo,
+    porcentaje: d.porcentajeCerrada,
+    manual: d.manualCerrada,
+    precioManual: d.precioManualCerrada,
+  });
+  const abierta = calcularPrecioVenta({
+    costo: d.costo,
+    porcentaje: d.porcentajeAbierta,
+    manual: d.manualAbierta,
+    precioManual: d.precioManualAbierta,
+  });
+  const porMayor = calcularPrecioVenta({
+    costo: d.costo,
+    porcentaje: d.porcentajePorMayor,
+    manual: d.manualPorMayor,
+    precioManual: d.precioManualPorMayor,
+  });
 
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("productos")
-    .update(updatePayload)
+    .update({
+      nombre: d.nombre,
+      marca_id: d.marcaId || null,
+      categoria_id: d.categoriaId || null,
+      proveedor_id: d.proveedorId || null,
+      descripcion: d.descripcion || null,
+      kg: d.kg,
+      costo: d.costo,
+      porcentaje_ganancia_cerrada: cerrada.porcentaje,
+      precio_venta_cerrada: cerrada.precio,
+      precio_manual_cerrada: d.manualCerrada,
+      porcentaje_ganancia_abierta: abierta.porcentaje,
+      precio_venta_abierta: abierta.precio,
+      precio_manual_abierta: d.manualAbierta,
+      porcentaje_ganancia_por_mayor: porMayor.porcentaje,
+      precio_venta_por_mayor: porMayor.precio,
+      precio_manual_por_mayor: d.manualPorMayor,
+      ...(d.active !== undefined ? { active: d.active } : {}),
+    })
     .eq("id", id)
     .select("id")
     .maybeSingle();

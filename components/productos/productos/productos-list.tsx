@@ -55,6 +55,9 @@ export function ProductosList({
               marcaNombre={producto.marca_id ? (marcaPorId.get(producto.marca_id) ?? null) : null}
               categoriaNombre={producto.categoria_id ? (categoriaPorId.get(producto.categoria_id) ?? null) : null}
               proveedorNombre={producto.proveedor_id ? (proveedorPorId.get(producto.proveedor_id) ?? null) : null}
+              marcas={marcas}
+              categorias={categorias}
+              proveedores={proveedores}
             />
           ))}
         </div>

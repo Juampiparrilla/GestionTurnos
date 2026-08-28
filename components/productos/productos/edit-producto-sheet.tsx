@@ -22,6 +22,7 @@ import type { Producto } from "@/types/producto";
 import { MarcaSelectField } from "./marca-select-field";
 import { CategoriaSelectField } from "./categoria-select-field";
 import { ProveedorSelectField } from "./proveedor-select-field";
+import { PriceTrackFields } from "./price-track-fields";
 
 export function EditProductoSheet({
   producto,
@@ -50,6 +51,18 @@ export function EditProductoSheet({
   const [categoriaId, setCategoriaId] = useState(producto.categoria_id ?? "");
   const [proveedorId, setProveedorId] = useState(producto.proveedor_id ?? "");
 
+  const [kg, setKg] = useState(producto.kg);
+  const [costo, setCosto] = useState(producto.costo);
+  const [porcentajeCerrada, setPorcentajeCerrada] = useState(producto.porcentaje_ganancia_cerrada);
+  const [manualCerrada, setManualCerrada] = useState(producto.precio_manual_cerrada);
+  const [precioManualCerrada, setPrecioManualCerrada] = useState(producto.precio_venta_cerrada);
+  const [porcentajeAbierta, setPorcentajeAbierta] = useState(producto.porcentaje_ganancia_abierta);
+  const [manualAbierta, setManualAbierta] = useState(producto.precio_manual_abierta);
+  const [precioManualAbierta, setPrecioManualAbierta] = useState(producto.precio_venta_abierta);
+  const [porcentajePorMayor, setPorcentajePorMayor] = useState(producto.porcentaje_ganancia_por_mayor);
+  const [manualPorMayor, setManualPorMayor] = useState(producto.precio_manual_por_mayor);
+  const [precioManualPorMayor, setPrecioManualPorMayor] = useState(producto.precio_venta_por_mayor);
+
   async function handleSubmit(formData: FormData) {
     setIsSubmitting(true);
     setError(null);
@@ -60,6 +73,17 @@ export function EditProductoSheet({
       categoriaId,
       proveedorId,
       descripcion: formData.get("descripcion"),
+      kg,
+      costo,
+      porcentajeCerrada,
+      manualCerrada,
+      precioManualCerrada,
+      porcentajeAbierta,
+      manualAbierta,
+      precioManualAbierta,
+      porcentajePorMayor,
+      manualPorMayor,
+      precioManualPorMayor,
       active,
     };
 
@@ -136,10 +160,71 @@ export function EditProductoSheet({
                 onChange={uppercaseOnChange}
               />
             </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="kg">Kg de la bolsa</Label>
+              <Input
+                id="kg"
+                type="number"
+                step="0.01"
+                min="0.01"
+                required
+                value={kg || ""}
+                onChange={(e) => setKg(Number(e.target.value))}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="costo">Precio de costo</Label>
+              <Input
+                id="costo"
+                type="number"
+                step="0.01"
+                min="0"
+                required
+                value={costo || ""}
+                onChange={(e) => setCosto(Number(e.target.value))}
+              />
+            </div>
+
+            <PriceTrackFields
+              label="Bolsa cerrada"
+              namePrefix="cerrada-edit"
+              costo={costo}
+              porcentaje={porcentajeCerrada}
+              onPorcentajeChange={setPorcentajeCerrada}
+              manual={manualCerrada}
+              onManualChange={setManualCerrada}
+              precioManual={precioManualCerrada}
+              onPrecioManualChange={setPrecioManualCerrada}
+            />
+            <PriceTrackFields
+              label="Bolsa abierta (por kg)"
+              namePrefix="abierta-edit"
+              costo={costo}
+              porcentaje={porcentajeAbierta}
+              onPorcentajeChange={setPorcentajeAbierta}
+              manual={manualAbierta}
+              onManualChange={setManualAbierta}
+              precioManual={precioManualAbierta}
+              onPrecioManualChange={setPrecioManualAbierta}
+            />
+            <PriceTrackFields
+              label="Por mayor"
+              namePrefix="por-mayor-edit"
+              costo={costo}
+              porcentaje={porcentajePorMayor}
+              onPorcentajeChange={setPorcentajePorMayor}
+              manual={manualPorMayor}
+              onManualChange={setManualPorMayor}
+              precioManual={precioManualPorMayor}
+              onPrecioManualChange={setPrecioManualPorMayor}
+            />
+
             <div className="flex items-center justify-between rounded-lg border p-3">
               <Label htmlFor="active">Producto activo</Label>
               <Switch id="active" checked={active} onCheckedChange={setActive} />
             </div>
+
             {error && (
               <p role="alert" className="text-sm text-destructive">
                 {error}

@@ -6,16 +6,6 @@ export type Producto = {
   categoria_id: string | null;
   proveedor_id: string | null;
   descripcion: string | null;
-  active: boolean;
-  created_by: string | null;
-  created_at: string;
-  updated_at: string;
-};
-
-export type Presentacion = {
-  id: string;
-  organization_id: string;
-  producto_id: string;
   kg: number;
   costo: number;
   porcentaje_ganancia_cerrada: number;
@@ -34,8 +24,7 @@ export type Presentacion = {
   updated_at: string;
 };
 
-export type PresentacionPublico = {
-  presentacion_id: string;
+export type ProductoPublico = {
   producto_id: string;
   nombre: string;
   marca_id: string | null;

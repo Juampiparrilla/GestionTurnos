@@ -23,6 +23,7 @@ export function ProductosList({
   proveedores: Proveedor[];
   descripcion: string;
 }) {
+  const [items, setItems] = useState(productos);
   const [createOpen, setCreateOpen] = useState(false);
   const [query, setQuery] = useState("");
 
@@ -30,7 +31,19 @@ export function ProductosList({
   const categoriaPorId = new Map(categorias.map((c) => [c.id, c.nombre]));
   const proveedorPorId = new Map(proveedores.map((p) => [p.id, p.nombre]));
 
-  const filtrados = productos.filter((p) => p.nombre.toLowerCase().includes(query.trim().toLowerCase()));
+  const filtrados = items.filter((p) => p.nombre.toLowerCase().includes(query.trim().toLowerCase()));
+
+  function handleCreated(producto: Producto) {
+    setItems((prev) => [...prev, producto].sort((a, b) => a.nombre.localeCompare(b.nombre)));
+  }
+
+  function handleUpdated(producto: Producto) {
+    setItems((prev) => prev.map((p) => (p.id === producto.id ? producto : p)));
+  }
+
+  function handleDeleted(id: string) {
+    setItems((prev) => prev.filter((p) => p.id !== id));
+  }
 
   return (
     <div className="space-y-4">
@@ -41,7 +54,7 @@ export function ProductosList({
       <SearchInput value={query} onChange={setQuery} placeholder="Buscar producto..." />
       {filtrados.length === 0 ? (
         <div className="rounded-lg border border-dashed p-8 text-center text-sm text-muted-foreground">
-          {productos.length === 0
+          {items.length === 0
             ? "Todavía no hay productos. Podés cargar uno a mano o importar un Excel."
             : "No se encontraron productos."}
         </div>
@@ -58,6 +71,8 @@ export function ProductosList({
               marcas={marcas}
               categorias={categorias}
               proveedores={proveedores}
+              onUpdated={handleUpdated}
+              onDeleted={handleDeleted}
             />
           ))}
         </div>
@@ -68,6 +83,7 @@ export function ProductosList({
         marcas={marcas}
         categorias={categorias}
         proveedores={proveedores}
+        onCreated={handleCreated}
       />
     </div>
   );

@@ -115,12 +115,10 @@ export function ProveedorSelectField({
         </div>
       ) : (
         <Combobox
-          items={["", ...proveedores.map((p) => p.id)]}
+          items={proveedores.map((p) => p.id)}
           value={value}
           onValueChange={(v) => onChange(v ?? "")}
-          itemToStringLabel={(id: string) =>
-            id ? (proveedores.find((p) => p.id === id)?.nombre ?? "") : "Sin proveedor"
-          }
+          itemToStringLabel={(id: string) => proveedores.find((p) => p.id === id)?.nombre ?? ""}
         >
           <ComboboxInputGroup>
             <ComboboxInput id="proveedorId" placeholder="Buscar proveedor..." />
@@ -134,7 +132,7 @@ export function ProveedorSelectField({
                 <ComboboxList>
                   {(id: string) => (
                     <ComboboxItem key={id} value={id}>
-                      {id ? (proveedores.find((p) => p.id === id)?.nombre ?? "") : "Sin proveedor"}
+                      {proveedores.find((p) => p.id === id)?.nombre ?? ""}
                     </ComboboxItem>
                   )}
                 </ComboboxList>

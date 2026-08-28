@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
 import { PendingOverlay } from "@/components/pending-overlay";
 import {
   Sheet,
@@ -32,6 +31,7 @@ export function EditProductoSheet({
   marcas,
   categorias,
   proveedores,
+  onUpdated,
 }: {
   producto: Producto;
   open: boolean;
@@ -39,8 +39,8 @@ export function EditProductoSheet({
   marcas: Marca[];
   categorias: Categoria[];
   proveedores: Proveedor[];
+  onUpdated: (producto: Producto) => void;
 }) {
-  const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const [active, setActive] = useState(producto.active);
@@ -67,6 +67,11 @@ export function EditProductoSheet({
 
   function handleSubmit(formData: FormData) {
     setError(null);
+
+    if (!marcaId || !categoriaId || !proveedorId) {
+      setError("Elegí marca, categoría y proveedor.");
+      return;
+    }
 
     const payload = {
       nombre: formData.get("nombre"),
@@ -104,7 +109,7 @@ export function EditProductoSheet({
       }
 
       onOpenChange(false);
-      router.refresh();
+      onUpdated(data.producto);
     });
   }
 

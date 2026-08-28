@@ -2,6 +2,7 @@ export type Producto = {
   id: string;
   organization_id: string;
   nombre: string;
+  codigo: string | null;
   marca_id: string | null;
   categoria_id: string | null;
   proveedor_id: string | null;

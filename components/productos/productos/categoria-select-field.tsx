@@ -112,12 +112,10 @@ export function CategoriaSelectField({
         </div>
       ) : (
         <Combobox
-          items={["", ...categorias.map((c) => c.id)]}
+          items={categorias.map((c) => c.id)}
           value={value}
           onValueChange={(v) => onChange(v ?? "")}
-          itemToStringLabel={(id: string) =>
-            id ? (categorias.find((c) => c.id === id)?.nombre ?? "") : "Sin categoría"
-          }
+          itemToStringLabel={(id: string) => categorias.find((c) => c.id === id)?.nombre ?? ""}
         >
           <ComboboxInputGroup>
             <ComboboxInput id="categoriaId" placeholder="Buscar categoría..." />
@@ -131,7 +129,7 @@ export function CategoriaSelectField({
                 <ComboboxList>
                   {(id: string) => (
                     <ComboboxItem key={id} value={id}>
-                      {id ? (categorias.find((c) => c.id === id)?.nombre ?? "") : "Sin categoría"}
+                      {categorias.find((c) => c.id === id)?.nombre ?? ""}
                     </ComboboxItem>
                   )}
                 </ComboboxList>

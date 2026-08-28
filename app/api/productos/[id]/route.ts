@@ -67,7 +67,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
       ...(d.active !== undefined ? { active: d.active } : {}),
     })
     .eq("id", id)
-    .select("id")
+    .select()
     .maybeSingle();
 
   if (error) {
@@ -78,7 +78,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
     return NextResponse.json({ error: "Producto no encontrado." }, { status: 404 });
   }
 
-  return NextResponse.json({ ok: true });
+  return NextResponse.json({ ok: true, producto: data });
 }
 
 export async function DELETE(_request: Request, { params }: { params: Promise<{ id: string }> }) {

@@ -6,9 +6,16 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetFooter } from "@/components/ui/sheet";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { compartirPdfReportePorWhatsApp, generarPdfReporte } from "@/lib/productos/generar-pdf-reporte";
+import { Switch } from "@/components/ui/switch";
+import {
+  AGRUPACION_LABELS,
+  compartirPdfReportePorWhatsApp,
+  generarPdfReporte,
+  type Agrupacion,
+} from "@/lib/productos/generar-pdf-reporte";
 import { PRICE_TRACK_LABELS, type PriceTrack } from "@/lib/productos/price-track";
 import type { Producto } from "@/types/producto";
+import type { Organization } from "@/types/organization";
 
 type Modo = "negocio" | "cliente";
 
@@ -20,6 +27,7 @@ export function GenerarPdfSheet({
   marcaPorId,
   categoriaPorId,
   proveedorPorId,
+  organization,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -28,16 +36,30 @@ export function GenerarPdfSheet({
   marcaPorId: Map<string, string>;
   categoriaPorId: Map<string, string>;
   proveedorPorId: Map<string, string>;
+  organization: Organization;
 }) {
   const [modo, setModo] = useState<Modo>("negocio");
-  const [precioTrack, setPrecioTrack] = useState<PriceTrack>(precioTrackFiltro);
+  const [precioTracks, setPrecioTracks] = useState<PriceTrack[]>([precioTrackFiltro]);
+  const [agrupacion, setAgrupacion] = useState<Agrupacion>("ninguna");
   const [isSharing, setIsSharing] = useState(false);
   const [shareError, setShareError] = useState<string | null>(null);
 
-  const opciones = modo === "negocio" ? ({ modo: "negocio" } as const) : ({ modo: "cliente", precioTrack } as const);
+  const opciones =
+    modo === "negocio"
+      ? ({ modo: "negocio", agrupacion } as const)
+      : ({ modo: "cliente", precioTracks, agrupacion } as const);
+  const sinPreciosElegidos = modo === "cliente" && precioTracks.length === 0;
+
+  function toggleTrack(track: PriceTrack, checked: boolean) {
+    setPrecioTracks((prev) => (checked ? [...prev, track] : prev.filter((t) => t !== track)));
+  }
 
   function handleDescargar() {
-    generarPdfReporte(productos, { marcaPorId, categoriaPorId, proveedorPorId }, opciones);
+    generarPdfReporte(
+      productos,
+      { marcaPorId, categoriaPorId, proveedorPorId, organization },
+      opciones,
+    );
     onOpenChange(false);
   }
 
@@ -46,7 +68,7 @@ export function GenerarPdfSheet({
     setIsSharing(true);
     const resultado = await compartirPdfReportePorWhatsApp(
       productos,
-      { marcaPorId, categoriaPorId, proveedorPorId },
+      { marcaPorId, categoriaPorId, proveedorPorId, organization },
       opciones,
     );
     setIsSharing(false);
@@ -79,25 +101,44 @@ export function GenerarPdfSheet({
             </Select>
           </div>
 
+          <div className="space-y-2">
+            <Label htmlFor="pdf-agrupacion">Agrupar por</Label>
+            <Select
+              name="pdf-agrupacion"
+              value={agrupacion}
+              onValueChange={(v) => setAgrupacion((v as Agrupacion) ?? "ninguna")}
+            >
+              <SelectTrigger id="pdf-agrupacion" className="w-full">
+                <SelectValue>{(v: Agrupacion) => AGRUPACION_LABELS[v]}</SelectValue>
+              </SelectTrigger>
+              <SelectContent>
+                {(Object.keys(AGRUPACION_LABELS) as Agrupacion[]).map((valor) => (
+                  <SelectItem key={valor} value={valor}>
+                    {AGRUPACION_LABELS[valor]}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
           {modo === "cliente" && (
             <div className="space-y-2">
-              <Label htmlFor="pdf-precio">Precio a mostrar</Label>
-              <Select
-                name="pdf-precio"
-                value={precioTrack}
-                onValueChange={(v) => setPrecioTrack((v as PriceTrack) ?? "cerrada")}
-              >
-                <SelectTrigger id="pdf-precio" className="w-full">
-                  <SelectValue>{(v: PriceTrack) => PRICE_TRACK_LABELS[v]}</SelectValue>
-                </SelectTrigger>
-                <SelectContent>
-                  {(Object.keys(PRICE_TRACK_LABELS) as PriceTrack[]).map((track) => (
-                    <SelectItem key={track} value={track}>
-                      {PRICE_TRACK_LABELS[track]}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <Label>Precio a mostrar</Label>
+              <div className="flex flex-col gap-2">
+                {(Object.keys(PRICE_TRACK_LABELS) as PriceTrack[]).map((track) => (
+                  <div key={track} className="flex items-center justify-between rounded-lg border p-3">
+                    <Label htmlFor={`pdf-precio-${track}`}>{PRICE_TRACK_LABELS[track]}</Label>
+                    <Switch
+                      id={`pdf-precio-${track}`}
+                      checked={precioTracks.includes(track)}
+                      onCheckedChange={(checked) => toggleTrack(track, checked)}
+                    />
+                  </div>
+                ))}
+              </div>
+              {sinPreciosElegidos && (
+                <p className="text-sm text-destructive">Elegí al menos un precio para mostrar.</p>
+              )}
             </div>
           )}
 
@@ -112,14 +153,14 @@ export function GenerarPdfSheet({
           )}
         </div>
         <SheetFooter className="px-0">
-          <Button onClick={handleDescargar} disabled={productos.length === 0}>
+          <Button onClick={handleDescargar} disabled={productos.length === 0 || sinPreciosElegidos}>
             Descargar PDF
           </Button>
           <Button
             type="button"
             variant="outline"
             onClick={handleCompartir}
-            disabled={productos.length === 0 || isSharing}
+            disabled={productos.length === 0 || sinPreciosElegidos || isSharing}
           >
             <MessageCircle className="size-4" aria-hidden="true" />
             {isSharing ? "Preparando..." : "Compartir por WhatsApp"}

@@ -2,6 +2,7 @@ export type Organization = {
   id: string;
   name: string;
   slug: string;
+  phone: string | null;
   active: boolean;
   created_by: string | null;
   created_at: string;

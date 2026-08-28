@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef, useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
 import { BadgePercent, Ban, ChevronDown, ChevronUp, Pencil, RotateCcw, Trash2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -23,6 +22,8 @@ export function ProductoRow({
   marcas,
   categorias,
   proveedores,
+  onUpdated,
+  onDeleted,
 }: {
   producto: Producto;
   numero: number;
@@ -32,8 +33,9 @@ export function ProductoRow({
   marcas: Marca[];
   categorias: Categoria[];
   proveedores: Proveedor[];
+  onUpdated: (producto: Producto) => void;
+  onDeleted: (id: string) => void;
 }) {
-  const router = useRouter();
   const [editOpen, setEditOpen] = useState(false);
   const [expanded, setExpanded] = useState(false);
   const [isPending, startTransition] = useTransition();
@@ -52,7 +54,7 @@ export function ProductoRow({
     if (!confirm(pregunta)) return;
 
     startTransition(async () => {
-      await fetch(`/api/productos/${producto.id}`, {
+      const res = await fetch(`/api/productos/${producto.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -76,7 +78,10 @@ export function ProductoRow({
           active: !producto.active,
         }),
       });
-      router.refresh();
+      const data = await res.json().catch(() => null);
+      if (res.ok && data?.producto) {
+        onUpdated(data.producto);
+      }
     });
   }
 
@@ -90,7 +95,7 @@ export function ProductoRow({
         alert(data?.error ?? "No se pudo borrar el producto.");
         return;
       }
-      router.refresh();
+      onDeleted(producto.id);
     });
   }
 
@@ -109,6 +114,7 @@ export function ProductoRow({
               </span>
             )}
           </p>
+          {producto.codigo && <p className="font-mono text-xs text-muted-foreground">{producto.codigo}</p>}
           <div className="flex items-center justify-end gap-1">
             {!producto.active && <Badge variant="outline" className="mr-auto">Inactivo</Badge>}
             <Button
@@ -181,6 +187,7 @@ export function ProductoRow({
         marcas={marcas}
         categorias={categorias}
         proveedores={proveedores}
+        onUpdated={onUpdated}
       />
     </>
   );

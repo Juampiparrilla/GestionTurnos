@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { FileDown } from "lucide-react";
+import { FileDown, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -11,7 +11,10 @@ import type { Marca } from "@/types/marca";
 import type { Categoria } from "@/types/categoria";
 import type { Proveedor } from "@/types/proveedor";
 import type { Producto } from "@/types/producto";
+import type { Organization } from "@/types/organization";
 import { GenerarPdfSheet } from "./generar-pdf-sheet";
+import { MultiSelectFilter } from "./multi-select-filter";
+import { OrganizationContactCard } from "./organization-contact-card";
 import { ReporteProductoRow } from "./reporte-producto-row";
 
 export function ReportesView({
@@ -19,18 +22,21 @@ export function ReportesView({
   marcas,
   categorias,
   proveedores,
+  organization: organizationProp,
   descripcion,
 }: {
   productos: Producto[];
   marcas: Marca[];
   categorias: Categoria[];
   proveedores: Proveedor[];
+  organization: Organization;
   descripcion: string;
 }) {
-  const [categoriaId, setCategoriaId] = useState("");
-  const [proveedorId, setProveedorId] = useState("");
-  const [marcaId, setMarcaId] = useState("");
-  const [kgFiltro, setKgFiltro] = useState("");
+  const [organization, setOrganization] = useState(organizationProp);
+  const [categoriaIds, setCategoriaIds] = useState<string[]>([]);
+  const [proveedorIds, setProveedorIds] = useState<string[]>([]);
+  const [marcaIds, setMarcaIds] = useState<string[]>([]);
+  const [kgFiltros, setKgFiltros] = useState<string[]>([]);
   const [ofertaFiltro, setOfertaFiltro] = useState("");
   const [precioTrack, setPrecioTrack] = useState<PriceTrack>("cerrada");
   const [minPrice, setMinPrice] = useState(0);
@@ -46,97 +52,109 @@ export function ReportesView({
     [productos],
   );
 
+  const hayFiltrosActivos =
+    categoriaIds.length > 0 ||
+    proveedorIds.length > 0 ||
+    marcaIds.length > 0 ||
+    kgFiltros.length > 0 ||
+    ofertaFiltro !== "" ||
+    precioTrack !== "cerrada" ||
+    minPrice !== 0 ||
+    maxPrice !== 0;
+
+  function limpiarFiltros() {
+    setCategoriaIds([]);
+    setProveedorIds([]);
+    setMarcaIds([]);
+    setKgFiltros([]);
+    setOfertaFiltro("");
+    setPrecioTrack("cerrada");
+    setMinPrice(0);
+    setMaxPrice(0);
+  }
+
   const filtrados = useMemo(() => {
     return productos.filter((p) => {
-      if (categoriaId && p.categoria_id !== categoriaId) return false;
-      if (proveedorId && p.proveedor_id !== proveedorId) return false;
-      if (marcaId && p.marca_id !== marcaId) return false;
-      if (kgFiltro && p.kg !== Number(kgFiltro)) return false;
+      if (categoriaIds.length > 0 && !categoriaIds.includes(p.categoria_id ?? "")) return false;
+      if (proveedorIds.length > 0 && !proveedorIds.includes(p.proveedor_id ?? "")) return false;
+      if (marcaIds.length > 0 && !marcaIds.includes(p.marca_id ?? "")) return false;
+      if (kgFiltros.length > 0 && !kgFiltros.includes(String(p.kg))) return false;
       if (ofertaFiltro && p.oferta !== (ofertaFiltro === "true")) return false;
       const precio = precioPorTrack(p, precioTrack);
       if (minPrice && precio < minPrice) return false;
       if (maxPrice && precio > maxPrice) return false;
       return true;
     });
-  }, [productos, categoriaId, proveedorId, marcaId, kgFiltro, ofertaFiltro, precioTrack, minPrice, maxPrice]);
+  }, [productos, categoriaIds, proveedorIds, marcaIds, kgFiltros, ofertaFiltro, precioTrack, minPrice, maxPrice]);
 
   return (
     <div className="space-y-4">
       <p className="text-sm text-muted-foreground">{descripcion}</p>
 
+      <OrganizationContactCard organization={organization} onUpdated={setOrganization} />
+
       <div className="flex flex-col gap-4 rounded-lg bg-muted/40 p-3">
+        <div className="flex items-center justify-between">
+          <p className="text-sm font-medium">Filtros</p>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={limpiarFiltros}
+            disabled={!hayFiltrosActivos}
+            className="h-auto gap-1 px-2 py-1 text-muted-foreground"
+          >
+            <X className="size-3.5" aria-hidden="true" />
+            Limpiar filtros
+          </Button>
+        </div>
+
         <div className="space-y-2">
           <Label htmlFor="filtro-categoria">Categoría</Label>
-          <Select name="filtro-categoria" value={categoriaId} onValueChange={(v) => setCategoriaId(v ?? "")}>
-            <SelectTrigger id="filtro-categoria" className="w-full">
-              <SelectValue>
-                {(id: string) => (id ? (categorias.find((c) => c.id === id)?.nombre ?? "Todas") : "Todas")}
-              </SelectValue>
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="">Todas</SelectItem>
-              {categorias.map((c) => (
-                <SelectItem key={c.id} value={c.id}>
-                  {c.nombre}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <MultiSelectFilter
+            id="filtro-categoria"
+            label="Categoría"
+            placeholder="Todas"
+            options={categorias.map((c) => ({ value: c.id, label: c.nombre }))}
+            selected={categoriaIds}
+            onChange={setCategoriaIds}
+          />
         </div>
 
         <div className="space-y-2">
           <Label htmlFor="filtro-proveedor">Proveedor</Label>
-          <Select name="filtro-proveedor" value={proveedorId} onValueChange={(v) => setProveedorId(v ?? "")}>
-            <SelectTrigger id="filtro-proveedor" className="w-full">
-              <SelectValue>
-                {(id: string) => (id ? (proveedores.find((p) => p.id === id)?.nombre ?? "Todos") : "Todos")}
-              </SelectValue>
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="">Todos</SelectItem>
-              {proveedores.map((p) => (
-                <SelectItem key={p.id} value={p.id}>
-                  {p.nombre}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <MultiSelectFilter
+            id="filtro-proveedor"
+            label="Proveedor"
+            placeholder="Todos"
+            options={proveedores.map((p) => ({ value: p.id, label: p.nombre }))}
+            selected={proveedorIds}
+            onChange={setProveedorIds}
+          />
         </div>
 
         <div className="space-y-2">
           <Label htmlFor="filtro-marca">Marca</Label>
-          <Select name="filtro-marca" value={marcaId} onValueChange={(v) => setMarcaId(v ?? "")}>
-            <SelectTrigger id="filtro-marca" className="w-full">
-              <SelectValue>
-                {(id: string) => (id ? (marcas.find((m) => m.id === id)?.nombre ?? "Todas") : "Todas")}
-              </SelectValue>
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="">Todas</SelectItem>
-              {marcas.map((m) => (
-                <SelectItem key={m.id} value={m.id}>
-                  {m.nombre}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <MultiSelectFilter
+            id="filtro-marca"
+            label="Marca"
+            placeholder="Todas"
+            options={marcas.map((m) => ({ value: m.id, label: m.nombre }))}
+            selected={marcaIds}
+            onChange={setMarcaIds}
+          />
         </div>
 
         <div className="space-y-2">
           <Label htmlFor="filtro-kg">Kg de la bolsa</Label>
-          <Select name="filtro-kg" value={kgFiltro} onValueChange={(v) => setKgFiltro(v ?? "")}>
-            <SelectTrigger id="filtro-kg" className="w-full">
-              <SelectValue>{(v: string) => (v ? `${v} kg` : "Todos")}</SelectValue>
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="">Todos</SelectItem>
-              {kgOptions.map((kg) => (
-                <SelectItem key={kg} value={String(kg)}>
-                  {kg} kg
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <MultiSelectFilter
+            id="filtro-kg"
+            label="Kg"
+            placeholder="Todos"
+            options={kgOptions.map((kg) => ({ value: String(kg), label: `${kg} kg` }))}
+            selected={kgFiltros}
+            onChange={setKgFiltros}
+          />
         </div>
 
         <div className="space-y-2">
@@ -224,6 +242,7 @@ export function ReportesView({
         marcaPorId={marcaPorId}
         categoriaPorId={categoriaPorId}
         proveedorPorId={proveedorPorId}
+        organization={organization}
       />
     </div>
   );

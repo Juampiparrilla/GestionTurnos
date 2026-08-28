@@ -78,6 +78,7 @@ function ComboboxPositioner({
   side = "bottom",
   sideOffset = 4,
   align = "start",
+  collisionAvoidance = { side: "none" },
   ...props
 }: ComboboxPrimitive.Positioner.Props) {
   return (
@@ -85,6 +86,7 @@ function ComboboxPositioner({
       side={side}
       sideOffset={sideOffset}
       align={align}
+      collisionAvoidance={collisionAvoidance}
       className={cn("isolate z-50", className)}
       {...props}
     />

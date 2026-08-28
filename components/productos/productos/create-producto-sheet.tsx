@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
 import { PendingOverlay } from "@/components/pending-overlay";
 import {
   Sheet,
@@ -23,6 +22,7 @@ import { MarcaSelectField } from "./marca-select-field";
 import { CategoriaSelectField } from "./categoria-select-field";
 import { ProveedorSelectField } from "./proveedor-select-field";
 import { PriceTrackFields } from "./price-track-fields";
+import type { Producto } from "@/types/producto";
 
 export function CreateProductoSheet({
   open,
@@ -30,14 +30,15 @@ export function CreateProductoSheet({
   marcas,
   categorias,
   proveedores,
+  onCreated,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   marcas: Marca[];
   categorias: Categoria[];
   proveedores: Proveedor[];
+  onCreated: (producto: Producto) => void;
 }) {
-  const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
 
@@ -93,6 +94,11 @@ export function CreateProductoSheet({
   function handleSubmit() {
     setError(null);
 
+    if (!marcaId || !categoriaId || !proveedorId) {
+      setError("Elegí marca, categoría y proveedor.");
+      return;
+    }
+
     const payload = {
       nombre,
       marcaId,
@@ -130,7 +136,7 @@ export function CreateProductoSheet({
       resetForm();
       onOpenChange(false);
       showSuccessToast("Producto creado con éxito");
-      router.refresh();
+      onCreated(data.producto);
     });
   }
 

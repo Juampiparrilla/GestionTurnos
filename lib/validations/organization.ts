@@ -14,3 +14,12 @@ export const createOrganizationSchema = z.object({
   dni: dniSchema,
   email: emailSchema,
 });
+
+export const updateOrganizationSchema = z.object({
+  phone: z
+    .string()
+    .trim()
+    .max(30, "No puede superar los 30 caracteres")
+    .optional()
+    .or(z.literal("")),
+});

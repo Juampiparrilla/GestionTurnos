@@ -61,9 +61,8 @@ export function PriceTrackFields({
             type="number"
             step="0.01"
             min="0"
-            required
-            value={porcentaje || ""}
-            onChange={(e) => onPorcentajeChange(Number(e.target.value))}
+            value={porcentaje}
+            onChange={(e) => onPorcentajeChange(e.target.value ? Number(e.target.value) : 0)}
           />
           <p className="text-xs text-muted-foreground">
             Precio de venta: ${precioCalculado.toLocaleString("es-AR")}

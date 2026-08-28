@@ -111,10 +111,10 @@ export function MarcaSelectField({
         </div>
       ) : (
         <Combobox
-          items={["", ...marcas.map((m) => m.id)]}
+          items={marcas.map((m) => m.id)}
           value={value}
           onValueChange={(v) => onChange(v ?? "")}
-          itemToStringLabel={(id: string) => (id ? (marcas.find((m) => m.id === id)?.nombre ?? "") : "Sin marca")}
+          itemToStringLabel={(id: string) => marcas.find((m) => m.id === id)?.nombre ?? ""}
         >
           <ComboboxInputGroup>
             <ComboboxInput id="marcaId" placeholder="Buscar marca..." />
@@ -128,7 +128,7 @@ export function MarcaSelectField({
                 <ComboboxList>
                   {(id: string) => (
                     <ComboboxItem key={id} value={id}>
-                      {id ? (marcas.find((m) => m.id === id)?.nombre ?? "") : "Sin marca"}
+                      {marcas.find((m) => m.id === id)?.nombre ?? ""}
                     </ComboboxItem>
                   )}
                 </ComboboxList>

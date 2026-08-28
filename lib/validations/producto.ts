@@ -14,16 +14,16 @@ const optionalText = (max: number) =>
     .optional()
     .or(z.literal(""));
 
-const optionalUuid = z.union([z.string().uuid(), z.literal(""), z.null()]).optional();
+const requiredUuid = z.string().uuid("Elegí una opción");
 
 const porcentajeSchema = z.number().min(0, "No puede ser negativo").max(1000);
 const precioSchema = z.number().min(0, "No puede ser negativo");
 
 export const createProductoSchema = z.object({
   nombre: nombreSchema,
-  marcaId: optionalUuid,
-  categoriaId: optionalUuid,
-  proveedorId: optionalUuid,
+  marcaId: requiredUuid,
+  categoriaId: requiredUuid,
+  proveedorId: requiredUuid,
   descripcion: optionalText(500),
   kg: z.number().positive("Tiene que ser mayor a 0"),
   costo: precioSchema,

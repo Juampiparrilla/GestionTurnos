@@ -7,6 +7,7 @@ import type { Marca } from "@/types/marca";
 import type { Categoria } from "@/types/categoria";
 import type { Proveedor } from "@/types/proveedor";
 import type { Producto } from "@/types/producto";
+import type { Organization } from "@/types/organization";
 
 export default async function ReportesPage() {
   const actor = await requireAdmin();
@@ -15,12 +16,14 @@ export default async function ReportesPage() {
   }
 
   const supabase = await createClient();
-  const [{ data: productos }, { data: marcas }, { data: categorias }, { data: proveedores }] = await Promise.all([
-    supabase.from("productos").select("*").eq("active", true).order("nombre"),
-    supabase.from("marcas").select("*").eq("active", true).order("nombre"),
-    supabase.from("categorias").select("*").eq("active", true).order("nombre"),
-    supabase.from("proveedores").select("*").eq("active", true).order("nombre"),
-  ]);
+  const [{ data: productos }, { data: marcas }, { data: categorias }, { data: proveedores }, { data: organization }] =
+    await Promise.all([
+      supabase.from("productos").select("*").eq("active", true).order("nombre"),
+      supabase.from("marcas").select("*").eq("active", true).order("nombre"),
+      supabase.from("categorias").select("*").eq("active", true).order("nombre"),
+      supabase.from("proveedores").select("*").eq("active", true).order("nombre"),
+      supabase.from("organizations").select("*").eq("id", actor.organization_id).single(),
+    ]);
 
   return (
     <div className="space-y-6">
@@ -33,6 +36,7 @@ export default async function ReportesPage() {
         marcas={(marcas as Marca[] | null) ?? []}
         categorias={(categorias as Categoria[] | null) ?? []}
         proveedores={(proveedores as Proveedor[] | null) ?? []}
+        organization={organization as Organization}
         descripcion="Buscá productos por categoría, proveedor, marca, oferta o precio y generá un PDF con el resultado."
       />
     </div>

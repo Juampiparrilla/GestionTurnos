@@ -36,16 +36,19 @@ export function ReporteProductoRow({
         aria-expanded={expanded}
         className="flex w-full items-start justify-between gap-2 p-3 text-left"
       >
-        <p className="flex min-w-0 items-center gap-1.5 font-medium break-words">
-          <span>
-            {numero}. {producto.nombre} · {producto.kg} kg
-          </span>
-          {producto.oferta && (
-            <span title="En oferta">
-              <BadgePercent className="size-4 shrink-0 text-amber-600" aria-label="En oferta" />
+        <div className="min-w-0">
+          <p className="flex items-center gap-1.5 font-medium break-words">
+            <span>
+              {numero}. {producto.nombre} · {producto.kg} kg
             </span>
-          )}
-        </p>
+            {producto.oferta && (
+              <span title="En oferta">
+                <BadgePercent className="size-4 shrink-0 text-amber-600" aria-label="En oferta" />
+              </span>
+            )}
+          </p>
+          {producto.codigo && <p className="font-mono text-xs text-muted-foreground">{producto.codigo}</p>}
+        </div>
         {expanded ? (
           <ChevronUp className="size-4 shrink-0 text-muted-foreground" aria-hidden="true" />
         ) : (

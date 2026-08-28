@@ -25,7 +25,7 @@ const FUNCIONALIDADES = [
   {
     titulo: "Costo por varias unidades o por descuento",
     descripcion:
-      "Si compraste varias unidades por un total (ej. 3 bolsas por $18.000) o te dieron un precio de lista con un % de descuento, el formulario calcula solo el costo unitario en vez de tener que hacer la cuenta a mano.",
+      "Si compraste varias unidades por un total (ej. 3 bolsas por $18.000) o te dieron un precio de lista con un % de descuento, el formulario calcula solo el costo unitario en vez de tener que hacer la cuenta a mano. Si además venía en un paquete de varias (ej. una caja de 12), esa cantidad se suma al cálculo.",
   },
   {
     titulo: "Ajuste masivo por proveedor",

@@ -31,10 +31,14 @@ type Supabase = Awaited<ReturnType<typeof createClient>>;
 // existente (índice único por organización) -- usado tanto por la creación
 // manual de un producto como por la importación masiva desde Excel, fila
 // por fila, para no duplicar este loop en los dos lugares.
+//
+// El unique de nombre+kg (productos_org_nombre_kg_unique) también da
+// 23505, pero ahí reintentar con otro código no sirve de nada -- es un
+// producto repetido de verdad, se corta al toque.
 export async function insertarProducto(
   supabase: Supabase,
   producto: NuevoProducto,
-): Promise<{ ok: true; producto: Record<string, unknown> } | { ok: false; motivo: "codigo" | "otro" }> {
+): Promise<{ ok: true; producto: Record<string, unknown> } | { ok: false; motivo: "codigo" | "duplicado" | "otro" }> {
   const codigoBase = generarCodigoBase(producto.nombre);
 
   for (let intento = 0; intento < MAX_INTENTOS_CODIGO; intento++) {
@@ -49,6 +53,9 @@ export async function insertarProducto(
     }
     if (error.code !== "23505") {
       return { ok: false, motivo: "otro" };
+    }
+    if (error.message.includes("productos_org_nombre_kg_unique")) {
+      return { ok: false, motivo: "duplicado" };
     }
   }
 

@@ -71,7 +71,10 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
     .maybeSingle();
 
   if (error) {
-    return NextResponse.json({ error: "No se pudo guardar el cambio. Intentá de nuevo." }, { status: 400 });
+    const message = error.message.includes("productos_org_nombre_kg_unique")
+      ? "Ya existe un producto con ese nombre y esos kg."
+      : "No se pudo guardar el cambio. Intentá de nuevo.";
+    return NextResponse.json({ error: message }, { status: 400 });
   }
 
   if (!data) {

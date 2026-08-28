@@ -22,7 +22,8 @@ Catálogo de productos del negocio, con **Marcas**, **Categorías** y **Proveedo
 - Cada producto tiene su costo y **tres pistas de precio de venta independientes** — bolsa cerrada, bolsa abierta (venta suelta por kg) y por mayor — cada una con su % de ganancia o un precio fijado a mano. El precio por kg se calcula solo a partir de la bolsa abierta.
 - Un producto con varios pesos (ej. 15 kg y 25 kg) son simplemente dos filas del catálogo con el mismo nombre y marca, no una entidad "presentación" aparte.
 - Cada producto recibe un **código único** autogenerado a partir de su nombre, para identificarlo rápido en listados, reportes y PDFs.
-- El costo se puede cargar directo, o calcularlo a partir de una compra por varias unidades (ej. "3 bolsas por $18.000" → $6.000 c/u).
+- El costo se puede cargar directo, calcularlo a partir de una compra por varias unidades (ej. "3 bolsas por $18.000" → $6.000 c/u), o a partir de un precio de lista con % de descuento.
+- No se puede cargar dos veces el mismo producto (mismo nombre y mismos kg) en la misma organización.
 - Toggle de **oferta** por producto, visible como ícono en el listado.
 - **Ajuste masivo de %** de ganancia por proveedor, sin tocar los productos que tienen el precio fijado manualmente.
 - **Importar por Excel**: se descarga una plantilla, se completa fuera de la app y se vuelve a subir para crear varios productos de una sola vez — cada fila se valida por separado, así un error en una no frena a las demás.

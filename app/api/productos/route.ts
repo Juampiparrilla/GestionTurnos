@@ -67,9 +67,11 @@ export async function POST(request: Request) {
 
   if (!resultado.ok) {
     const message =
-      resultado.motivo === "codigo"
-        ? "No se pudo generar un código único. Intentá de nuevo."
-        : "No se pudo crear el producto. Intentá de nuevo.";
+      resultado.motivo === "duplicado"
+        ? "Ya existe un producto con ese nombre y esos kg."
+        : resultado.motivo === "codigo"
+          ? "No se pudo generar un código único. Intentá de nuevo."
+          : "No se pudo crear el producto. Intentá de nuevo.";
     return NextResponse.json({ error: message }, { status: 400 });
   }
 

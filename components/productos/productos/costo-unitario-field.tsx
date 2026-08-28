@@ -6,10 +6,20 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { MoneyInput } from "@/components/productos/money-input";
 
-// Cuando el costo viene de comprar varias unidades por un total (ej. 3
-// bolsas por $18.000), este campo calcula el costo unitario en vez de
-// obligar a hacer la cuenta a mano -- lo que se guarda siempre es el
-// costo unitario, cantidad/costo total son solo para el cálculo.
+type Modo = "directo" | "unidades" | "descuento";
+
+function redondear(value: number): number {
+  return Math.round(value * 100) / 100;
+}
+
+// El costo unitario se puede cargar de tres formas: directo, o calculado
+// a partir de otro dato que sí tenemos a mano --
+// - "unidades": compramos varias unidades por un total (ej. 3 bolsas por
+//   $18.000) y queremos el costo de una sola.
+// - "descuento": el proveedor nos pasa el precio de lista final, y a eso
+//   se le resta un % de descuento para llegar al costo real.
+// Los dos modos son excluyentes entre sí y con la carga directa -- lo
+// único que se guarda siempre es el costo unitario resultante.
 export function CostoUnitarioField({
   costo,
   onCostoChange,
@@ -17,28 +27,56 @@ export function CostoUnitarioField({
   costo: number;
   onCostoChange: (value: number) => void;
 }) {
-  const [calcular, setCalcular] = useState(false);
+  const [modo, setModo] = useState<Modo>("directo");
+
   const [cantidad, setCantidad] = useState(1);
   const [costoTotal, setCostoTotal] = useState(0);
 
-  function actualizar(nuevaCantidad: number, nuevoCostoTotal: number) {
+  const [precioLista, setPrecioLista] = useState(0);
+  const [descuento, setDescuento] = useState(0);
+
+  function activarModo(nuevoModo: Modo, activo: boolean) {
+    setModo(activo ? nuevoModo : "directo");
+  }
+
+  function actualizarUnidades(nuevaCantidad: number, nuevoCostoTotal: number) {
     setCantidad(nuevaCantidad);
     setCostoTotal(nuevoCostoTotal);
     if (nuevaCantidad > 0) {
-      onCostoChange(Math.round((nuevoCostoTotal / nuevaCantidad) * 100) / 100);
+      onCostoChange(redondear(nuevoCostoTotal / nuevaCantidad));
     }
+  }
+
+  function actualizarDescuento(nuevoPrecioLista: number, nuevoDescuento: number) {
+    setPrecioLista(nuevoPrecioLista);
+    setDescuento(nuevoDescuento);
+    onCostoChange(redondear(nuevoPrecioLista * (1 - nuevoDescuento / 100)));
   }
 
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between">
-        <Label htmlFor="calcular-costo" className="text-xs text-muted-foreground">
+        <Label htmlFor="calcular-unidades" className="text-xs text-muted-foreground">
           Compré varias unidades por un total
         </Label>
-        <Switch id="calcular-costo" checked={calcular} onCheckedChange={setCalcular} />
+        <Switch
+          id="calcular-unidades"
+          checked={modo === "unidades"}
+          onCheckedChange={(checked) => activarModo("unidades", checked)}
+        />
+      </div>
+      <div className="flex items-center justify-between">
+        <Label htmlFor="calcular-descuento" className="text-xs text-muted-foreground">
+          Precio de lista con descuento
+        </Label>
+        <Switch
+          id="calcular-descuento"
+          checked={modo === "descuento"}
+          onCheckedChange={(checked) => activarModo("descuento", checked)}
+        />
       </div>
 
-      {calcular ? (
+      {modo === "unidades" && (
         <div className="space-y-2 rounded-lg border p-3">
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1">
@@ -49,7 +87,7 @@ export function CostoUnitarioField({
                 step="1"
                 min="1"
                 value={cantidad || ""}
-                onChange={(e) => actualizar(Number(e.target.value), costoTotal)}
+                onChange={(e) => actualizarUnidades(Number(e.target.value), costoTotal)}
               />
             </div>
             <div className="space-y-1">
@@ -57,7 +95,7 @@ export function CostoUnitarioField({
               <MoneyInput
                 id="costo-total-unidades"
                 value={costoTotal}
-                onChange={(value) => actualizar(cantidad, value)}
+                onChange={(value) => actualizarUnidades(cantidad, value)}
               />
             </div>
           </div>
@@ -65,7 +103,39 @@ export function CostoUnitarioField({
             Precio de costo unitario: ${costo.toLocaleString("es-AR")}
           </p>
         </div>
-      ) : (
+      )}
+
+      {modo === "descuento" && (
+        <div className="space-y-2 rounded-lg border p-3">
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1">
+              <Label htmlFor="precio-lista">Precio de lista</Label>
+              <MoneyInput
+                id="precio-lista"
+                value={precioLista}
+                onChange={(value) => actualizarDescuento(value, descuento)}
+              />
+            </div>
+            <div className="space-y-1">
+              <Label htmlFor="descuento-lista">% de descuento</Label>
+              <Input
+                id="descuento-lista"
+                type="number"
+                step="0.01"
+                min="0"
+                max="100"
+                value={descuento || ""}
+                onChange={(e) => actualizarDescuento(precioLista, Number(e.target.value) || 0)}
+              />
+            </div>
+          </div>
+          <p className="text-xs text-muted-foreground">
+            Precio de costo unitario: ${costo.toLocaleString("es-AR")}
+          </p>
+        </div>
+      )}
+
+      {modo === "directo" && (
         <div className="space-y-2">
           <Label htmlFor="costo">Precio de costo</Label>
           <MoneyInput id="costo" required value={costo} onChange={onCostoChange} />

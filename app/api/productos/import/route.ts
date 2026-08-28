@@ -169,7 +169,11 @@ export async function POST(request: Request) {
       });
 
       if (!resultado.ok) {
-        errores.push({ fila: numeroFila, mensaje: "No se pudo guardar el producto." });
+        const mensaje =
+          resultado.motivo === "duplicado"
+            ? "Ya existe un producto con ese nombre y esos kg."
+            : "No se pudo guardar el producto.";
+        errores.push({ fila: numeroFila, mensaje });
         continue;
       }
 

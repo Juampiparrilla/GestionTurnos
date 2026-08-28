@@ -23,9 +23,9 @@ const FUNCIONALIDADES = [
       "Se administran desde sus propias pantallas, y también se pueden crear al vuelo sin salir del formulario de producto.",
   },
   {
-    titulo: "Costo por varias unidades",
+    titulo: "Costo por varias unidades o por descuento",
     descripcion:
-      "Si compraste varias unidades por un total (ej. 3 bolsas por $18.000), el formulario calcula solo el costo unitario en vez de tener que hacer la cuenta a mano.",
+      "Si compraste varias unidades por un total (ej. 3 bolsas por $18.000) o te dieron un precio de lista con un % de descuento, el formulario calcula solo el costo unitario en vez de tener que hacer la cuenta a mano.",
   },
   {
     titulo: "Ajuste masivo por proveedor",

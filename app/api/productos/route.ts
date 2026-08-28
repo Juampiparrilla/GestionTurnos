@@ -62,6 +62,7 @@ export async function POST(request: Request) {
       porcentaje_ganancia_por_mayor: porMayor.porcentaje,
       precio_venta_por_mayor: porMayor.precio,
       precio_manual_por_mayor: d.manualPorMayor,
+      oferta: d.oferta,
       created_by: actor.id,
     })
     .select("id")

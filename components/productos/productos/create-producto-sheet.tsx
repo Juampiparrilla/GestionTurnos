@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { PendingOverlay } from "@/components/pending-overlay";
 import {
@@ -13,6 +13,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import { showSuccessToast } from "@/lib/toast";
 import { MoneyInput } from "@/components/productos/money-input";
 import type { Marca } from "@/types/marca";
@@ -37,7 +38,7 @@ export function CreateProductoSheet({
   proveedores: Proveedor[];
 }) {
   const router = useRouter();
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
 
   const [marcaOptions, setMarcaOptions] = useState(marcas);
@@ -61,6 +62,7 @@ export function CreateProductoSheet({
   const [porcentajePorMayor, setPorcentajePorMayor] = useState(0);
   const [manualPorMayor, setManualPorMayor] = useState(false);
   const [precioManualPorMayor, setPrecioManualPorMayor] = useState(0);
+  const [oferta, setOferta] = useState(false);
 
   function resetForm() {
     setNombre("");
@@ -79,6 +81,7 @@ export function CreateProductoSheet({
     setPorcentajePorMayor(0);
     setManualPorMayor(false);
     setPrecioManualPorMayor(0);
+    setOferta(false);
     setError(null);
   }
 
@@ -87,8 +90,7 @@ export function CreateProductoSheet({
     onOpenChange(next);
   }
 
-  async function handleSubmit() {
-    setIsSubmitting(true);
+  function handleSubmit() {
     setError(null);
 
     const payload = {
@@ -108,32 +110,33 @@ export function CreateProductoSheet({
       porcentajePorMayor,
       manualPorMayor,
       precioManualPorMayor,
+      oferta,
     };
 
-    const res = await fetch("/api/productos", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
+    startTransition(async () => {
+      const res = await fetch("/api/productos", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error ?? "No se pudo crear el producto.");
+        return;
+      }
+
+      resetForm();
+      onOpenChange(false);
+      showSuccessToast("Producto creado con éxito");
+      router.refresh();
     });
-
-    const data = await res.json();
-
-    if (!res.ok) {
-      setError(data.error ?? "No se pudo crear el producto.");
-      setIsSubmitting(false);
-      return;
-    }
-
-    setIsSubmitting(false);
-    resetForm();
-    onOpenChange(false);
-    showSuccessToast("Producto creado con éxito");
-    router.refresh();
   }
 
   return (
     <>
-      <PendingOverlay pending={isSubmitting} />
+      <PendingOverlay pending={isPending} />
       <Sheet open={open} onOpenChange={handleOpenChange}>
         <SheetContent side="right" className="w-full sm:max-w-md">
           <SheetHeader>
@@ -150,6 +153,18 @@ export function CreateProductoSheet({
                 value={nombre}
                 onChange={(e) => setNombre(e.target.value.toUpperCase())}
                 required
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="kg">Kg de la bolsa</Label>
+              <Input
+                id="kg"
+                type="number"
+                step="0.01"
+                min="0.01"
+                required
+                value={kg || ""}
+                onChange={(e) => setKg(Number(e.target.value))}
               />
             </div>
             <MarcaSelectField
@@ -187,18 +202,6 @@ export function CreateProductoSheet({
               />
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="kg">Kg de la bolsa</Label>
-              <Input
-                id="kg"
-                type="number"
-                step="0.01"
-                min="0.01"
-                required
-                value={kg || ""}
-                onChange={(e) => setKg(Number(e.target.value))}
-              />
-            </div>
             <div className="space-y-2">
               <Label htmlFor="costo">Precio de costo</Label>
               <MoneyInput id="costo" required value={costo} onChange={setCosto} />
@@ -238,14 +241,19 @@ export function CreateProductoSheet({
               onPrecioManualChange={setPrecioManualPorMayor}
             />
 
+            <div className="flex items-center justify-between rounded-lg border p-3">
+              <Label htmlFor="oferta">En oferta</Label>
+              <Switch id="oferta" checked={oferta} onCheckedChange={setOferta} />
+            </div>
+
             {error && (
               <p role="alert" className="text-sm text-destructive">
                 {error}
               </p>
             )}
             <SheetFooter className="px-0">
-              <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? "Creando..." : "Crear producto"}
+              <Button type="submit" disabled={isPending}>
+                {isPending ? "Creando..." : "Crear producto"}
               </Button>
             </SheetFooter>
           </form>

@@ -63,6 +63,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
       porcentaje_ganancia_por_mayor: porMayor.porcentaje,
       precio_venta_por_mayor: porMayor.precio,
       precio_manual_por_mayor: d.manualPorMayor,
+      oferta: d.oferta,
       ...(d.active !== undefined ? { active: d.active } : {}),
     })
     .eq("id", id)

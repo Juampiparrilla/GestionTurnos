@@ -18,6 +18,7 @@ export type Producto = {
   precio_venta_por_mayor: number;
   precio_manual_por_mayor: boolean;
   precio_por_kg: number;
+  oferta: boolean;
   active: boolean;
   created_by: string | null;
   created_at: string;
@@ -36,4 +37,5 @@ export type ProductoPublico = {
   precio_venta_abierta: number;
   precio_venta_por_mayor: number;
   precio_por_kg: number;
+  oferta: boolean;
 };

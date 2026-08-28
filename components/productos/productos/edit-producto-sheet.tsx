@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { PendingOverlay } from "@/components/pending-overlay";
 import {
@@ -41,7 +41,7 @@ export function EditProductoSheet({
   proveedores: Proveedor[];
 }) {
   const router = useRouter();
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const [active, setActive] = useState(producto.active);
 
@@ -63,9 +63,9 @@ export function EditProductoSheet({
   const [porcentajePorMayor, setPorcentajePorMayor] = useState(producto.porcentaje_ganancia_por_mayor);
   const [manualPorMayor, setManualPorMayor] = useState(producto.precio_manual_por_mayor);
   const [precioManualPorMayor, setPrecioManualPorMayor] = useState(producto.precio_venta_por_mayor);
+  const [oferta, setOferta] = useState(producto.oferta);
 
-  async function handleSubmit(formData: FormData) {
-    setIsSubmitting(true);
+  function handleSubmit(formData: FormData) {
     setError(null);
 
     const payload = {
@@ -85,31 +85,32 @@ export function EditProductoSheet({
       porcentajePorMayor,
       manualPorMayor,
       precioManualPorMayor,
+      oferta,
       active,
     };
 
-    const res = await fetch(`/api/productos/${producto.id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
+    startTransition(async () => {
+      const res = await fetch(`/api/productos/${producto.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error ?? "No se pudo guardar el cambio.");
+        return;
+      }
+
+      onOpenChange(false);
+      router.refresh();
     });
-
-    const data = await res.json();
-
-    if (!res.ok) {
-      setError(data.error ?? "No se pudo guardar el cambio.");
-      setIsSubmitting(false);
-      return;
-    }
-
-    setIsSubmitting(false);
-    onOpenChange(false);
-    router.refresh();
   }
 
   return (
     <>
-      <PendingOverlay pending={isSubmitting} />
+      <PendingOverlay pending={isPending} />
       <Sheet open={open} onOpenChange={onOpenChange}>
         <SheetContent side="right" className="w-full sm:max-w-md">
           <SheetHeader>
@@ -125,6 +126,18 @@ export function EditProductoSheet({
                 maxLength={150}
                 onChange={uppercaseOnChange}
                 required
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="kg">Kg de la bolsa</Label>
+              <Input
+                id="kg"
+                type="number"
+                step="0.01"
+                min="0.01"
+                required
+                value={kg || ""}
+                onChange={(e) => setKg(Number(e.target.value))}
               />
             </div>
             <div className="flex flex-col gap-4 rounded-lg bg-muted/40 p-3">
@@ -165,18 +178,6 @@ export function EditProductoSheet({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="kg">Kg de la bolsa</Label>
-              <Input
-                id="kg"
-                type="number"
-                step="0.01"
-                min="0.01"
-                required
-                value={kg || ""}
-                onChange={(e) => setKg(Number(e.target.value))}
-              />
-            </div>
-            <div className="space-y-2">
               <Label htmlFor="costo">Precio de costo</Label>
               <MoneyInput id="costo" required value={costo} onChange={setCosto} />
             </div>
@@ -216,6 +217,11 @@ export function EditProductoSheet({
             />
 
             <div className="flex items-center justify-between rounded-lg border p-3">
+              <Label htmlFor="oferta">En oferta</Label>
+              <Switch id="oferta" checked={oferta} onCheckedChange={setOferta} />
+            </div>
+
+            <div className="flex items-center justify-between rounded-lg border p-3">
               <Label htmlFor="active">Producto activo</Label>
               <Switch id="active" checked={active} onCheckedChange={setActive} />
             </div>
@@ -226,8 +232,8 @@ export function EditProductoSheet({
               </p>
             )}
             <SheetFooter className="px-0">
-              <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? "Guardando..." : "Guardar cambios"}
+              <Button type="submit" disabled={isPending}>
+                {isPending ? "Guardando..." : "Guardar cambios"}
               </Button>
             </SheetFooter>
           </form>

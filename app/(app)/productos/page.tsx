@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { LayoutGrid, Package, Tag, Truck } from "lucide-react";
+import { FileText, LayoutGrid, Package, Tag, Truck } from "lucide-react";
 import { getCurrentProfile } from "@/lib/auth/session";
 import { LinkPendingSpinner } from "@/components/link-pending-spinner";
 
@@ -31,18 +31,28 @@ export default async function ProductosHomePage() {
   }
 
   return (
-    <div className="grid grid-cols-2 gap-3">
-      {SECTIONS.map(({ href, label, icon: Icon }) => (
-        <Link
-          key={href}
-          href={href}
-          className="flex flex-col items-center justify-center gap-2 rounded-lg bg-zinc-900 p-8 text-center text-white shadow-sm transition-colors hover:bg-zinc-800"
-        >
-          <Icon className="size-6" aria-hidden="true" />
-          <span className="font-medium">{label}</span>
-          <LinkPendingSpinner />
-        </Link>
-      ))}
+    <div className="space-y-3">
+      <div className="grid grid-cols-2 gap-3">
+        {SECTIONS.map(({ href, label, icon: Icon }) => (
+          <Link
+            key={href}
+            href={href}
+            className="flex flex-col items-center justify-center gap-2 rounded-lg bg-zinc-900 p-8 text-center text-white shadow-sm transition-colors hover:bg-zinc-800"
+          >
+            <Icon className="size-6" aria-hidden="true" />
+            <span className="font-medium">{label}</span>
+            <LinkPendingSpinner />
+          </Link>
+        ))}
+      </div>
+      <Link
+        href="/productos/reportes"
+        className="flex items-center justify-center gap-2 rounded-lg bg-zinc-900 p-4 text-center text-white shadow-sm transition-colors hover:bg-zinc-800"
+      >
+        <FileText className="size-5" aria-hidden="true" />
+        <span className="font-medium">Reportes</span>
+        <LinkPendingSpinner />
+      </Link>
     </div>
   );
 }

@@ -36,6 +36,7 @@ export const createProductoSchema = z.object({
   porcentajePorMayor: porcentajeSchema,
   manualPorMayor: z.boolean(),
   precioManualPorMayor: precioSchema,
+  oferta: z.boolean(),
 });
 
 export const updateProductoSchema = createProductoSchema.extend({

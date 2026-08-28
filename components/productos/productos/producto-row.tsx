@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { Ban, ChevronDown, ChevronUp, Pencil, RotateCcw, Trash2 } from "lucide-react";
+import { BadgePercent, Ban, ChevronDown, ChevronUp, Pencil, RotateCcw, Trash2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { PendingOverlay } from "@/components/pending-overlay";
@@ -37,6 +37,13 @@ export function ProductoRow({
   const [editOpen, setEditOpen] = useState(false);
   const [expanded, setExpanded] = useState(false);
   const [isPending, startTransition] = useTransition();
+  const detalleRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (expanded) {
+      detalleRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+    }
+  }, [expanded]);
 
   function toggleActive() {
     const pregunta = producto.active
@@ -65,6 +72,7 @@ export function ProductoRow({
           porcentajePorMayor: producto.porcentaje_ganancia_por_mayor,
           manualPorMayor: producto.precio_manual_por_mayor,
           precioManualPorMayor: producto.precio_venta_por_mayor,
+          oferta: producto.oferta,
           active: !producto.active,
         }),
       });
@@ -91,8 +99,15 @@ export function ProductoRow({
       <PendingOverlay pending={isPending} />
       <div className="min-w-0 rounded-lg border bg-background shadow-sm">
         <div className="flex flex-col gap-2 p-4">
-          <p className="font-medium break-words">
-            {numero}. {producto.nombre} · {producto.kg} kg
+          <p className="flex items-center gap-1.5 font-medium break-words">
+            <span>
+              {numero}. {producto.nombre} · {producto.kg} kg
+            </span>
+            {producto.oferta && (
+              <span title="En oferta">
+                <BadgePercent className="size-4 shrink-0 text-amber-600" aria-label="En oferta" />
+              </span>
+            )}
           </p>
           <div className="flex items-center justify-end gap-1">
             {!producto.active && <Badge variant="outline" className="mr-auto">Inactivo</Badge>}
@@ -137,7 +152,7 @@ export function ProductoRow({
           </div>
         </div>
         {expanded && (
-          <div className="flex flex-col gap-1 border-t px-4 py-3 text-sm text-muted-foreground">
+          <div ref={detalleRef} className="flex flex-col gap-1 border-t px-4 py-3 text-sm text-muted-foreground">
             {!marcaNombre && !categoriaNombre && !proveedorNombre && <span>Sin datos</span>}
             {marcaNombre && <span>Marca: {marcaNombre}</span>}
             {categoriaNombre && <span>Categoría: {categoriaNombre}</span>}

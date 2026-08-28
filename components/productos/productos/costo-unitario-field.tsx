@@ -48,8 +48,8 @@ export function CostoUnitarioField({
                 type="number"
                 step="1"
                 min="1"
-                value={cantidad}
-                onChange={(e) => actualizar(Number(e.target.value) || 1, costoTotal)}
+                value={cantidad || ""}
+                onChange={(e) => actualizar(Number(e.target.value), costoTotal)}
               />
             </div>
             <div className="space-y-1">

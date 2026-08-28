@@ -16,61 +16,70 @@ function redondear(value: number): number {
 // a partir de otro dato que sí tenemos a mano --
 // - "unidades": compramos varias unidades por un total (ej. 3 bolsas por
 //   $18.000) y queremos el costo de una sola.
-// - "descuento": el proveedor nos pasa el precio de lista final, y a eso
-//   se le resta un % de descuento para llegar al costo real.
-// Los dos modos son excluyentes entre sí y con la carga directa -- lo
-// único que se guarda siempre es el costo unitario resultante.
+// - "descuento": el proveedor nos pasa el precio de lista final de ESE
+//   producto, y a eso se le resta un % de descuento -- no tiene nada que
+//   ver con paquetes ni cantidades, es solo precio × (1 - %).
 //
-// "¿Viene en un paquete de varias?" es un solo campo compartido entre
-// "unidades" y "descuento" (antes estaba duplicado, uno adentro de cada
-// modo) -- aparece apenas se activa cualquiera de los dos, no es algo
-// específico de "descuento".
+// "¿Viene en un paquete de varias?" es un concepto aparte, exclusivo de
+// productos por Unidad (ej. una caja de 12 sachets): no depende de qué
+// toggle de arriba esté activo, aparece solo por elegir "Se vende por:
+// Unidad". Si está activo, divide el resultado de CUALQUIERA de los dos
+// modos de cálculo (no solo "descuento"). Para productos por Kg no
+// existe -- ahí "Compré varias unidades por un total" pide su propia
+// cantidad, igual que siempre.
 export function CostoUnitarioField({
   costo,
   onCostoChange,
+  unidadMedida,
 }: {
   costo: number;
   onCostoChange: (value: number) => void;
+  unidadMedida: "kg" | "unidad";
 }) {
   const [modo, setModo] = useState<Modo>("directo");
 
-  const [cantidadPaquete, setCantidadPaquete] = useState(1);
+  const [cantidadKg, setCantidadKg] = useState(1);
   const [costoTotal, setCostoTotal] = useState(0);
+
   const [precioLista, setPrecioLista] = useState(0);
   const [descuento, setDescuento] = useState(0);
+
+  const [cantidadPaquete, setCantidadPaquete] = useState(1);
 
   function activarModo(nuevoModo: Modo, activo: boolean) {
     setModo(activo ? nuevoModo : "directo");
   }
 
-  function recalcular(paquete: number, total: number, lista: number, desc: number) {
-    if (paquete <= 0) return;
-    if (modo === "unidades") {
-      onCostoChange(redondear(total / paquete));
-    } else if (modo === "descuento") {
-      onCostoChange(redondear((lista * (1 - desc / 100)) / paquete));
+  function actualizarUnidadesKg(nuevaCantidad: number, nuevoCostoTotal: number) {
+    setCantidadKg(nuevaCantidad);
+    setCostoTotal(nuevoCostoTotal);
+    if (nuevaCantidad > 0) {
+      onCostoChange(redondear(nuevoCostoTotal / nuevaCantidad));
     }
+  }
+
+  function actualizarUnidadesConPaquete(nuevoCostoTotal: number, paquete: number) {
+    setCostoTotal(nuevoCostoTotal);
+    if (paquete > 0) {
+      onCostoChange(redondear(nuevoCostoTotal / paquete));
+    }
+  }
+
+  function actualizarDescuento(nuevoPrecioLista: number, nuevoDescuento: number, paquete: number) {
+    setPrecioLista(nuevoPrecioLista);
+    setDescuento(nuevoDescuento);
+    const base = redondear(nuevoPrecioLista * (1 - nuevoDescuento / 100));
+    onCostoChange(unidadMedida === "unidad" && paquete > 0 ? redondear(base / paquete) : base);
   }
 
   function actualizarPaquete(nuevoPaquete: number) {
     setCantidadPaquete(nuevoPaquete);
-    recalcular(nuevoPaquete, costoTotal, precioLista, descuento);
+    if (modo === "unidades") {
+      actualizarUnidadesConPaquete(costoTotal, nuevoPaquete);
+    } else if (modo === "descuento") {
+      actualizarDescuento(precioLista, descuento, nuevoPaquete);
+    }
   }
-
-  function actualizarCostoTotal(nuevoCostoTotal: number) {
-    setCostoTotal(nuevoCostoTotal);
-    recalcular(cantidadPaquete, nuevoCostoTotal, precioLista, descuento);
-  }
-
-  function actualizarDescuento(nuevoPrecioLista: number, nuevoDescuento: number) {
-    setPrecioLista(nuevoPrecioLista);
-    setDescuento(nuevoDescuento);
-    recalcular(cantidadPaquete, costoTotal, nuevoPrecioLista, nuevoDescuento);
-  }
-
-  // El paquete de compra aplica sea Kg o Unidad -- también tiene sentido
-  // comprar varias bolsas de un producto por Kg a un precio combinado.
-  const mostrarCantidadPaquete = modo === "unidades" || modo === "descuento";
 
   return (
     <div className="space-y-2">
@@ -95,7 +104,7 @@ export function CostoUnitarioField({
         />
       </div>
 
-      {mostrarCantidadPaquete && (
+      {unidadMedida === "unidad" && (
         <div className="space-y-1">
           <Label htmlFor="cantidad-paquete">¿Compraste un paquete de varias? (dejá 1 si no)</Label>
           <Input
@@ -111,10 +120,38 @@ export function CostoUnitarioField({
 
       {modo === "unidades" && (
         <div className="space-y-2 rounded-lg border p-3">
-          <div className="space-y-1">
-            <Label htmlFor="costo-total-unidades">Costo total del paquete</Label>
-            <MoneyInput id="costo-total-unidades" value={costoTotal} onChange={actualizarCostoTotal} />
-          </div>
+          {unidadMedida === "kg" ? (
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1">
+                <Label htmlFor="cantidad-unidades">Cantidad</Label>
+                <Input
+                  id="cantidad-unidades"
+                  type="number"
+                  step="1"
+                  min="1"
+                  value={cantidadKg || ""}
+                  onChange={(e) => actualizarUnidadesKg(Number(e.target.value), costoTotal)}
+                />
+              </div>
+              <div className="space-y-1">
+                <Label htmlFor="costo-total-unidades">Costo total</Label>
+                <MoneyInput
+                  id="costo-total-unidades"
+                  value={costoTotal}
+                  onChange={(value) => actualizarUnidadesKg(cantidadKg, value)}
+                />
+              </div>
+            </div>
+          ) : (
+            <div className="space-y-1">
+              <Label htmlFor="costo-total-unidades">Costo total del paquete</Label>
+              <MoneyInput
+                id="costo-total-unidades"
+                value={costoTotal}
+                onChange={(value) => actualizarUnidadesConPaquete(value, cantidadPaquete)}
+              />
+            </div>
+          )}
           <p className="text-xs text-muted-foreground">
             Precio de costo unitario: ${costo.toLocaleString("es-AR")}
           </p>
@@ -129,7 +166,7 @@ export function CostoUnitarioField({
               <MoneyInput
                 id="precio-lista"
                 value={precioLista}
-                onChange={(value) => actualizarDescuento(value, descuento)}
+                onChange={(value) => actualizarDescuento(value, descuento, cantidadPaquete)}
               />
             </div>
             <div className="space-y-1">
@@ -141,7 +178,7 @@ export function CostoUnitarioField({
                 min="0"
                 max="100"
                 value={descuento || ""}
-                onChange={(e) => actualizarDescuento(precioLista, Number(e.target.value) || 0)}
+                onChange={(e) => actualizarDescuento(precioLista, Number(e.target.value) || 0, cantidadPaquete)}
               />
             </div>
           </div>

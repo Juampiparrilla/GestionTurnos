@@ -242,7 +242,7 @@ export function CreateProductoSheet({
               />
             </div>
 
-            <CostoUnitarioField costo={costo} onCostoChange={setCosto} />
+            <CostoUnitarioField costo={costo} onCostoChange={setCosto} unidadMedida={unidadMedida} />
 
             <PriceTrackFields
               label={unidadMedida === "kg" ? "Bolsa cerrada" : "Precio unitario"}

@@ -7,7 +7,7 @@ import type { Categoria } from "@/types/categoria";
 import { CategoriaRow } from "./categoria-row";
 import { CreateCategoriaSheet } from "./create-categoria-sheet";
 
-export function CategoriasList({ categorias }: { categorias: Categoria[] }) {
+export function CategoriasList({ categorias, descripcion }: { categorias: Categoria[]; descripcion: string }) {
   const [createOpen, setCreateOpen] = useState(false);
   const [query, setQuery] = useState("");
 
@@ -15,8 +15,11 @@ export function CategoriasList({ categorias }: { categorias: Categoria[] }) {
 
   return (
     <div className="space-y-4">
+      <div className="flex items-center justify-between gap-4">
+        <p className="text-sm text-muted-foreground">{descripcion}</p>
+        <Button onClick={() => setCreateOpen(true)}>+ Crear categoría</Button>
+      </div>
       <SearchInput value={query} onChange={setQuery} placeholder="Buscar categoría..." />
-      <Button onClick={() => setCreateOpen(true)}>+ Crear categoría</Button>
       {filtradas.length === 0 ? (
         <div className="rounded-lg border border-dashed p-8 text-center text-sm text-muted-foreground">
           {categorias.length === 0 ? "Todavía no hay categorías." : "No se encontraron categorías."}

@@ -16,14 +16,14 @@ export default async function MarcasPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <div className="flex items-center justify-between gap-4">
-          <h1 className="text-xl font-semibold">Marcas</h1>
-          <VolverAProductosLink />
-        </div>
-        <p className="text-sm text-muted-foreground">Marcas de alimento (Belcan, Agility, etc.).</p>
+      <div className="flex items-center justify-between gap-4">
+        <h1 className="text-xl font-semibold">Marcas</h1>
+        <VolverAProductosLink />
       </div>
-      <MarcasList marcas={(marcas as Marca[] | null) ?? []} />
+      <MarcasList
+        marcas={(marcas as Marca[] | null) ?? []}
+        descripcion="Marcas de alimento (Belcan, Agility, etc.)."
+      />
     </div>
   );
 }

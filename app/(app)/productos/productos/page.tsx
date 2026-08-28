@@ -24,18 +24,16 @@ export default async function ProductosPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <div className="flex items-center justify-between gap-4">
-          <h1 className="text-xl font-semibold">Productos</h1>
-          <VolverAProductosLink />
-        </div>
-        <p className="text-sm text-muted-foreground">Catálogo con costos, precios y presentaciones.</p>
+      <div className="flex items-center justify-between gap-4">
+        <h1 className="text-xl font-semibold">Productos</h1>
+        <VolverAProductosLink />
       </div>
       <ProductosList
         productos={(productos as Producto[] | null) ?? []}
         marcas={(marcas as Marca[] | null) ?? []}
         categorias={(categorias as Categoria[] | null) ?? []}
         proveedores={(proveedores as Proveedor[] | null) ?? []}
+        descripcion="Catálogo con costos, precios y presentaciones."
       />
     </div>
   );

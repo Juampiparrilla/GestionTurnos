@@ -16,14 +16,14 @@ export default async function CategoriasPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <div className="flex items-center justify-between gap-4">
-          <h1 className="text-xl font-semibold">Categorías</h1>
-          <VolverAProductosLink />
-        </div>
-        <p className="text-sm text-muted-foreground">Clasificación de productos (alimento perro, gato, etc.).</p>
+      <div className="flex items-center justify-between gap-4">
+        <h1 className="text-xl font-semibold">Categorías</h1>
+        <VolverAProductosLink />
       </div>
-      <CategoriasList categorias={(categorias as Categoria[] | null) ?? []} />
+      <CategoriasList
+        categorias={(categorias as Categoria[] | null) ?? []}
+        descripcion="Clasificación de productos (alimento perro, gato, etc.)."
+      />
     </div>
   );
 }

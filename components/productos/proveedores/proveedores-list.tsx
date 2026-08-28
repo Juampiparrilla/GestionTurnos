@@ -7,7 +7,7 @@ import type { Proveedor } from "@/types/proveedor";
 import { ProveedorRow } from "./proveedor-row";
 import { CreateProveedorSheet } from "./create-proveedor-sheet";
 
-export function ProveedoresList({ proveedores }: { proveedores: Proveedor[] }) {
+export function ProveedoresList({ proveedores, descripcion }: { proveedores: Proveedor[]; descripcion: string }) {
   const [createOpen, setCreateOpen] = useState(false);
   const [query, setQuery] = useState("");
 
@@ -15,8 +15,11 @@ export function ProveedoresList({ proveedores }: { proveedores: Proveedor[] }) {
 
   return (
     <div className="space-y-4">
+      <div className="flex items-center justify-between gap-4">
+        <p className="text-sm text-muted-foreground">{descripcion}</p>
+        <Button onClick={() => setCreateOpen(true)}>+ Crear proveedor</Button>
+      </div>
       <SearchInput value={query} onChange={setQuery} placeholder="Buscar proveedor..." />
-      <Button onClick={() => setCreateOpen(true)}>+ Crear proveedor</Button>
       {filtrados.length === 0 ? (
         <div className="rounded-lg border border-dashed p-8 text-center text-sm text-muted-foreground">
           {proveedores.length === 0 ? "Todavía no hay proveedores." : "No se encontraron proveedores."}

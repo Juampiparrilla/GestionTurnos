@@ -6,10 +6,11 @@ export function VolverAProductosLink() {
   return (
     <Link
       href="/productos"
-      className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
+      title="Volver a Productos"
+      aria-label="Volver a Productos"
+      className="inline-flex items-center text-muted-foreground hover:text-foreground"
     >
-      <ArrowLeft className="size-4" />
-      Volver a Productos
+      <ArrowLeft className="size-5" aria-hidden="true" />
       <LinkPendingSpinner />
     </Link>
   );

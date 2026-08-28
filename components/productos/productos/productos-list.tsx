@@ -15,11 +15,13 @@ export function ProductosList({
   marcas,
   categorias,
   proveedores,
+  descripcion,
 }: {
   productos: Producto[];
   marcas: Marca[];
   categorias: Categoria[];
   proveedores: Proveedor[];
+  descripcion: string;
 }) {
   const [createOpen, setCreateOpen] = useState(false);
   const [query, setQuery] = useState("");
@@ -32,8 +34,11 @@ export function ProductosList({
 
   return (
     <div className="space-y-4">
+      <div className="flex items-center justify-between gap-4">
+        <p className="text-sm text-muted-foreground">{descripcion}</p>
+        <Button onClick={() => setCreateOpen(true)}>+ Crear producto</Button>
+      </div>
       <SearchInput value={query} onChange={setQuery} placeholder="Buscar producto..." />
-      <Button onClick={() => setCreateOpen(true)}>+ Crear producto</Button>
       {filtrados.length === 0 ? (
         <div className="rounded-lg border border-dashed p-8 text-center text-sm text-muted-foreground">
           {productos.length === 0

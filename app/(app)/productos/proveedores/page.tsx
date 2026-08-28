@@ -16,16 +16,14 @@ export default async function ProveedoresPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <div className="flex items-center justify-between gap-4">
-          <h1 className="text-xl font-semibold">Proveedores</h1>
-          <VolverAProductosLink />
-        </div>
-        <p className="text-sm text-muted-foreground">
-          Distribuidores a los que se les compra. Ajustá el % de ganancia de todos sus productos desde acá.
-        </p>
+      <div className="flex items-center justify-between gap-4">
+        <h1 className="text-xl font-semibold">Proveedores</h1>
+        <VolverAProductosLink />
       </div>
-      <ProveedoresList proveedores={(proveedores as Proveedor[] | null) ?? []} />
+      <ProveedoresList
+        proveedores={(proveedores as Proveedor[] | null) ?? []}
+        descripcion="Distribuidores a los que se les compra. Ajustá el % de ganancia de todos sus productos desde acá."
+      />
     </div>
   );
 }

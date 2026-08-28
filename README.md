@@ -1,6 +1,6 @@
 # Gestión de Turnos
 
-Aplicación web para que negocios con uno o varios locales organicen los turnos de trabajo de sus empleados: quién trabaja qué día, en qué horario, y quién cubre feriados y domingos. Reemplaza la planilla o el cuaderno que se usa hoy para armar los turnos.
+Aplicación web para que negocios con uno o varios locales organicen los turnos de trabajo de sus empleados: quién trabaja qué día, en qué horario, y quién cubre feriados y domingos. Reemplaza la planilla o el cuaderno que se usa hoy para armar los turnos. También incluye un módulo de **Productos** para llevar el catálogo, los costos y los precios de venta del negocio.
 
 Es **multi-tenant**: cada empresa que la usa está completamente aislada de las demás (a nivel de base de datos, no solo de interfaz).
 
@@ -15,6 +15,17 @@ Producción: [gestion-turnos-nu.vercel.app](https://gestion-turnos-nu.vercel.app
 - Un resumen por persona muestra cuántos turnos, domingos y feriados tiene cada uno. El horario se puede descargar como imagen para compartir por WhatsApp.
 - No hay registro público de usuarios: un admin crea la cuenta y genera un link de invitación que comparte manualmente (por WhatsApp), sin depender de email. Lo mismo para restablecer una contraseña olvidada.
 
+## Productos
+
+Catálogo de productos del negocio, con **Marcas**, **Categorías** y **Proveedores** como entidades propias (ABM completo: crear, editar, desactivar/reactivar y borrar en forma definitiva).
+
+- Cada producto tiene su costo y **tres pistas de precio de venta independientes** — bolsa cerrada, bolsa abierta (venta suelta por kg) y por mayor — cada una con su % de ganancia o un precio fijado a mano. El precio por kg se calcula solo a partir de la bolsa abierta.
+- Un producto con varios pesos (ej. 15 kg y 25 kg) son simplemente dos filas del catálogo con el mismo nombre y marca, no una entidad "presentación" aparte.
+- Toggle de **oferta** por producto, visible como ícono en el listado.
+- **Ajuste masivo de %** de ganancia por proveedor, sin tocar los productos que tienen el precio fijado manualmente.
+- **Reportes**: filtra el catálogo por categoría, proveedor, marca, kg, oferta y un rango de precio (sobre la pista que elijas), y genera un PDF con el resultado — completo para uso interno del negocio, o reducido a nombre + kg + un precio para compartir con un cliente.
+- Solo Administrador y Super Administrador gestionan y ven costos; el catálogo de solo consulta para Empleado todavía está pendiente.
+
 ## Roles
 
 | Rol | Alcance | Qué puede hacer |
@@ -28,6 +39,7 @@ Producción: [gestion-turnos-nu.vercel.app](https://gestion-turnos-nu.vercel.app
 
 - **Next.js** (App Router) + TypeScript, Tailwind CSS v4, shadcn/ui (sobre Base UI)
 - **Supabase**: Postgres + Auth + Row Level Security como única capa de datos y de aislamiento entre organizaciones
+- **jsPDF** para generar los PDF de Reportes en el navegador, sin backend
 - Deploy en **Vercel**, auto-deploy sobre `main`
 
 La seguridad no depende del frontend: todo el aislamiento entre organizaciones y los permisos por rol están reforzados con RLS y funciones de base de datos, no solo con lo que muestra la interfaz.

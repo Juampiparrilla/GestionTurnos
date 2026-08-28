@@ -9,6 +9,7 @@ import type { Marca } from "@/types/marca";
 import type { Categoria } from "@/types/categoria";
 import type { Proveedor } from "@/types/proveedor";
 import type { Producto } from "@/types/producto";
+import { formatCantidad } from "@/lib/productos/formato-cantidad";
 import { EditProductoSheet } from "./edit-producto-sheet";
 
 const currency = (value: number) => `$${value.toLocaleString("es-AR")}`;
@@ -64,6 +65,7 @@ export function ProductoRow({
           proveedorId: producto.proveedor_id ?? "",
           descripcion: producto.descripcion ?? "",
           kg: producto.kg,
+          unidadMedida: producto.unidad_medida,
           costo: producto.costo,
           porcentajeCerrada: producto.porcentaje_ganancia_cerrada,
           manualCerrada: producto.precio_manual_cerrada,
@@ -106,7 +108,7 @@ export function ProductoRow({
         <div className="flex flex-col gap-2 p-4">
           <p className="flex items-center gap-1.5 font-medium break-words">
             <span>
-              {numero}. {producto.nombre} · {producto.kg} kg
+              {numero}. {producto.nombre} · {formatCantidad(producto.kg, producto.unidad_medida)}
             </span>
             {producto.oferta && (
               <span title="En oferta">
@@ -165,18 +167,23 @@ export function ProductoRow({
             {proveedorNombre && <span>Proveedor: {proveedorNombre}</span>}
             <span>Costo: {currency(producto.costo)}</span>
             <span>
-              Bolsa cerrada: {currency(producto.precio_venta_cerrada)}
+              {producto.unidad_medida === "kg" ? "Bolsa cerrada" : "Precio unitario"}:{" "}
+              {currency(producto.precio_venta_cerrada)}
               {producto.precio_manual_cerrada ? " (manual)" : ` (${producto.porcentaje_ganancia_cerrada}%)`}
             </span>
-            <span>
-              Bolsa abierta: {currency(producto.precio_venta_abierta)}
-              {producto.precio_manual_abierta ? " (manual)" : ` (${producto.porcentaje_ganancia_abierta}%)`}
-            </span>
+            {producto.unidad_medida === "kg" && (
+              <span>
+                Bolsa abierta: {currency(producto.precio_venta_abierta)}
+                {producto.precio_manual_abierta ? " (manual)" : ` (${producto.porcentaje_ganancia_abierta}%)`}
+              </span>
+            )}
             <span>
               Por mayor: {currency(producto.precio_venta_por_mayor)}
               {producto.precio_manual_por_mayor ? " (manual)" : ` (${producto.porcentaje_ganancia_por_mayor}%)`}
             </span>
-            <span>Precio por kg: {currency(producto.precio_por_kg)}</span>
+            {producto.unidad_medida === "kg" && (
+              <span>Precio por kg: {currency(producto.precio_por_kg)}</span>
+            )}
           </div>
         )}
       </div>

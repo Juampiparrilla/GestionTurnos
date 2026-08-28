@@ -119,6 +119,7 @@ export async function POST(request: Request) {
     const crudo = {
       nombre: nombre.toUpperCase(),
       kg: celdaNumero(row, "kg"),
+      unidadMedida: celda(row, "unidadMedida").toLowerCase() || "kg",
       marca: celda(row, "marca").toUpperCase(),
       categoria: celda(row, "categoria").toUpperCase(),
       proveedor: celda(row, "proveedor").toUpperCase(),
@@ -143,7 +144,10 @@ export async function POST(request: Request) {
       ]);
 
       const cerrada = calcularPrecioVenta({ costo: d.costo, porcentaje: d.porcentajeCerrada, manual: false, precioManual: 0 });
-      const abierta = calcularPrecioVenta({ costo: d.costo, porcentaje: d.porcentajeAbierta, manual: false, precioManual: 0 });
+      const abierta =
+        d.unidadMedida === "kg"
+          ? calcularPrecioVenta({ costo: d.costo, porcentaje: d.porcentajeAbierta, manual: false, precioManual: 0 })
+          : { precio: 0, porcentaje: 0 };
       const porMayor = calcularPrecioVenta({ costo: d.costo, porcentaje: d.porcentajePorMayor, manual: false, precioManual: 0 });
 
       const resultado = await insertarProducto(supabase, {
@@ -154,6 +158,7 @@ export async function POST(request: Request) {
         proveedor_id: proveedorId,
         descripcion: null,
         kg: d.kg,
+        unidad_medida: d.unidadMedida,
         costo: d.costo,
         porcentaje_ganancia_cerrada: cerrada.porcentaje,
         precio_venta_cerrada: cerrada.precio,

@@ -19,15 +19,15 @@ Producción: [gestion-turnos-nu.vercel.app](https://gestion-turnos-nu.vercel.app
 
 Catálogo de productos del negocio, con **Marcas**, **Categorías** y **Proveedores** como entidades propias (ABM completo: crear, editar, desactivar/reactivar y borrar en forma definitiva).
 
-- Cada producto tiene su costo y **tres pistas de precio de venta independientes** — bolsa cerrada, bolsa abierta (venta suelta por kg) y por mayor — cada una con su % de ganancia o un precio fijado a mano. El precio por kg se calcula solo a partir de la bolsa abierta.
-- Un producto con varios pesos (ej. 15 kg y 25 kg) son simplemente dos filas del catálogo con el mismo nombre y marca, no una entidad "presentación" aparte.
+- Un producto se vende por **Kg** o por **Unidad**. Por Kg tiene **tres pistas de precio independientes** — bolsa cerrada, bolsa abierta (venta suelta por kg) y por mayor —, cada una con su % de ganancia o un precio fijado a mano; el precio por kg se calcula solo a partir de la bolsa abierta. Por Unidad solo tiene precio unitario y por mayor — no aplica "bolsa abierta" a algo que no se vende suelto (ej. un sachet, un accesorio).
+- Un producto con varias cantidades (ej. 15 kg y 25 kg) son simplemente dos filas del catálogo con el mismo nombre y marca, no una entidad "presentación" aparte.
 - Cada producto recibe un **código único** autogenerado a partir de su nombre, para identificarlo rápido en listados, reportes y PDFs.
 - El costo se puede cargar directo, calcularlo a partir de una compra por varias unidades (ej. "3 bolsas por $18.000" → $6.000 c/u), o a partir de un precio de lista con % de descuento.
-- No se puede cargar dos veces el mismo producto (mismo nombre y mismos kg) en la misma organización.
+- No se puede cargar dos veces el mismo producto (mismo nombre y misma cantidad) en la misma organización.
 - Toggle de **oferta** por producto, visible como ícono en el listado.
 - **Ajuste masivo de %** de ganancia por proveedor, sin tocar los productos que tienen el precio fijado manualmente.
 - **Importar por Excel**: se descarga una plantilla, se completa fuera de la app y se vuelve a subir para crear varios productos de una sola vez — cada fila se valida por separado, así un error en una no frena a las demás.
-- **Reportes**: filtra el catálogo por categoría, proveedor, marca, kg y oferta (con selección múltiple en cada uno, y un botón para limpiar todos los filtros) y por un rango de precio sobre la bolsa cerrada. Genera un PDF horizontal con el resultado, opcionalmente agrupado por categoría/marca/proveedor, con marca de agua y encabezado con el nombre y teléfono del negocio — completo para uso interno, o reducido a nombre + kg + los precios que elijas mostrar para compartir con un cliente (por WhatsApp o descarga directa), con una fecha de validez opcional (a tantos días desde hoy).
+- **Reportes**: filtra el catálogo por categoría, proveedor, marca, cantidad y oferta (con selección múltiple en cada uno, y un botón para limpiar todos los filtros) y por un rango de precio sobre la bolsa cerrada. Genera un PDF horizontal con el resultado, opcionalmente agrupado por categoría/marca/proveedor, con marca de agua y encabezado con el nombre y teléfono del negocio — completo para uso interno, o reducido a nombre + cantidad + los precios que elijas mostrar para compartir con un cliente (por WhatsApp o descarga directa), con una fecha de validez opcional (a tantos días desde hoy).
 - Botón **Funcionalidades** en la pantalla principal con el detalle de todo lo anterior.
 - Solo Administrador y Super Administrador gestionan y ven costos; el catálogo de solo consulta para Empleado todavía está pendiente.
 

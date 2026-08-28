@@ -18,6 +18,7 @@ const requiredUuid = z.string().uuid("Elegí una opción");
 
 const porcentajeSchema = z.number().min(0, "No puede ser negativo").max(1000);
 const precioSchema = z.number().min(0, "No puede ser negativo");
+const unidadMedidaSchema = z.enum(["kg", "unidad"]);
 
 export const createProductoSchema = z.object({
   nombre: nombreSchema,
@@ -26,6 +27,7 @@ export const createProductoSchema = z.object({
   proveedorId: requiredUuid,
   descripcion: optionalText(500),
   kg: z.number().positive("Tiene que ser mayor a 0"),
+  unidadMedida: unidadMedidaSchema,
   costo: precioSchema,
   porcentajeCerrada: porcentajeSchema,
   manualCerrada: z.boolean(),
@@ -57,6 +59,7 @@ const nombreEntidadSchema = z
 export const importProductoRowSchema = z.object({
   nombre: nombreSchema,
   kg: z.number().positive("Tiene que ser mayor a 0"),
+  unidadMedida: unidadMedidaSchema,
   marca: nombreEntidadSchema,
   categoria: nombreEntidadSchema,
   proveedor: nombreEntidadSchema,

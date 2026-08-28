@@ -30,12 +30,17 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
     manual: d.manualCerrada,
     precioManual: d.precioManualCerrada,
   });
-  const abierta = calcularPrecioVenta({
-    costo: d.costo,
-    porcentaje: d.porcentajeAbierta,
-    manual: d.manualAbierta,
-    precioManual: d.precioManualAbierta,
-  });
+  // Mismo criterio que al crear: "Bolsa abierta" no aplica a productos
+  // por unidad, se ignora lo que mande el cliente.
+  const abierta =
+    d.unidadMedida === "kg"
+      ? calcularPrecioVenta({
+          costo: d.costo,
+          porcentaje: d.porcentajeAbierta,
+          manual: d.manualAbierta,
+          precioManual: d.precioManualAbierta,
+        })
+      : { precio: 0, porcentaje: 0 };
   const porMayor = calcularPrecioVenta({
     costo: d.costo,
     porcentaje: d.porcentajePorMayor,
@@ -53,13 +58,14 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
       proveedor_id: d.proveedorId || null,
       descripcion: d.descripcion || null,
       kg: d.kg,
+      unidad_medida: d.unidadMedida,
       costo: d.costo,
       porcentaje_ganancia_cerrada: cerrada.porcentaje,
       precio_venta_cerrada: cerrada.precio,
       precio_manual_cerrada: d.manualCerrada,
       porcentaje_ganancia_abierta: abierta.porcentaje,
       precio_venta_abierta: abierta.precio,
-      precio_manual_abierta: d.manualAbierta,
+      precio_manual_abierta: d.unidadMedida === "kg" && d.manualAbierta,
       porcentaje_ganancia_por_mayor: porMayor.porcentaje,
       precio_venta_por_mayor: porMayor.precio,
       precio_manual_por_mayor: d.manualPorMayor,

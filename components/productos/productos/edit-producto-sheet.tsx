@@ -12,6 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { uppercaseOnChange } from "@/lib/productos/uppercase-input";
 import type { Marca } from "@/types/marca";
@@ -53,6 +54,7 @@ export function EditProductoSheet({
   const [proveedorId, setProveedorId] = useState(producto.proveedor_id ?? "");
 
   const [kg, setKg] = useState(producto.kg);
+  const [unidadMedida, setUnidadMedida] = useState(producto.unidad_medida);
   const [costo, setCosto] = useState(producto.costo);
   const [porcentajeCerrada, setPorcentajeCerrada] = useState(producto.porcentaje_ganancia_cerrada);
   const [manualCerrada, setManualCerrada] = useState(producto.precio_manual_cerrada);
@@ -80,6 +82,7 @@ export function EditProductoSheet({
       proveedorId,
       descripcion: formData.get("descripcion"),
       kg,
+      unidadMedida,
       costo,
       porcentajeCerrada,
       manualCerrada,
@@ -134,7 +137,23 @@ export function EditProductoSheet({
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="kg">Kg de la bolsa</Label>
+              <Label htmlFor="unidad-medida">Se vende por</Label>
+              <Select
+                name="unidad-medida"
+                value={unidadMedida}
+                onValueChange={(v) => setUnidadMedida((v as "kg" | "unidad") ?? "kg")}
+              >
+                <SelectTrigger id="unidad-medida" className="w-full">
+                  <SelectValue>{(v: "kg" | "unidad") => (v === "kg" ? "Kg" : "Unidad")}</SelectValue>
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="kg">Kg</SelectItem>
+                  <SelectItem value="unidad">Unidad</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="kg">{unidadMedida === "kg" ? "Kg de la bolsa" : "Cantidad de unidades"}</Label>
               <Input
                 id="kg"
                 type="number"
@@ -185,7 +204,7 @@ export function EditProductoSheet({
             <CostoUnitarioField costo={costo} onCostoChange={setCosto} />
 
             <PriceTrackFields
-              label="Bolsa cerrada"
+              label={unidadMedida === "kg" ? "Bolsa cerrada" : "Precio unitario"}
               namePrefix="cerrada-edit"
               costo={costo}
               porcentaje={porcentajeCerrada}
@@ -195,17 +214,19 @@ export function EditProductoSheet({
               precioManual={precioManualCerrada}
               onPrecioManualChange={setPrecioManualCerrada}
             />
-            <PriceTrackFields
-              label="Bolsa abierta (por kg)"
-              namePrefix="abierta-edit"
-              costo={costo}
-              porcentaje={porcentajeAbierta}
-              onPorcentajeChange={setPorcentajeAbierta}
-              manual={manualAbierta}
-              onManualChange={setManualAbierta}
-              precioManual={precioManualAbierta}
-              onPrecioManualChange={setPrecioManualAbierta}
-            />
+            {unidadMedida === "kg" && (
+              <PriceTrackFields
+                label="Bolsa abierta (por kg)"
+                namePrefix="abierta-edit"
+                costo={costo}
+                porcentaje={porcentajeAbierta}
+                onPorcentajeChange={setPorcentajeAbierta}
+                manual={manualAbierta}
+                onManualChange={setManualAbierta}
+                precioManual={precioManualAbierta}
+                onPrecioManualChange={setPrecioManualAbierta}
+              />
+            )}
             <PriceTrackFields
               label="Por mayor"
               namePrefix="por-mayor-edit"

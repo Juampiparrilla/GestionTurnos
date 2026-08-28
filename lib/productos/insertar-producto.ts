@@ -11,6 +11,7 @@ export type NuevoProducto = {
   proveedor_id: string | null;
   descripcion: string | null;
   kg: number;
+  unidad_medida: "kg" | "unidad";
   costo: number;
   porcentaje_ganancia_cerrada: number;
   precio_venta_cerrada: number;

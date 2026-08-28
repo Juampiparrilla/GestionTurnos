@@ -2,6 +2,7 @@ import jsPDF from "jspdf";
 import autoTable, { type CellInput, type RowInput } from "jspdf-autotable";
 import type { Producto } from "@/types/producto";
 import { PRICE_TRACK_LABELS, precioPorTrack, type PriceTrack } from "./price-track";
+import { formatCantidad } from "./formato-cantidad";
 
 const currency = (value: number) => `$${value.toLocaleString("es-AR")}`;
 
@@ -73,27 +74,31 @@ function agruparProductos(
 }
 
 function filaProducto(p: Producto, contexto: ContextoPdf, opciones: OpcionesPdf): CellInput[] {
+  const esPorUnidad = p.unidad_medida === "unidad";
+
   if (opciones.modo === "negocio") {
     return [
       p.nombre,
       p.codigo ?? "",
-      p.kg,
+      formatCantidad(p.kg, p.unidad_medida),
       p.marca_id ? (contexto.marcaPorId.get(p.marca_id) ?? "") : "",
       p.categoria_id ? (contexto.categoriaPorId.get(p.categoria_id) ?? "") : "",
       p.proveedor_id ? (contexto.proveedorPorId.get(p.proveedor_id) ?? "") : "",
       currency(p.costo),
       currency(p.precio_venta_cerrada),
-      currency(p.precio_venta_abierta),
+      esPorUnidad ? "-" : currency(p.precio_venta_abierta),
       currency(p.precio_venta_por_mayor),
-      currency(p.precio_por_kg),
+      esPorUnidad ? "-" : currency(p.precio_por_kg),
       p.oferta ? "Sí" : "",
     ];
   }
   return [
     p.nombre,
     p.codigo ?? "",
-    p.kg,
-    ...opciones.precioTracks.map((track) => currency(precioPorTrack(p, track))),
+    formatCantidad(p.kg, p.unidad_medida),
+    ...opciones.precioTracks.map((track) =>
+      esPorUnidad && track === "abierta" ? "-" : currency(precioPorTrack(p, track)),
+    ),
   ];
 }
 
@@ -127,7 +132,7 @@ function construirDocumentoPdf(productos: Producto[], contexto: ContextoPdf, opc
           [
             "Nombre",
             "Código",
-            "Kg",
+            "Cantidad",
             "Marca",
             "Categoría",
             "Proveedor",
@@ -139,7 +144,7 @@ function construirDocumentoPdf(productos: Producto[], contexto: ContextoPdf, opc
             "Oferta",
           ],
         ]
-      : [["Nombre", "Código", "Kg", ...opciones.precioTracks.map((track) => PRICE_TRACK_LABELS[track])]];
+      : [["Nombre", "Código", "Cantidad", ...opciones.precioTracks.map((track) => PRICE_TRACK_LABELS[track])]];
 
   const columnas = head[0].length;
   const grupos = agruparProductos(productos, opciones.agrupacion, contexto);

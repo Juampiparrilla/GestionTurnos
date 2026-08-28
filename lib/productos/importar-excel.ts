@@ -4,7 +4,8 @@
 // cambia en los dos lugares a la vez.
 export const IMPORT_COLUMNAS = [
   { header: "Nombre", key: "nombre", width: 45 },
-  { header: "Kg", key: "kg", width: 10 },
+  { header: "Cantidad", key: "kg", width: 10 },
+  { header: "Unidad de medida (kg o unidad)", key: "unidadMedida", width: 26 },
   { header: "Marca", key: "marca", width: 20 },
   { header: "Categoría", key: "categoria", width: 32 },
   { header: "Proveedor", key: "proveedor", width: 20 },

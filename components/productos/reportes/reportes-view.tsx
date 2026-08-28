@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { MoneyInput } from "@/components/productos/money-input";
 import { precioPorTrack } from "@/lib/productos/price-track";
+import { formatCantidad } from "@/lib/productos/formato-cantidad";
 import type { Marca } from "@/types/marca";
 import type { Categoria } from "@/types/categoria";
 import type { Proveedor } from "@/types/proveedor";
@@ -36,7 +37,7 @@ export function ReportesView({
   const [categoriaIds, setCategoriaIds] = useState<string[]>([]);
   const [proveedorIds, setProveedorIds] = useState<string[]>([]);
   const [marcaIds, setMarcaIds] = useState<string[]>([]);
-  const [kgFiltros, setKgFiltros] = useState<string[]>([]);
+  const [cantidadFiltros, setCantidadFiltros] = useState<string[]>([]);
   const [ofertaFiltro, setOfertaFiltro] = useState("");
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(0);
@@ -46,16 +47,23 @@ export function ReportesView({
   const categoriaPorId = new Map(categorias.map((c) => [c.id, c.nombre]));
   const proveedorPorId = new Map(proveedores.map((p) => [p.id, p.nombre]));
 
-  const kgOptions = useMemo(
-    () => Array.from(new Set(productos.map((p) => p.kg))).sort((a, b) => a - b),
-    [productos],
-  );
+  // Se identifica por "kg|unidad_medida" y no solo por kg -- un producto de
+  // 12 kg y uno de 12 unidades no son lo mismo, aunque el número coincida.
+  const cantidadOptions = useMemo(() => {
+    const claves = new Set(productos.map((p) => `${p.kg}|${p.unidad_medida}`));
+    return Array.from(claves)
+      .map((clave) => {
+        const [kg, unidadMedida] = clave.split("|") as [string, "kg" | "unidad"];
+        return { value: clave, label: formatCantidad(Number(kg), unidadMedida), kg: Number(kg) };
+      })
+      .sort((a, b) => a.kg - b.kg);
+  }, [productos]);
 
   const hayFiltrosActivos =
     categoriaIds.length > 0 ||
     proveedorIds.length > 0 ||
     marcaIds.length > 0 ||
-    kgFiltros.length > 0 ||
+    cantidadFiltros.length > 0 ||
     ofertaFiltro !== "" ||
     minPrice !== 0 ||
     maxPrice !== 0;
@@ -64,7 +72,7 @@ export function ReportesView({
     setCategoriaIds([]);
     setProveedorIds([]);
     setMarcaIds([]);
-    setKgFiltros([]);
+    setCantidadFiltros([]);
     setOfertaFiltro("");
     setMinPrice(0);
     setMaxPrice(0);
@@ -75,7 +83,7 @@ export function ReportesView({
       if (categoriaIds.length > 0 && !categoriaIds.includes(p.categoria_id ?? "")) return false;
       if (proveedorIds.length > 0 && !proveedorIds.includes(p.proveedor_id ?? "")) return false;
       if (marcaIds.length > 0 && !marcaIds.includes(p.marca_id ?? "")) return false;
-      if (kgFiltros.length > 0 && !kgFiltros.includes(String(p.kg))) return false;
+      if (cantidadFiltros.length > 0 && !cantidadFiltros.includes(`${p.kg}|${p.unidad_medida}`)) return false;
       if (ofertaFiltro && p.oferta !== (ofertaFiltro === "true")) return false;
       // El rango de precio siempre compara contra la bolsa cerrada -- el
       // selector de qué precio usar (igual al de "Precio a mostrar" del PDF)
@@ -85,7 +93,7 @@ export function ReportesView({
       if (maxPrice && precio > maxPrice) return false;
       return true;
     });
-  }, [productos, categoriaIds, proveedorIds, marcaIds, kgFiltros, ofertaFiltro, minPrice, maxPrice]);
+  }, [productos, categoriaIds, proveedorIds, marcaIds, cantidadFiltros, ofertaFiltro, minPrice, maxPrice]);
 
   return (
     <div className="space-y-4">
@@ -143,13 +151,13 @@ export function ReportesView({
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="filtro-kg">Kg de la bolsa</Label>
+          <Label htmlFor="filtro-cantidad">Cantidad</Label>
           <MultiSelectFilter
-            id="filtro-kg"
-            placeholder="Todos"
-            options={kgOptions.map((kg) => ({ value: String(kg), label: `${kg} kg` }))}
-            selected={kgFiltros}
-            onChange={setKgFiltros}
+            id="filtro-cantidad"
+            placeholder="Todas"
+            options={cantidadOptions}
+            selected={cantidadFiltros}
+            onChange={setCantidadFiltros}
           />
         </div>
 

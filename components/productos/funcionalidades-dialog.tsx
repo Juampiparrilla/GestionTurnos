@@ -15,7 +15,7 @@ const FUNCIONALIDADES = [
   {
     titulo: "Productos",
     descripcion:
-      "Alta, edición y baja de productos con costo, kg y tres precios de venta (bolsa cerrada, bolsa abierta y por mayor), cada uno con su % de ganancia o un precio manual.",
+      "Alta, edición y baja de productos con costo y precios de venta, cada uno con su % de ganancia o un precio manual. Se venden por Kg (bolsa cerrada, bolsa abierta y por mayor) o por Unidad (precio unitario y por mayor, para productos que no se venden sueltos, como un sachet o un accesorio).",
   },
   {
     titulo: "Marcas, categorías y proveedores",
@@ -35,7 +35,7 @@ const FUNCIONALIDADES = [
   {
     titulo: "Reportes con filtros",
     descripcion:
-      "Filtrá productos por categoría, marca, proveedor, kg, oferta y precio (podés elegir varias opciones a la vez en cada filtro), con un botón para limpiar todo, y agrupalos por categoría, marca o proveedor.",
+      "Filtrá productos por categoría, marca, proveedor, cantidad, oferta y precio (podés elegir varias opciones a la vez en cada filtro), con un botón para limpiar todo, y agrupalos por categoría, marca o proveedor.",
   },
   {
     titulo: "PDF y WhatsApp",

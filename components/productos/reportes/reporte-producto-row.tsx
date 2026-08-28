@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { BadgePercent, ChevronDown, ChevronUp } from "lucide-react";
 import type { Producto } from "@/types/producto";
+import { formatCantidad } from "@/lib/productos/formato-cantidad";
 
 const currency = (value: number) => `$${value.toLocaleString("es-AR")}`;
 
@@ -39,7 +40,7 @@ export function ReporteProductoRow({
         <div className="min-w-0">
           <p className="flex items-center gap-1.5 font-medium break-words">
             <span>
-              {numero}. {producto.nombre} · {producto.kg} kg
+              {numero}. {producto.nombre} · {formatCantidad(producto.kg, producto.unidad_medida)}
             </span>
             {producto.oferta && (
               <span title="En oferta">
@@ -63,18 +64,23 @@ export function ReporteProductoRow({
           {proveedorNombre && <span>Proveedor: {proveedorNombre}</span>}
           <span>Costo: {currency(producto.costo)}</span>
           <span>
-            Bolsa cerrada: {currency(producto.precio_venta_cerrada)}
+            {producto.unidad_medida === "kg" ? "Bolsa cerrada" : "Precio unitario"}:{" "}
+            {currency(producto.precio_venta_cerrada)}
             {producto.precio_manual_cerrada ? " (manual)" : ` (${producto.porcentaje_ganancia_cerrada}%)`}
           </span>
-          <span>
-            Bolsa abierta: {currency(producto.precio_venta_abierta)}
-            {producto.precio_manual_abierta ? " (manual)" : ` (${producto.porcentaje_ganancia_abierta}%)`}
-          </span>
+          {producto.unidad_medida === "kg" && (
+            <span>
+              Bolsa abierta: {currency(producto.precio_venta_abierta)}
+              {producto.precio_manual_abierta ? " (manual)" : ` (${producto.porcentaje_ganancia_abierta}%)`}
+            </span>
+          )}
           <span>
             Por mayor: {currency(producto.precio_venta_por_mayor)}
             {producto.precio_manual_por_mayor ? " (manual)" : ` (${producto.porcentaje_ganancia_por_mayor}%)`}
           </span>
-          <span>Precio por kg: {currency(producto.precio_por_kg)}</span>
+          {producto.unidad_medida === "kg" && (
+            <span>Precio por kg: {currency(producto.precio_por_kg)}</span>
+          )}
         </div>
       )}
     </div>

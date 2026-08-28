@@ -113,7 +113,6 @@ export function ReportesView({
           <Label htmlFor="filtro-categoria">Categoría</Label>
           <MultiSelectFilter
             id="filtro-categoria"
-            label="Categoría"
             placeholder="Todas"
             options={categorias.map((c) => ({ value: c.id, label: c.nombre }))}
             selected={categoriaIds}
@@ -125,7 +124,6 @@ export function ReportesView({
           <Label htmlFor="filtro-proveedor">Proveedor</Label>
           <MultiSelectFilter
             id="filtro-proveedor"
-            label="Proveedor"
             placeholder="Todos"
             options={proveedores.map((p) => ({ value: p.id, label: p.nombre }))}
             selected={proveedorIds}
@@ -137,7 +135,6 @@ export function ReportesView({
           <Label htmlFor="filtro-marca">Marca</Label>
           <MultiSelectFilter
             id="filtro-marca"
-            label="Marca"
             placeholder="Todas"
             options={marcas.map((m) => ({ value: m.id, label: m.nombre }))}
             selected={marcaIds}
@@ -149,7 +146,6 @@ export function ReportesView({
           <Label htmlFor="filtro-kg">Kg de la bolsa</Label>
           <MultiSelectFilter
             id="filtro-kg"
-            label="Kg"
             placeholder="Todos"
             options={kgOptions.map((kg) => ({ value: String(kg), label: `${kg} kg` }))}
             selected={kgFiltros}

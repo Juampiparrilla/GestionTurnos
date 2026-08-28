@@ -16,11 +16,53 @@ function ComboboxInputGroup({
     <ComboboxPrimitive.InputGroup
       data-slot="combobox-input-group"
       className={cn(
-        "flex h-8 w-full items-center gap-1 rounded-lg border border-input bg-transparent pr-1 pl-2.5 text-sm transition-colors outline-none focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/50 dark:bg-input/30",
+        "flex min-h-8 w-full items-center gap-1 rounded-lg border border-input bg-transparent pr-1 pl-2.5 text-sm transition-colors outline-none focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/50 dark:bg-input/30",
         className
       )}
       {...props}
     />
+  )
+}
+
+function ComboboxValue(props: ComboboxPrimitive.Value.Props) {
+  return <ComboboxPrimitive.Value {...props} />
+}
+
+function ComboboxChips({ className, ...props }: ComboboxPrimitive.Chips.Props) {
+  return (
+    <ComboboxPrimitive.Chips
+      data-slot="combobox-chips"
+      className={cn("flex flex-1 flex-wrap items-center gap-1 py-1", className)}
+      {...props}
+    />
+  )
+}
+
+function ComboboxChip({ className, ...props }: ComboboxPrimitive.Chip.Props) {
+  return (
+    <ComboboxPrimitive.Chip
+      data-slot="combobox-chip"
+      className={cn(
+        "flex h-6 items-center gap-1 rounded-full bg-secondary py-0.5 pr-1 pl-2 text-xs font-medium text-secondary-foreground outline-none data-highlighted:bg-accent data-highlighted:text-accent-foreground",
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
+function ComboboxChipRemove({ className, ...props }: ComboboxPrimitive.ChipRemove.Props) {
+  return (
+    <ComboboxPrimitive.ChipRemove
+      data-slot="combobox-chip-remove"
+      className={cn(
+        "flex size-4 shrink-0 items-center justify-center rounded-full text-secondary-foreground/70 hover:bg-secondary-foreground/20 hover:text-secondary-foreground",
+        className
+      )}
+      {...props}
+    >
+      <XIcon className="size-3" />
+    </ComboboxPrimitive.ChipRemove>
   )
 }
 
@@ -159,4 +201,8 @@ export {
   ComboboxList,
   ComboboxEmpty,
   ComboboxItem,
+  ComboboxValue,
+  ComboboxChips,
+  ComboboxChip,
+  ComboboxChipRemove,
 }

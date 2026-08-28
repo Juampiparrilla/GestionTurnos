@@ -97,7 +97,7 @@ export function CostoUnitarioField({
 
       {mostrarCantidadPaquete && (
         <div className="space-y-1">
-          <Label htmlFor="cantidad-paquete">¿Viene en un paquete de varias? (dejá 1 si es por unidad)</Label>
+          <Label htmlFor="cantidad-paquete">¿Compraste un paquete de varias? (dejá 1 si no)</Label>
           <Input
             id="cantidad-paquete"
             type="number"

@@ -1,0 +1,46 @@
+export type Producto = {
+  id: string;
+  organization_id: string;
+  nombre: string;
+  marca: string | null;
+  categoria_id: string | null;
+  proveedor_id: string | null;
+  descripcion: string | null;
+  active: boolean;
+  created_by: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type Presentacion = {
+  id: string;
+  organization_id: string;
+  producto_id: string;
+  kg: number;
+  sku: string | null;
+  costo: number;
+  porcentaje_ganancia_cerrada: number;
+  precio_venta_cerrada: number;
+  precio_manual_cerrada: boolean;
+  porcentaje_ganancia_abierta: number;
+  precio_venta_abierta: number;
+  precio_manual_abierta: boolean;
+  precio_por_kg: number;
+  active: boolean;
+  created_by: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type PresentacionPublico = {
+  presentacion_id: string;
+  producto_id: string;
+  nombre: string;
+  marca: string | null;
+  categoria_id: string | null;
+  proveedor_id: string | null;
+  kg: number;
+  precio_venta_cerrada: number;
+  precio_venta_abierta: number;
+  precio_por_kg: number;
+};

@@ -1,0 +1,54 @@
+import { z } from "zod";
+
+const nombreSchema = z
+  .string()
+  .trim()
+  .min(2, "El nombre debe tener al menos 2 caracteres")
+  .max(150, "El nombre no puede superar los 150 caracteres");
+
+const optionalText = (max: number) =>
+  z
+    .string()
+    .trim()
+    .max(max, `No puede superar los ${max} caracteres`)
+    .optional()
+    .or(z.literal(""));
+
+const optionalUuid = z.union([z.string().uuid(), z.literal(""), z.null()]).optional();
+
+export const createProductoSchema = z.object({
+  nombre: nombreSchema,
+  marca: optionalText(100),
+  categoriaId: optionalUuid,
+  proveedorId: optionalUuid,
+  descripcion: optionalText(500),
+});
+
+export const updateProductoSchema = z.object({
+  nombre: nombreSchema.optional(),
+  marca: optionalText(100),
+  categoriaId: optionalUuid,
+  proveedorId: optionalUuid,
+  descripcion: optionalText(500),
+  active: z.boolean().optional(),
+});
+
+const porcentajeSchema = z.number().min(0, "No puede ser negativo").max(1000);
+const precioSchema = z.number().min(0, "No puede ser negativo");
+
+export const createPresentacionSchema = z.object({
+  productoId: z.string().uuid("Producto inválido"),
+  kg: z.number().positive("Tiene que ser mayor a 0"),
+  sku: optionalText(50),
+  costo: precioSchema,
+  porcentajeCerrada: porcentajeSchema,
+  manualCerrada: z.boolean(),
+  precioManualCerrada: precioSchema,
+  porcentajeAbierta: porcentajeSchema,
+  manualAbierta: z.boolean(),
+  precioManualAbierta: precioSchema,
+});
+
+export const updatePresentacionSchema = createPresentacionSchema
+  .omit({ productoId: true })
+  .extend({ active: z.boolean().optional() });

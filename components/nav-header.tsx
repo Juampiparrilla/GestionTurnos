@@ -35,6 +35,13 @@ export function NavHeader({ profile }: { profile: Profile }) {
               <LinkPendingSpinner />
             </Link>
           )}
+          <Link
+            href="/productos"
+            className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"
+          >
+            Productos
+            <LinkPendingSpinner />
+          </Link>
           <form action={signOut}>
             <SignOutButton />
           </form>

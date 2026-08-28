@@ -1,0 +1,27 @@
+import { redirect } from "next/navigation";
+import { requireAdmin } from "@/lib/auth/require-role";
+import { createClient } from "@/lib/supabase/server";
+import { ProveedoresList } from "@/components/productos/proveedores/proveedores-list";
+import type { Proveedor } from "@/types/proveedor";
+
+export default async function ProveedoresPage() {
+  const actor = await requireAdmin();
+  if (!actor) {
+    redirect("/");
+  }
+
+  const supabase = await createClient();
+  const { data: proveedores } = await supabase.from("proveedores").select("*").order("nombre");
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-xl font-semibold">Proveedores</h1>
+        <p className="text-sm text-muted-foreground">
+          Distribuidores a los que se les compra. Ajustá el % de ganancia de todos sus productos desde acá.
+        </p>
+      </div>
+      <ProveedoresList proveedores={(proveedores as Proveedor[] | null) ?? []} />
+    </div>
+  );
+}

@@ -45,9 +45,16 @@ export function CostoUnitarioField({
   const [descuento, setDescuento] = useState(0);
 
   const [cantidadPaquete, setCantidadPaquete] = useState(1);
+  const [costoDirecto, setCostoDirecto] = useState(costo);
 
   function activarModo(nuevoModo: Modo, activo: boolean) {
     setModo(activo ? nuevoModo : "directo");
+  }
+
+  function actualizarDirecto(valor: number, paquete: number) {
+    setCostoDirecto(valor);
+    const divisor = unidadMedida === "unidad" ? paquete : 1;
+    onCostoChange(divisor > 0 ? redondear(valor / divisor) : valor);
   }
 
   function actualizarUnidadesKg(nuevaCantidad: number, nuevoCostoTotal: number) {
@@ -78,6 +85,8 @@ export function CostoUnitarioField({
       actualizarUnidadesConPaquete(costoTotal, nuevoPaquete);
     } else if (modo === "descuento") {
       actualizarDescuento(precioLista, descuento, nuevoPaquete);
+    } else {
+      actualizarDirecto(costoDirecto, nuevoPaquete);
     }
   }
 
@@ -190,8 +199,20 @@ export function CostoUnitarioField({
 
       {modo === "directo" && (
         <div className="space-y-2">
-          <Label htmlFor="costo">Precio de costo</Label>
-          <MoneyInput id="costo" required value={costo} onChange={onCostoChange} />
+          <Label htmlFor="costo">
+            {unidadMedida === "unidad" && cantidadPaquete > 1 ? "Precio de costo del paquete" : "Precio de costo"}
+          </Label>
+          <MoneyInput
+            id="costo"
+            required
+            value={costoDirecto}
+            onChange={(value) => actualizarDirecto(value, cantidadPaquete)}
+          />
+          {unidadMedida === "unidad" && cantidadPaquete > 1 && (
+            <p className="text-xs text-muted-foreground">
+              Precio de costo unitario: ${costo.toLocaleString("es-AR")}
+            </p>
+          )}
         </div>
       )}
     </div>

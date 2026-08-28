@@ -6,12 +6,18 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+  Combobox,
+  ComboboxClear,
+  ComboboxEmpty,
+  ComboboxInput,
+  ComboboxInputGroup,
+  ComboboxItem,
+  ComboboxList,
+  ComboboxPopup,
+  ComboboxPortal,
+  ComboboxPositioner,
+  ComboboxTrigger,
+} from "@/components/ui/combobox";
 import { PendingOverlay } from "@/components/pending-overlay";
 import { showSuccessToast } from "@/lib/toast";
 import type { Proveedor } from "@/types/proveedor";
@@ -108,21 +114,34 @@ export function ProveedorSelectField({
           </Button>
         </div>
       ) : (
-        <Select name="proveedorId" value={value} onValueChange={(v) => onChange(v ?? "")}>
-          <SelectTrigger id="proveedorId" className="w-full">
-            <SelectValue>
-              {(id: string) => (id ? (proveedores.find((p) => p.id === id)?.nombre ?? "Sin proveedor") : "Sin proveedor")}
-            </SelectValue>
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="">Sin proveedor</SelectItem>
-            {proveedores.map((proveedor) => (
-              <SelectItem key={proveedor.id} value={proveedor.id}>
-                {proveedor.nombre}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <Combobox
+          items={["", ...proveedores.map((p) => p.id)]}
+          value={value}
+          onValueChange={(v) => onChange(v ?? "")}
+          itemToStringLabel={(id: string) =>
+            id ? (proveedores.find((p) => p.id === id)?.nombre ?? "") : "Sin proveedor"
+          }
+        >
+          <ComboboxInputGroup>
+            <ComboboxInput id="proveedorId" placeholder="Buscar proveedor..." />
+            <ComboboxClear />
+            <ComboboxTrigger />
+          </ComboboxInputGroup>
+          <ComboboxPortal>
+            <ComboboxPositioner>
+              <ComboboxPopup>
+                <ComboboxEmpty>No se encontraron proveedores.</ComboboxEmpty>
+                <ComboboxList>
+                  {(id: string) => (
+                    <ComboboxItem key={id} value={id}>
+                      {id ? (proveedores.find((p) => p.id === id)?.nombre ?? "") : "Sin proveedor"}
+                    </ComboboxItem>
+                  )}
+                </ComboboxList>
+              </ComboboxPopup>
+            </ComboboxPositioner>
+          </ComboboxPortal>
+        </Combobox>
       )}
       {error && <p className="text-sm text-destructive">{error}</p>}
     </div>

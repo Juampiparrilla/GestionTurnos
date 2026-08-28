@@ -6,12 +6,18 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+  Combobox,
+  ComboboxClear,
+  ComboboxEmpty,
+  ComboboxInput,
+  ComboboxInputGroup,
+  ComboboxItem,
+  ComboboxList,
+  ComboboxPopup,
+  ComboboxPortal,
+  ComboboxPositioner,
+  ComboboxTrigger,
+} from "@/components/ui/combobox";
 import { PendingOverlay } from "@/components/pending-overlay";
 import { showSuccessToast } from "@/lib/toast";
 import type { Categoria } from "@/types/categoria";
@@ -105,21 +111,34 @@ export function CategoriaSelectField({
           </Button>
         </div>
       ) : (
-        <Select name="categoriaId" value={value} onValueChange={(v) => onChange(v ?? "")}>
-          <SelectTrigger id="categoriaId" className="w-full">
-            <SelectValue>
-              {(id: string) => (id ? (categorias.find((c) => c.id === id)?.nombre ?? "Sin categoría") : "Sin categoría")}
-            </SelectValue>
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="">Sin categoría</SelectItem>
-            {categorias.map((categoria) => (
-              <SelectItem key={categoria.id} value={categoria.id}>
-                {categoria.nombre}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <Combobox
+          items={["", ...categorias.map((c) => c.id)]}
+          value={value}
+          onValueChange={(v) => onChange(v ?? "")}
+          itemToStringLabel={(id: string) =>
+            id ? (categorias.find((c) => c.id === id)?.nombre ?? "") : "Sin categoría"
+          }
+        >
+          <ComboboxInputGroup>
+            <ComboboxInput id="categoriaId" placeholder="Buscar categoría..." />
+            <ComboboxClear />
+            <ComboboxTrigger />
+          </ComboboxInputGroup>
+          <ComboboxPortal>
+            <ComboboxPositioner>
+              <ComboboxPopup>
+                <ComboboxEmpty>No se encontraron categorías.</ComboboxEmpty>
+                <ComboboxList>
+                  {(id: string) => (
+                    <ComboboxItem key={id} value={id}>
+                      {id ? (categorias.find((c) => c.id === id)?.nombre ?? "") : "Sin categoría"}
+                    </ComboboxItem>
+                  )}
+                </ComboboxList>
+              </ComboboxPopup>
+            </ComboboxPositioner>
+          </ComboboxPortal>
+        </Combobox>
       )}
       {error && <p className="text-sm text-destructive">{error}</p>}
     </div>

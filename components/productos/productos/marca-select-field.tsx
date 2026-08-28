@@ -6,12 +6,18 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+  Combobox,
+  ComboboxClear,
+  ComboboxEmpty,
+  ComboboxInput,
+  ComboboxInputGroup,
+  ComboboxItem,
+  ComboboxList,
+  ComboboxPopup,
+  ComboboxPortal,
+  ComboboxPositioner,
+  ComboboxTrigger,
+} from "@/components/ui/combobox";
 import { PendingOverlay } from "@/components/pending-overlay";
 import { showSuccessToast } from "@/lib/toast";
 import type { Marca } from "@/types/marca";
@@ -104,21 +110,32 @@ export function MarcaSelectField({
           </Button>
         </div>
       ) : (
-        <Select name="marcaId" value={value} onValueChange={(v) => onChange(v ?? "")}>
-          <SelectTrigger id="marcaId" className="w-full">
-            <SelectValue>
-              {(id: string) => (id ? (marcas.find((m) => m.id === id)?.nombre ?? "Sin marca") : "Sin marca")}
-            </SelectValue>
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="">Sin marca</SelectItem>
-            {marcas.map((marca) => (
-              <SelectItem key={marca.id} value={marca.id}>
-                {marca.nombre}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <Combobox
+          items={["", ...marcas.map((m) => m.id)]}
+          value={value}
+          onValueChange={(v) => onChange(v ?? "")}
+          itemToStringLabel={(id: string) => (id ? (marcas.find((m) => m.id === id)?.nombre ?? "") : "Sin marca")}
+        >
+          <ComboboxInputGroup>
+            <ComboboxInput id="marcaId" placeholder="Buscar marca..." />
+            <ComboboxClear />
+            <ComboboxTrigger />
+          </ComboboxInputGroup>
+          <ComboboxPortal>
+            <ComboboxPositioner>
+              <ComboboxPopup>
+                <ComboboxEmpty>No se encontraron marcas.</ComboboxEmpty>
+                <ComboboxList>
+                  {(id: string) => (
+                    <ComboboxItem key={id} value={id}>
+                      {id ? (marcas.find((m) => m.id === id)?.nombre ?? "") : "Sin marca"}
+                    </ComboboxItem>
+                  )}
+                </ComboboxList>
+              </ComboboxPopup>
+            </ComboboxPositioner>
+          </ComboboxPortal>
+        </Combobox>
       )}
       {error && <p className="text-sm text-destructive">{error}</p>}
     </div>

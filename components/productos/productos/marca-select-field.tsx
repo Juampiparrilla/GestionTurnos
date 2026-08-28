@@ -13,6 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { PendingOverlay } from "@/components/pending-overlay";
+import { showSuccessToast } from "@/lib/toast";
 import type { Marca } from "@/types/marca";
 
 // Selector de marca con un "+" al lado para crear una nueva sin salir de
@@ -65,6 +66,7 @@ export function MarcaSelectField({
     setNombre("");
     setCreating(false);
     setIsSubmitting(false);
+    showSuccessToast("Marca creada con éxito");
   }
 
   return (
@@ -103,7 +105,7 @@ export function MarcaSelectField({
         </div>
       ) : (
         <Select name="marcaId" value={value} onValueChange={(v) => onChange(v ?? "")}>
-          <SelectTrigger id="marcaId">
+          <SelectTrigger id="marcaId" className="w-full">
             <SelectValue>
               {(id: string) => (id ? (marcas.find((m) => m.id === id)?.nombre ?? "Sin marca") : "Sin marca")}
             </SelectValue>

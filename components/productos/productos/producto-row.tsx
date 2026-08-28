@@ -89,26 +89,21 @@ export function ProductoRow({
   return (
     <>
       <PendingOverlay pending={isPending} />
-      <div className="rounded-lg border bg-background shadow-sm">
-        <div className="flex items-center justify-between gap-3 p-4">
+      <div className="min-w-0 rounded-lg border bg-background shadow-sm">
+        <div className="flex min-w-0 items-center justify-between gap-3 p-4">
           <div className="flex min-w-0 items-center gap-3">
             <span className="w-6 shrink-0 text-sm text-muted-foreground">{numero}.</span>
-            <div className="min-w-0">
-              <p className="truncate font-medium">
-                {producto.nombre} · {producto.kg} kg
-              </p>
-              <p className="truncate text-sm text-muted-foreground">
-                {[marcaNombre, categoriaNombre, proveedorNombre].filter(Boolean).join(" · ") || "Sin datos"}
-              </p>
-            </div>
+            <p className="min-w-0 truncate font-medium">
+              {producto.nombre} · {producto.kg} kg
+            </p>
           </div>
-          <div className="flex shrink-0 items-center gap-2">
+          <div className="flex shrink-0 items-center gap-1">
             {!producto.active && <Badge variant="outline">Inactivo</Badge>}
             <Button
               variant="ghost"
               size="icon-sm"
               onClick={() => setExpanded((v) => !v)}
-              aria-label={expanded ? "Ocultar precios" : "Ver precios"}
+              aria-label={expanded ? "Ocultar detalle" : "Ver detalle"}
             >
               {expanded ? (
                 <ChevronUp className="size-4" aria-hidden="true" />
@@ -145,7 +140,8 @@ export function ProductoRow({
           </div>
         </div>
         {expanded && (
-          <div className="flex flex-wrap gap-x-4 gap-y-1 border-t px-4 py-3 text-sm text-muted-foreground">
+          <div className="flex flex-col gap-1 border-t px-4 py-3 text-sm text-muted-foreground">
+            <span>{[marcaNombre, categoriaNombre, proveedorNombre].filter(Boolean).join(" · ") || "Sin datos"}</span>
             <span>Costo: {currency(producto.costo)}</span>
             <span>
               Bolsa cerrada: {currency(producto.precio_venta_cerrada)}

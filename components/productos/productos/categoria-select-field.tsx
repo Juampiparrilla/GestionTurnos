@@ -13,6 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { PendingOverlay } from "@/components/pending-overlay";
+import { showSuccessToast } from "@/lib/toast";
 import type { Categoria } from "@/types/categoria";
 
 // Selector de categoría con un "+" al lado para crear una nueva sin salir
@@ -66,6 +67,7 @@ export function CategoriaSelectField({
     setNombre("");
     setCreating(false);
     setIsSubmitting(false);
+    showSuccessToast("Categoría creada con éxito");
   }
 
   return (
@@ -104,7 +106,7 @@ export function CategoriaSelectField({
         </div>
       ) : (
         <Select name="categoriaId" value={value} onValueChange={(v) => onChange(v ?? "")}>
-          <SelectTrigger id="categoriaId">
+          <SelectTrigger id="categoriaId" className="w-full">
             <SelectValue>
               {(id: string) => (id ? (categorias.find((c) => c.id === id)?.nombre ?? "Sin categoría") : "Sin categoría")}
             </SelectValue>

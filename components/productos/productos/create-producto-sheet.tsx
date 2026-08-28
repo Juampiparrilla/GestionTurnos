@@ -14,6 +14,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { uppercaseOnChange } from "@/lib/productos/uppercase-input";
+import { showSuccessToast } from "@/lib/toast";
+import { MoneyInput } from "@/components/productos/money-input";
 import type { Marca } from "@/types/marca";
 import type { Categoria } from "@/types/categoria";
 import type { Proveedor } from "@/types/proveedor";
@@ -48,13 +50,13 @@ export function CreateProductoSheet({
 
   const [kg, setKg] = useState(0);
   const [costo, setCosto] = useState(0);
-  const [porcentajeCerrada, setPorcentajeCerrada] = useState(30);
+  const [porcentajeCerrada, setPorcentajeCerrada] = useState(0);
   const [manualCerrada, setManualCerrada] = useState(false);
   const [precioManualCerrada, setPrecioManualCerrada] = useState(0);
-  const [porcentajeAbierta, setPorcentajeAbierta] = useState(45);
+  const [porcentajeAbierta, setPorcentajeAbierta] = useState(0);
   const [manualAbierta, setManualAbierta] = useState(false);
   const [precioManualAbierta, setPrecioManualAbierta] = useState(0);
-  const [porcentajePorMayor, setPorcentajePorMayor] = useState(20);
+  const [porcentajePorMayor, setPorcentajePorMayor] = useState(0);
   const [manualPorMayor, setManualPorMayor] = useState(false);
   const [precioManualPorMayor, setPrecioManualPorMayor] = useState(0);
 
@@ -97,6 +99,7 @@ export function CreateProductoSheet({
 
     setIsSubmitting(false);
     onOpenChange(false);
+    showSuccessToast("Producto creado con éxito");
     router.refresh();
   }
 
@@ -163,15 +166,7 @@ export function CreateProductoSheet({
             </div>
             <div className="space-y-2">
               <Label htmlFor="costo">Precio de costo</Label>
-              <Input
-                id="costo"
-                type="number"
-                step="0.01"
-                min="0"
-                required
-                value={costo || ""}
-                onChange={(e) => setCosto(Number(e.target.value))}
-              />
+              <MoneyInput id="costo" required value={costo} onChange={setCosto} />
             </div>
 
             <PriceTrackFields

@@ -3,6 +3,7 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import { MoneyInput } from "@/components/productos/money-input";
 
 // Un bloque de precio (bolsa cerrada o bolsa abierta): o se carga el % de
 // ganancia y el precio se calcula solo, o se fija el precio a mano (el %
@@ -45,14 +46,11 @@ export function PriceTrackFields({
       {manual ? (
         <div className="space-y-2">
           <Label htmlFor={`${namePrefix}-precio`}>Precio de venta</Label>
-          <Input
+          <MoneyInput
             id={`${namePrefix}-precio`}
-            type="number"
-            step="0.01"
-            min="0"
             required
-            value={precioManual || ""}
-            onChange={(e) => onPrecioManualChange(Number(e.target.value))}
+            value={precioManual}
+            onChange={onPrecioManualChange}
           />
         </div>
       ) : (

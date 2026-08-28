@@ -13,6 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { PendingOverlay } from "@/components/pending-overlay";
+import { showSuccessToast } from "@/lib/toast";
 import type { Proveedor } from "@/types/proveedor";
 
 // Selector de proveedor con un "+" al lado para crear uno nuevo sin salir
@@ -69,6 +70,7 @@ export function ProveedorSelectField({
     setNombre("");
     setCreating(false);
     setIsSubmitting(false);
+    showSuccessToast("Proveedor creado con éxito");
   }
 
   return (
@@ -107,7 +109,7 @@ export function ProveedorSelectField({
         </div>
       ) : (
         <Select name="proveedorId" value={value} onValueChange={(v) => onChange(v ?? "")}>
-          <SelectTrigger id="proveedorId">
+          <SelectTrigger id="proveedorId" className="w-full">
             <SelectValue>
               {(id: string) => (id ? (proveedores.find((p) => p.id === id)?.nombre ?? "Sin proveedor") : "Sin proveedor")}
             </SelectValue>

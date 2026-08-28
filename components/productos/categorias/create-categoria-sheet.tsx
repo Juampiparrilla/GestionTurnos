@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { uppercaseOnChange } from "@/lib/productos/uppercase-input";
+import { showSuccessToast } from "@/lib/toast";
 
 export function CreateCategoriaSheet({
   open,
@@ -51,6 +52,7 @@ export function CreateCategoriaSheet({
 
     setIsSubmitting(false);
     onOpenChange(false);
+    showSuccessToast("Categoría creada con éxito");
     router.refresh();
   }
 

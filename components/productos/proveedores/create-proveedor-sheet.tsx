@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { uppercaseOnChange } from "@/lib/productos/uppercase-input";
+import { showSuccessToast } from "@/lib/toast";
 
 export function CreateProveedorSheet({
   open,
@@ -54,6 +55,7 @@ export function CreateProveedorSheet({
 
     setIsSubmitting(false);
     onOpenChange(false);
+    showSuccessToast("Proveedor creado con éxito");
     router.refresh();
   }
 

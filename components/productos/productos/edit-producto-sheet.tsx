@@ -15,6 +15,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { uppercaseOnChange } from "@/lib/productos/uppercase-input";
+import { MoneyInput } from "@/components/productos/money-input";
 import type { Marca } from "@/types/marca";
 import type { Categoria } from "@/types/categoria";
 import type { Proveedor } from "@/types/proveedor";
@@ -126,30 +127,32 @@ export function EditProductoSheet({
                 required
               />
             </div>
-            <MarcaSelectField
-              marcas={marcaOptions}
-              value={marcaId}
-              onChange={setMarcaId}
-              onMarcaCreated={(nueva) =>
-                setMarcaOptions((prev) => [...prev, nueva].sort((a, b) => a.nombre.localeCompare(b.nombre)))
-              }
-            />
-            <CategoriaSelectField
-              categorias={categoriaOptions}
-              value={categoriaId}
-              onChange={setCategoriaId}
-              onCategoriaCreated={(nueva) =>
-                setCategoriaOptions((prev) => [...prev, nueva].sort((a, b) => a.nombre.localeCompare(b.nombre)))
-              }
-            />
-            <ProveedorSelectField
-              proveedores={proveedorOptions}
-              value={proveedorId}
-              onChange={setProveedorId}
-              onProveedorCreated={(nuevo) =>
-                setProveedorOptions((prev) => [...prev, nuevo].sort((a, b) => a.nombre.localeCompare(b.nombre)))
-              }
-            />
+            <div className="flex flex-col gap-4 rounded-lg bg-muted/40 p-3">
+              <MarcaSelectField
+                marcas={marcaOptions}
+                value={marcaId}
+                onChange={setMarcaId}
+                onMarcaCreated={(nueva) =>
+                  setMarcaOptions((prev) => [...prev, nueva].sort((a, b) => a.nombre.localeCompare(b.nombre)))
+                }
+              />
+              <CategoriaSelectField
+                categorias={categoriaOptions}
+                value={categoriaId}
+                onChange={setCategoriaId}
+                onCategoriaCreated={(nueva) =>
+                  setCategoriaOptions((prev) => [...prev, nueva].sort((a, b) => a.nombre.localeCompare(b.nombre)))
+                }
+              />
+              <ProveedorSelectField
+                proveedores={proveedorOptions}
+                value={proveedorId}
+                onChange={setProveedorId}
+                onProveedorCreated={(nuevo) =>
+                  setProveedorOptions((prev) => [...prev, nuevo].sort((a, b) => a.nombre.localeCompare(b.nombre)))
+                }
+              />
+            </div>
             <div className="space-y-2">
               <Label htmlFor="descripcion">Descripción (opcional)</Label>
               <Input
@@ -175,15 +178,7 @@ export function EditProductoSheet({
             </div>
             <div className="space-y-2">
               <Label htmlFor="costo">Precio de costo</Label>
-              <Input
-                id="costo"
-                type="number"
-                step="0.01"
-                min="0"
-                required
-                value={costo || ""}
-                onChange={(e) => setCosto(Number(e.target.value))}
-              />
+              <MoneyInput id="costo" required value={costo} onChange={setCosto} />
             </div>
 
             <PriceTrackFields

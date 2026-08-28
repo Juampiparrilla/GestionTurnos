@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { uppercaseOnChange } from "@/lib/productos/uppercase-input";
+import { showSuccessToast } from "@/lib/toast";
 
 export function CreateMarcaSheet({
   open,
@@ -48,6 +49,7 @@ export function CreateMarcaSheet({
 
     setIsSubmitting(false);
     onOpenChange(false);
+    showSuccessToast("Marca creada con éxito");
     router.refresh();
   }
 

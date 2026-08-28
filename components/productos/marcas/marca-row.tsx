@@ -47,7 +47,7 @@ export function MarcaRow({ marca, numero }: { marca: Marca; numero: number }) {
   return (
     <>
       <PendingOverlay pending={isPending} />
-      <div className="flex items-center justify-between gap-3 rounded-lg border bg-background p-4 shadow-sm">
+      <div className="flex min-w-0 items-center justify-between gap-3 rounded-lg border bg-background p-4 shadow-sm">
         <div className="flex min-w-0 items-center gap-3">
           <span className="w-6 shrink-0 text-sm text-muted-foreground">{numero}.</span>
           <p className="truncate font-medium">{marca.nombre}</p>

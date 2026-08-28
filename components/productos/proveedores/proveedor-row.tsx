@@ -49,7 +49,7 @@ export function ProveedorRow({ proveedor, numero }: { proveedor: Proveedor; nume
   return (
     <>
       <PendingOverlay pending={isPending} />
-      <div className="flex items-center justify-between gap-3 rounded-lg border bg-background p-4 shadow-sm">
+      <div className="flex min-w-0 items-center justify-between gap-3 rounded-lg border bg-background p-4 shadow-sm">
         <div className="flex min-w-0 flex-1 items-center gap-3">
           <span className="w-6 shrink-0 text-sm text-muted-foreground">{numero}.</span>
           <div className="min-w-0">

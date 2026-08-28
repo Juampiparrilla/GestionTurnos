@@ -42,6 +42,11 @@ const FUNCIONALIDADES = [
     descripcion:
       "Cada producto recibe un código único generado a partir de su nombre, para identificarlo rápido en listados, reportes y PDFs.",
   },
+  {
+    titulo: "Importar Excel",
+    descripcion:
+      "Descargá una plantilla, completala con varios productos a la vez y subila para cargarlos todos juntos en vez de uno por uno.",
+  },
 ];
 
 export function FuncionalidadesDialog() {

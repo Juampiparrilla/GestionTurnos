@@ -4,6 +4,7 @@ import { FileText, LayoutGrid, Package, Tag, Truck } from "lucide-react";
 import { getCurrentProfile } from "@/lib/auth/session";
 import { LinkPendingSpinner } from "@/components/link-pending-spinner";
 import { FuncionalidadesDialog } from "@/components/productos/funcionalidades-dialog";
+import { ImportarExcelSheet } from "@/components/productos/importar-excel-sheet";
 
 const SECTIONS = [
   { href: "/productos/productos", label: "Productos", icon: Package },
@@ -34,6 +35,7 @@ export default async function ProductosHomePage() {
   return (
     <div className="space-y-3">
       <FuncionalidadesDialog />
+      <ImportarExcelSheet />
       <div className="grid grid-cols-2 gap-3">
         {SECTIONS.map(({ href, label, icon: Icon }) => (
           <Link

@@ -42,3 +42,26 @@ export const createProductoSchema = z.object({
 export const updateProductoSchema = createProductoSchema.extend({
   active: z.boolean().optional(),
 });
+
+const nombreEntidadSchema = z
+  .string()
+  .trim()
+  .min(1, "No puede estar vacío")
+  .max(100, "No puede superar los 100 caracteres");
+
+// Fila cruda de la planilla de importación: a diferencia de
+// createProductoSchema, marca/categoría/proveedor llegan como texto (se
+// resuelven por nombre contra la base, no como uuid) y no admite precio
+// manual/oferta/descripción -- no forman parte de las columnas de la
+// plantilla.
+export const importProductoRowSchema = z.object({
+  nombre: nombreSchema,
+  kg: z.number().positive("Tiene que ser mayor a 0"),
+  marca: nombreEntidadSchema,
+  categoria: nombreEntidadSchema,
+  proveedor: nombreEntidadSchema,
+  costo: precioSchema,
+  porcentajeCerrada: porcentajeSchema,
+  porcentajeAbierta: porcentajeSchema,
+  porcentajePorMayor: porcentajeSchema,
+});

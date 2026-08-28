@@ -110,7 +110,18 @@ export async function DELETE(
   const { error } = await admin.auth.admin.deleteUser(id);
 
   if (error) {
-    return NextResponse.json({ error: "No se pudo borrar el usuario. Intentá de nuevo." }, { status: 400 });
+    // Puede ser un perfil de prueba cargado directo en la base, sin una
+    // cuenta de Auth real detrás -- si la Admin API no lo encuentra, se
+    // borra igual la fila de profiles para que no quede colgada en la lista.
+    const noEncontrado = error.status === 404;
+    if (!noEncontrado) {
+      return NextResponse.json({ error: "No se pudo borrar el usuario. Intentá de nuevo." }, { status: 400 });
+    }
+
+    const { error: profileError } = await supabase.from("profiles").delete().eq("id", id);
+    if (profileError) {
+      return NextResponse.json({ error: "No se pudo borrar el usuario. Intentá de nuevo." }, { status: 400 });
+    }
   }
 
   return NextResponse.json({ ok: true });

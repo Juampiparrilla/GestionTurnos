@@ -14,7 +14,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { uppercaseOnChange } from "@/lib/productos/uppercase-input";
-import { MoneyInput } from "@/components/productos/money-input";
 import type { Marca } from "@/types/marca";
 import type { Categoria } from "@/types/categoria";
 import type { Proveedor } from "@/types/proveedor";
@@ -23,6 +22,7 @@ import { MarcaSelectField } from "./marca-select-field";
 import { CategoriaSelectField } from "./categoria-select-field";
 import { ProveedorSelectField } from "./proveedor-select-field";
 import { PriceTrackFields } from "./price-track-fields";
+import { CostoUnitarioField } from "./costo-unitario-field";
 
 export function EditProductoSheet({
   producto,
@@ -182,10 +182,7 @@ export function EditProductoSheet({
               />
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="costo">Precio de costo</Label>
-              <MoneyInput id="costo" required value={costo} onChange={setCosto} />
-            </div>
+            <CostoUnitarioField costo={costo} onCostoChange={setCosto} />
 
             <PriceTrackFields
               label="Bolsa cerrada"

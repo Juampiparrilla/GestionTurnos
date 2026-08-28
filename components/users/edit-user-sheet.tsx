@@ -128,6 +128,7 @@ export function EditUserSheet({
   }
 
   async function handleRevoke() {
+    setRevokeConfirmOpen(false);
     setIsRevoking(true);
     setActionError(null);
 
@@ -137,17 +138,16 @@ export function EditUserSheet({
       const data = await res.json();
       setActionError(data.error ?? "No se pudo revocar la invitación.");
       setIsRevoking(false);
-      setRevokeConfirmOpen(false);
       return;
     }
 
     setIsRevoking(false);
-    setRevokeConfirmOpen(false);
     setInvitationStatus("REVOKED");
     router.refresh();
   }
 
   async function handleDelete() {
+    setDeleteConfirmOpen(false);
     setIsDeleting(true);
     setActionError(null);
 
@@ -157,12 +157,10 @@ export function EditUserSheet({
       const data = await res.json();
       setActionError(data.error ?? "No se pudo borrar el usuario.");
       setIsDeleting(false);
-      setDeleteConfirmOpen(false);
       return;
     }
 
     setIsDeleting(false);
-    setDeleteConfirmOpen(false);
     onOpenChange(false);
     router.refresh();
   }

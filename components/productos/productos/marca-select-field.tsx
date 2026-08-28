@@ -12,6 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { PendingOverlay } from "@/components/pending-overlay";
 import type { Marca } from "@/types/marca";
 
 // Selector de marca con un "+" al lado para crear una nueva sin salir de
@@ -68,6 +69,7 @@ export function MarcaSelectField({
 
   return (
     <div className="space-y-2">
+      <PendingOverlay pending={isSubmitting} />
       <div className="flex items-center justify-between">
         <Label htmlFor="marcaId">Marca</Label>
         <Button

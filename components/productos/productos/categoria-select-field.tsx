@@ -12,6 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { PendingOverlay } from "@/components/pending-overlay";
 import type { Categoria } from "@/types/categoria";
 
 // Selector de categoría con un "+" al lado para crear una nueva sin salir
@@ -69,6 +70,7 @@ export function CategoriaSelectField({
 
   return (
     <div className="space-y-2">
+      <PendingOverlay pending={isSubmitting} />
       <div className="flex items-center justify-between">
         <Label htmlFor="categoriaId">Categoría</Label>
         <Button

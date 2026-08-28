@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { SearchInput } from "@/components/productos/search-input";
 import type { Marca } from "@/types/marca";
 import type { Categoria } from "@/types/categoria";
 import type { Proveedor } from "@/types/proveedor";
@@ -21,24 +22,31 @@ export function ProductosList({
   proveedores: Proveedor[];
 }) {
   const [createOpen, setCreateOpen] = useState(false);
+  const [query, setQuery] = useState("");
 
   const marcaPorId = new Map(marcas.map((m) => [m.id, m.nombre]));
   const categoriaPorId = new Map(categorias.map((c) => [c.id, c.nombre]));
   const proveedorPorId = new Map(proveedores.map((p) => [p.id, p.nombre]));
 
+  const filtrados = productos.filter((p) => p.nombre.toLowerCase().includes(query.trim().toLowerCase()));
+
   return (
     <div className="space-y-4">
+      <SearchInput value={query} onChange={setQuery} placeholder="Buscar producto..." />
       <Button onClick={() => setCreateOpen(true)}>+ Crear producto</Button>
-      {productos.length === 0 ? (
+      {filtrados.length === 0 ? (
         <div className="rounded-lg border border-dashed p-8 text-center text-sm text-muted-foreground">
-          Todavía no hay productos. Podés cargar uno a mano o importar un Excel.
+          {productos.length === 0
+            ? "Todavía no hay productos. Podés cargar uno a mano o importar un Excel."
+            : "No se encontraron productos."}
         </div>
       ) : (
         <div className="grid gap-3">
-          {productos.map((producto) => (
+          {filtrados.map((producto, index) => (
             <ProductoRow
               key={producto.id}
               producto={producto}
+              numero={index + 1}
               marcaNombre={producto.marca_id ? (marcaPorId.get(producto.marca_id) ?? null) : null}
               categoriaNombre={producto.categoria_id ? (categoriaPorId.get(producto.categoria_id) ?? null) : null}
               proveedorNombre={producto.proveedor_id ? (proveedorPorId.get(producto.proveedor_id) ?? null) : null}

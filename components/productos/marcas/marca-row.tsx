@@ -5,10 +5,11 @@ import { useRouter } from "next/navigation";
 import { Ban, Pencil, RotateCcw, Trash2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { PendingOverlay } from "@/components/pending-overlay";
 import type { Marca } from "@/types/marca";
 import { EditMarcaSheet } from "./edit-marca-sheet";
 
-export function MarcaRow({ marca }: { marca: Marca }) {
+export function MarcaRow({ marca, numero }: { marca: Marca; numero: number }) {
   const router = useRouter();
   const [editOpen, setEditOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
@@ -45,8 +46,12 @@ export function MarcaRow({ marca }: { marca: Marca }) {
 
   return (
     <>
+      <PendingOverlay pending={isPending} />
       <div className="flex items-center justify-between gap-3 rounded-lg border bg-background p-4 shadow-sm">
-        <p className="min-w-0 truncate font-medium">{marca.nombre}</p>
+        <div className="flex min-w-0 items-center gap-3">
+          <span className="w-6 shrink-0 text-sm text-muted-foreground">{numero}.</span>
+          <p className="truncate font-medium">{marca.nombre}</p>
+        </div>
         <div className="flex shrink-0 items-center gap-2">
           {!marca.active && <Badge variant="outline">Inactiva</Badge>}
           <Button variant="ghost" size="icon-sm" onClick={() => setEditOpen(true)} aria-label="Editar">

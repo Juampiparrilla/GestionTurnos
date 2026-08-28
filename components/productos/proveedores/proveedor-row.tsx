@@ -5,11 +5,12 @@ import { useRouter } from "next/navigation";
 import { Ban, Pencil, RotateCcw, Trash2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { PendingOverlay } from "@/components/pending-overlay";
 import type { Proveedor } from "@/types/proveedor";
 import { EditProveedorSheet } from "./edit-proveedor-sheet";
 import { AjustarPorcentajeSheet } from "./ajustar-porcentaje-sheet";
 
-export function ProveedorRow({ proveedor }: { proveedor: Proveedor }) {
+export function ProveedorRow({ proveedor, numero }: { proveedor: Proveedor; numero: number }) {
   const router = useRouter();
   const [editOpen, setEditOpen] = useState(false);
   const [ajustarOpen, setAjustarOpen] = useState(false);
@@ -47,13 +48,17 @@ export function ProveedorRow({ proveedor }: { proveedor: Proveedor }) {
 
   return (
     <>
+      <PendingOverlay pending={isPending} />
       <div className="flex items-center justify-between gap-3 rounded-lg border bg-background p-4 shadow-sm">
-        <div className="min-w-0 flex-1">
-          <p className="truncate font-medium">{proveedor.nombre}</p>
-          <p className="truncate text-sm text-muted-foreground">
-            {[proveedor.contacto, proveedor.telefono, proveedor.email].filter(Boolean).join(" · ") ||
-              "Sin datos de contacto"}
-          </p>
+        <div className="flex min-w-0 flex-1 items-center gap-3">
+          <span className="w-6 shrink-0 text-sm text-muted-foreground">{numero}.</span>
+          <div className="min-w-0">
+            <p className="truncate font-medium">{proveedor.nombre}</p>
+            <p className="truncate text-sm text-muted-foreground">
+              {[proveedor.contacto, proveedor.telefono, proveedor.email].filter(Boolean).join(" · ") ||
+                "Sin datos de contacto"}
+            </p>
+          </div>
         </div>
         <div className="flex shrink-0 items-center gap-2">
           {!proveedor.active && <Badge variant="outline">Inactivo</Badge>}

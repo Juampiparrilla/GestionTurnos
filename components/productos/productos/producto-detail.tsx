@@ -7,6 +7,7 @@ import { ArrowLeft, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { LinkPendingSpinner } from "@/components/link-pending-spinner";
+import { PendingOverlay } from "@/components/pending-overlay";
 import type { Marca } from "@/types/marca";
 import type { Categoria } from "@/types/categoria";
 import type { Proveedor } from "@/types/proveedor";
@@ -49,39 +50,41 @@ export function ProductoDetail({
 
   return (
     <div className="space-y-6">
-      <Link
-        href="/productos/productos"
-        className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
-      >
-        <ArrowLeft className="size-4" />
-        Volver a productos
-        <LinkPendingSpinner />
-      </Link>
-
-      <div className="flex items-start justify-between gap-4">
-        <div>
+      <PendingOverlay pending={isPending} />
+      <div>
+        <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <h1 className="text-xl font-semibold">{producto.nombre}</h1>
             {!producto.active && <Badge variant="outline">Inactivo</Badge>}
           </div>
+          <Link
+            href="/productos/productos"
+            className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
+          >
+            <ArrowLeft className="size-4" />
+            Volver a productos
+            <LinkPendingSpinner />
+          </Link>
+        </div>
+        <div className="flex items-center justify-between gap-4">
           <p className="text-sm text-muted-foreground">
             {[marcaNombre, producto.descripcion].filter(Boolean).join(" · ") || "Sin datos adicionales"}
           </p>
-        </div>
-        <div className="flex shrink-0 items-center gap-2">
-          <Button variant="outline" onClick={() => setEditOpen(true)}>
-            Editar
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={deleteForever}
-            disabled={isPending}
-            aria-label="Borrar definitivamente"
-            className="text-destructive hover:text-destructive"
-          >
-            <Trash2 className="size-4" aria-hidden="true" />
-          </Button>
+          <div className="flex shrink-0 items-center gap-2">
+            <Button variant="outline" onClick={() => setEditOpen(true)}>
+              Editar
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={deleteForever}
+              disabled={isPending}
+              aria-label="Borrar definitivamente"
+              className="text-destructive hover:text-destructive"
+            >
+              <Trash2 className="size-4" aria-hidden="true" />
+            </Button>
+          </div>
         </div>
       </div>
 

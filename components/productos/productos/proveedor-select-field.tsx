@@ -12,6 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { PendingOverlay } from "@/components/pending-overlay";
 import type { Proveedor } from "@/types/proveedor";
 
 // Selector de proveedor con un "+" al lado para crear uno nuevo sin salir
@@ -72,6 +73,7 @@ export function ProveedorSelectField({
 
   return (
     <div className="space-y-2">
+      <PendingOverlay pending={isSubmitting} />
       <div className="flex items-center justify-between">
         <Label htmlFor="proveedorId">Proveedor</Label>
         <Button

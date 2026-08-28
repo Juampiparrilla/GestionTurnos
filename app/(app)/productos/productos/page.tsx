@@ -24,9 +24,11 @@ export default async function ProductosPage() {
 
   return (
     <div className="space-y-6">
-      <VolverAProductosLink />
       <div>
-        <h1 className="text-xl font-semibold">Productos</h1>
+        <div className="flex items-center justify-between gap-4">
+          <h1 className="text-xl font-semibold">Productos</h1>
+          <VolverAProductosLink />
+        </div>
         <p className="text-sm text-muted-foreground">Catálogo con costos, precios y presentaciones.</p>
       </div>
       <ProductosList

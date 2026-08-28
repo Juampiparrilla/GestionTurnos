@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { LayoutGrid, Package, Tag, Truck } from "lucide-react";
 import { getCurrentProfile } from "@/lib/auth/session";
+import { LinkPendingSpinner } from "@/components/link-pending-spinner";
 
 const SECTIONS = [
   { href: "/productos/productos", label: "Productos", icon: Package },
@@ -39,6 +40,7 @@ export default async function ProductosHomePage() {
         >
           <Icon className="size-6" aria-hidden="true" />
           <span className="font-medium">{label}</span>
+          <LinkPendingSpinner />
         </Link>
       ))}
     </div>

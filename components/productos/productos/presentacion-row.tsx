@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Ban, Pencil, RotateCcw, Trash2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { PendingOverlay } from "@/components/pending-overlay";
 import type { Presentacion } from "@/types/producto";
 import { EditPresentacionSheet } from "./edit-presentacion-sheet";
 
@@ -60,6 +61,7 @@ export function PresentacionRow({ presentacion }: { presentacion: Presentacion }
 
   return (
     <>
+      <PendingOverlay pending={isPending} />
       <div className="flex items-start justify-between gap-3 rounded-lg border bg-background p-4 shadow-sm">
         <div className="space-y-1">
           <p className="font-medium">{presentacion.kg} kg</p>

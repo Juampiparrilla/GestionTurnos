@@ -5,10 +5,11 @@ import { useRouter } from "next/navigation";
 import { Ban, Pencil, RotateCcw, Trash2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { PendingOverlay } from "@/components/pending-overlay";
 import type { Categoria } from "@/types/categoria";
 import { EditCategoriaSheet } from "./edit-categoria-sheet";
 
-export function CategoriaRow({ categoria }: { categoria: Categoria }) {
+export function CategoriaRow({ categoria, numero }: { categoria: Categoria; numero: number }) {
   const router = useRouter();
   const [editOpen, setEditOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
@@ -45,12 +46,16 @@ export function CategoriaRow({ categoria }: { categoria: Categoria }) {
 
   return (
     <>
+      <PendingOverlay pending={isPending} />
       <div className="flex items-center justify-between gap-3 rounded-lg border bg-background p-4 shadow-sm">
-        <div className="min-w-0">
-          <p className="truncate font-medium">{categoria.nombre}</p>
-          {categoria.descripcion && (
-            <p className="truncate text-sm text-muted-foreground">{categoria.descripcion}</p>
-          )}
+        <div className="flex min-w-0 items-center gap-3">
+          <span className="w-6 shrink-0 text-sm text-muted-foreground">{numero}.</span>
+          <div className="min-w-0">
+            <p className="truncate font-medium">{categoria.nombre}</p>
+            {categoria.descripcion && (
+              <p className="truncate text-sm text-muted-foreground">{categoria.descripcion}</p>
+            )}
+          </div>
         </div>
         <div className="flex shrink-0 items-center gap-2">
           {!categoria.active && <Badge variant="outline">Inactiva</Badge>}

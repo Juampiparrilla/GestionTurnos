@@ -170,7 +170,15 @@ export function CreateProductoSheet({
               <Select
                 name="unidad-medida"
                 value={unidadMedida}
-                onValueChange={(v) => setUnidadMedida((v as "kg" | "unidad") ?? "kg")}
+                onValueChange={(v) => {
+                  const nueva = (v as "kg" | "unidad") ?? "kg";
+                  setUnidadMedida(nueva);
+                  // Al pasar a Unidad, lo más común es vender de a una (ej.
+                  // un sachet); no confundir con la cantidad que venga en
+                  // el paquete que se compra, eso se carga aparte en el
+                  // cálculo de costo.
+                  if (nueva === "unidad" && kg === 0) setKg(1);
+                }}
               >
                 <SelectTrigger id="unidad-medida" className="w-full">
                   <SelectValue>{(v: "kg" | "unidad") => (v === "kg" ? "Kg" : "Unidad")}</SelectValue>
@@ -192,6 +200,12 @@ export function CreateProductoSheet({
                 value={kg || ""}
                 onChange={(e) => setKg(Number(e.target.value))}
               />
+              {unidadMedida === "unidad" && (
+                <p className="text-xs text-muted-foreground">
+                  Normalmente 1 (se vende de a una). Si compraste un paquete con varias adentro, esa cantidad va en
+                  “Precio de lista con descuento” o “Compré varias unidades por un total”, más abajo.
+                </p>
+              )}
             </div>
             <MarcaSelectField
               marcas={marcaOptions}

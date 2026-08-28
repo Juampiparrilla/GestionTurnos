@@ -21,9 +21,13 @@ Catálogo de productos del negocio, con **Marcas**, **Categorías** y **Proveedo
 
 - Cada producto tiene su costo y **tres pistas de precio de venta independientes** — bolsa cerrada, bolsa abierta (venta suelta por kg) y por mayor — cada una con su % de ganancia o un precio fijado a mano. El precio por kg se calcula solo a partir de la bolsa abierta.
 - Un producto con varios pesos (ej. 15 kg y 25 kg) son simplemente dos filas del catálogo con el mismo nombre y marca, no una entidad "presentación" aparte.
+- Cada producto recibe un **código único** autogenerado a partir de su nombre, para identificarlo rápido en listados, reportes y PDFs.
+- El costo se puede cargar directo, o calcularlo a partir de una compra por varias unidades (ej. "3 bolsas por $18.000" → $6.000 c/u).
 - Toggle de **oferta** por producto, visible como ícono en el listado.
 - **Ajuste masivo de %** de ganancia por proveedor, sin tocar los productos que tienen el precio fijado manualmente.
-- **Reportes**: filtra el catálogo por categoría, proveedor, marca, kg, oferta y un rango de precio (sobre la pista que elijas), y genera un PDF con el resultado — completo para uso interno del negocio, o reducido a nombre + kg + un precio para compartir con un cliente.
+- **Importar por Excel**: se descarga una plantilla, se completa fuera de la app y se vuelve a subir para crear varios productos de una sola vez — cada fila se valida por separado, así un error en una no frena a las demás.
+- **Reportes**: filtra el catálogo por categoría, proveedor, marca, kg y oferta (con selección múltiple en cada uno) y por un rango de precio sobre la bolsa cerrada. Genera un PDF horizontal con el resultado, opcionalmente agrupado por categoría/marca/proveedor, con marca de agua y encabezado con el nombre y teléfono del negocio — completo para uso interno, o reducido a nombre + kg + los precios que elijas mostrar para compartir con un cliente (por WhatsApp o descarga directa).
+- Botón **Funcionalidades** en la pantalla principal con el detalle de todo lo anterior.
 - Solo Administrador y Super Administrador gestionan y ven costos; el catálogo de solo consulta para Empleado todavía está pendiente.
 
 ## Roles
@@ -32,7 +36,7 @@ Catálogo de productos del negocio, con **Marcas**, **Categorías** y **Proveedo
 |---|---|---|
 | **Administrador de Plataforma** | Global, no pertenece a ninguna organización | Da de alta organizaciones nuevas junto con su primer Super Administrador; activa/desactiva organizaciones. Sin acceso operativo a los turnos de ninguna empresa. |
 | **Super Administrador** | Una organización | Todo lo que puede un Administrador, más: crear otros Administradores, y es el único que puede asignar ese rol. |
-| **Administrador** | Una organización | Gestiona horarios, turnos, asignaciones, feriados, domingos y usuarios (crear, editar, activar/desactivar, invitar, restablecer contraseña). No puede crear organizaciones ni Super Administradores. |
+| **Administrador** | Una organización | Gestiona horarios, turnos, asignaciones, feriados, domingos y usuarios (crear, editar, activar/desactivar, invitar, restablecer contraseña, borrar en forma definitiva una vez desactivado). No puede crear organizaciones ni Super Administradores. |
 | **Empleado** | Una organización | Solo lectura: ve sus horarios, la grilla semanal, feriados y domingos correspondientes, y puede descargar el horario. |
 
 ## Stack
@@ -40,6 +44,7 @@ Catálogo de productos del negocio, con **Marcas**, **Categorías** y **Proveedo
 - **Next.js** (App Router) + TypeScript, Tailwind CSS v4, shadcn/ui (sobre Base UI)
 - **Supabase**: Postgres + Auth + Row Level Security como única capa de datos y de aislamiento entre organizaciones
 - **jsPDF** para generar los PDF de Reportes en el navegador, sin backend
+- **exceljs** para la plantilla e importación de productos por Excel (server-side)
 - Deploy en **Vercel**, auto-deploy sobre `main`
 
 La seguridad no depende del frontend: todo el aislamiento entre organizaciones y los permisos por rol están reforzados con RLS y funciones de base de datos, no solo con lo que muestra la interfaz.

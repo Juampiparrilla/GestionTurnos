@@ -16,7 +16,7 @@ export const AGRUPACION_LABELS: Record<Agrupacion, string> = {
 
 export type OpcionesPdf =
   | { modo: "negocio"; agrupacion: Agrupacion }
-  | { modo: "cliente"; precioTracks: PriceTrack[]; agrupacion: Agrupacion };
+  | { modo: "cliente"; precioTracks: PriceTrack[]; agrupacion: Agrupacion; validoHasta: Date | null };
 
 type ContextoPdf = {
   marcaPorId: Map<string, string>;
@@ -113,6 +113,12 @@ function construirDocumentoPdf(productos: Producto[], contexto: ContextoPdf, opc
     : contexto.organization.name;
   doc.text(datosOrganizacion, pageWidth - 14, 15, { align: "right" });
 
+  let inicioTabla = 26;
+  if (opciones.modo === "cliente" && opciones.validoHasta) {
+    doc.text(`Precios válidos hasta el ${opciones.validoHasta.toLocaleDateString("es-AR")}`, 14, 27);
+    inicioTabla = 32;
+  }
+
   doc.setTextColor(0);
 
   const head: string[][] =
@@ -150,7 +156,7 @@ function construirDocumentoPdf(productos: Producto[], contexto: ContextoPdf, opc
   autoTable(doc, {
     head,
     body,
-    startY: 26,
+    startY: inicioTabla,
     styles: { fontSize: 9 },
     headStyles: { fillColor: [24, 24, 27] },
     didDrawPage: () => dibujarMarcaDeAgua(doc, contexto.organization),

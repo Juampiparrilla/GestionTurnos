@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetFooter } from "@/components/ui/sheet";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -18,6 +19,10 @@ import type { Producto } from "@/types/producto";
 import type { Organization } from "@/types/organization";
 
 type Modo = "negocio" | "cliente";
+
+function calcularValidoHasta(desde: number, dias: number): Date | null {
+  return dias > 0 ? new Date(desde + dias * 24 * 60 * 60 * 1000) : null;
+}
 
 export function GenerarPdfSheet({
   open,
@@ -41,14 +46,24 @@ export function GenerarPdfSheet({
   const [modo, setModo] = useState<Modo>("negocio");
   const [precioTracks, setPrecioTracks] = useState<PriceTrack[]>([precioTrackFiltro]);
   const [agrupacion, setAgrupacion] = useState<Agrupacion>("ninguna");
+  const [diasValidez, setDiasValidez] = useState(0);
+  const [ahora] = useState(() => Date.now());
   const [isSharing, setIsSharing] = useState(false);
   const [shareError, setShareError] = useState<string | null>(null);
 
-  const opciones =
-    modo === "negocio"
-      ? ({ modo: "negocio", agrupacion } as const)
-      : ({ modo: "cliente", precioTracks, agrupacion } as const);
+  const validoHastaPreview = calcularValidoHasta(ahora, diasValidez);
   const sinPreciosElegidos = modo === "cliente" && precioTracks.length === 0;
+
+  function construirOpciones() {
+    return modo === "negocio"
+      ? ({ modo: "negocio", agrupacion } as const)
+      : ({
+          modo: "cliente",
+          precioTracks,
+          agrupacion,
+          validoHasta: calcularValidoHasta(Date.now(), diasValidez),
+        } as const);
+  }
 
   function toggleTrack(track: PriceTrack, checked: boolean) {
     setPrecioTracks((prev) => (checked ? [...prev, track] : prev.filter((t) => t !== track)));
@@ -58,7 +73,7 @@ export function GenerarPdfSheet({
     generarPdfReporte(
       productos,
       { marcaPorId, categoriaPorId, proveedorPorId, organization },
-      opciones,
+      construirOpciones(),
     );
     onOpenChange(false);
   }
@@ -69,7 +84,7 @@ export function GenerarPdfSheet({
     const resultado = await compartirPdfReportePorWhatsApp(
       productos,
       { marcaPorId, categoriaPorId, proveedorPorId, organization },
-      opciones,
+      construirOpciones(),
     );
     setIsSharing(false);
     if (!resultado.ok) {
@@ -139,6 +154,25 @@ export function GenerarPdfSheet({
               {sinPreciosElegidos && (
                 <p className="text-sm text-destructive">Elegí al menos un precio para mostrar.</p>
               )}
+            </div>
+          )}
+
+          {modo === "cliente" && (
+            <div className="space-y-2">
+              <Label htmlFor="pdf-validez">Válido por (días, opcional)</Label>
+              <Input
+                id="pdf-validez"
+                type="number"
+                step="1"
+                min="0"
+                value={diasValidez || ""}
+                onChange={(e) => setDiasValidez(e.target.value ? Number(e.target.value) : 0)}
+              />
+              <p className="text-xs text-muted-foreground">
+                {validoHastaPreview
+                  ? `Precios válidos hasta el ${validoHastaPreview.toLocaleDateString("es-AR")}.`
+                  : "Dejalo vacío para no mostrar fecha de validez."}
+              </p>
             </div>
           )}
 

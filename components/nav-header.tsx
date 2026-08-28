@@ -22,28 +22,31 @@ export function NavHeader({ profile }: { profile: Profile }) {
         <nav className="flex items-center gap-3">
           <Link
             href="/tableros"
-            className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"
+            title={isAdmin ? "Horarios" : "Mis horarios"}
+            aria-label={isAdmin ? "Horarios" : "Mis horarios"}
+            className="inline-flex items-center text-muted-foreground hover:text-foreground"
           >
-            <CalendarClock className="size-4" aria-hidden="true" />
-            {isAdmin ? "Horarios" : "Mis horarios"}
+            <CalendarClock className="size-5" aria-hidden="true" />
             <LinkPendingSpinner />
           </Link>
           {isAdmin && (
             <Link
               href="/usuarios"
-              className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"
+              title="Usuarios"
+              aria-label="Usuarios"
+              className="inline-flex items-center text-muted-foreground hover:text-foreground"
             >
-              <Users className="size-4" aria-hidden="true" />
-              Usuarios
+              <Users className="size-5" aria-hidden="true" />
               <LinkPendingSpinner />
             </Link>
           )}
           <Link
             href="/productos"
-            className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"
+            title="Productos"
+            aria-label="Productos"
+            className="inline-flex items-center text-muted-foreground hover:text-foreground"
           >
-            <Package className="size-4" aria-hidden="true" />
-            Productos
+            <Package className="size-5" aria-hidden="true" />
             <LinkPendingSpinner />
           </Link>
           <form action={signOut}>

@@ -11,9 +11,15 @@ export function SignOutButton() {
   return (
     <>
       <PendingOverlay pending={pending} />
-      <Button type="submit" variant="ghost" size="sm" disabled={pending}>
-        <LogOut className="size-4" aria-hidden="true" />
-        Salir
+      <Button
+        type="submit"
+        variant="ghost"
+        size="icon-sm"
+        disabled={pending}
+        title="Salir"
+        aria-label="Salir"
+      >
+        <LogOut className="size-5" aria-hidden="true" />
       </Button>
     </>
   );

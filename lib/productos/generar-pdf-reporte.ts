@@ -7,15 +7,13 @@ const currency = (value: number) => `$${value.toLocaleString("es-AR")}`;
 
 export type OpcionesPdf = { modo: "negocio" } | { modo: "cliente"; precioTrack: PriceTrack };
 
-export function generarPdfReporte(
-  productos: Producto[],
-  contexto: {
-    marcaPorId: Map<string, string>;
-    categoriaPorId: Map<string, string>;
-    proveedorPorId: Map<string, string>;
-  },
-  opciones: OpcionesPdf,
-) {
+type ContextoPdf = {
+  marcaPorId: Map<string, string>;
+  categoriaPorId: Map<string, string>;
+  proveedorPorId: Map<string, string>;
+};
+
+function construirDocumentoPdf(productos: Producto[], contexto: ContextoPdf, opciones: OpcionesPdf): jsPDF {
   const doc = new jsPDF();
   const fecha = new Date().toLocaleDateString("es-AR");
 
@@ -59,6 +57,48 @@ export function generarPdfReporte(
     headStyles: { fillColor: [24, 24, 27] },
   });
 
+  return doc;
+}
+
+function nombreArchivoPdf(opciones: OpcionesPdf): string {
   const sufijo = opciones.modo === "negocio" ? "interno" : "cliente";
-  doc.save(`reporte-productos-${sufijo}-${Date.now()}.pdf`);
+  return `reporte-productos-${sufijo}-${Date.now()}.pdf`;
+}
+
+export function generarPdfReporte(productos: Producto[], contexto: ContextoPdf, opciones: OpcionesPdf) {
+  const doc = construirDocumentoPdf(productos, contexto, opciones);
+  doc.save(nombreArchivoPdf(opciones));
+}
+
+// El wa.me/?text= que usa lib/invitations/share.ts solo sirve para texto --
+// para adjuntar el PDF en sí hace falta el share sheet nativo del sistema
+// operativo (Web Share API con `files`), que solo funciona en navegadores
+// móviles y requiere gesto del usuario. Sin soporte en desktop.
+export async function compartirPdfReportePorWhatsApp(
+  productos: Producto[],
+  contexto: ContextoPdf,
+  opciones: OpcionesPdf,
+): Promise<{ ok: true } | { ok: false; error: string }> {
+  const doc = construirDocumentoPdf(productos, contexto, opciones);
+  const file = new File([doc.output("blob")], nombreArchivoPdf(opciones), { type: "application/pdf" });
+
+  if (!navigator.canShare?.({ files: [file] })) {
+    return {
+      ok: false,
+      error: "Tu navegador no permite compartir archivos directamente. Descargá el PDF y compartilo manualmente.",
+    };
+  }
+
+  try {
+    await navigator.share({
+      files: [file],
+      title: opciones.modo === "negocio" ? "Reporte de productos" : "Lista de precios",
+    });
+    return { ok: true };
+  } catch (err) {
+    if (err instanceof DOMException && err.name === "AbortError") {
+      return { ok: true };
+    }
+    return { ok: false, error: "No se pudo compartir el PDF." };
+  }
 }

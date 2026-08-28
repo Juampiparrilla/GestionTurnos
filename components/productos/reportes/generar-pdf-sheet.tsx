@@ -1,11 +1,12 @@
 "use client";
 
 import { useState } from "react";
+import { MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetFooter } from "@/components/ui/sheet";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { generarPdfReporte } from "@/lib/productos/generar-pdf-reporte";
+import { compartirPdfReportePorWhatsApp, generarPdfReporte } from "@/lib/productos/generar-pdf-reporte";
 import { PRICE_TRACK_LABELS, type PriceTrack } from "@/lib/productos/price-track";
 import type { Producto } from "@/types/producto";
 
@@ -30,13 +31,29 @@ export function GenerarPdfSheet({
 }) {
   const [modo, setModo] = useState<Modo>("negocio");
   const [precioTrack, setPrecioTrack] = useState<PriceTrack>(precioTrackFiltro);
+  const [isSharing, setIsSharing] = useState(false);
+  const [shareError, setShareError] = useState<string | null>(null);
+
+  const opciones = modo === "negocio" ? ({ modo: "negocio" } as const) : ({ modo: "cliente", precioTrack } as const);
 
   function handleDescargar() {
-    generarPdfReporte(
+    generarPdfReporte(productos, { marcaPorId, categoriaPorId, proveedorPorId }, opciones);
+    onOpenChange(false);
+  }
+
+  async function handleCompartir() {
+    setShareError(null);
+    setIsSharing(true);
+    const resultado = await compartirPdfReportePorWhatsApp(
       productos,
       { marcaPorId, categoriaPorId, proveedorPorId },
-      modo === "negocio" ? { modo: "negocio" } : { modo: "cliente", precioTrack },
+      opciones,
     );
+    setIsSharing(false);
+    if (!resultado.ok) {
+      setShareError(resultado.error);
+      return;
+    }
     onOpenChange(false);
   }
 
@@ -87,10 +104,25 @@ export function GenerarPdfSheet({
           <p className="text-sm text-muted-foreground">
             {productos.length} {productos.length === 1 ? "producto incluido" : "productos incluidos"}.
           </p>
+
+          {shareError && (
+            <p role="alert" className="text-sm text-destructive">
+              {shareError}
+            </p>
+          )}
         </div>
         <SheetFooter className="px-0">
           <Button onClick={handleDescargar} disabled={productos.length === 0}>
             Descargar PDF
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={handleCompartir}
+            disabled={productos.length === 0 || isSharing}
+          >
+            <MessageCircle className="size-4" aria-hidden="true" />
+            {isSharing ? "Preparando..." : "Compartir por WhatsApp"}
           </Button>
         </SheetFooter>
       </SheetContent>

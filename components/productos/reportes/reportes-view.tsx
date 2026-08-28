@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { BadgePercent, FileDown } from "lucide-react";
+import { FileDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -12,8 +12,7 @@ import type { Categoria } from "@/types/categoria";
 import type { Proveedor } from "@/types/proveedor";
 import type { Producto } from "@/types/producto";
 import { GenerarPdfSheet } from "./generar-pdf-sheet";
-
-const currency = (value: number) => `$${value.toLocaleString("es-AR")}`;
+import { ReporteProductoRow } from "./reporte-producto-row";
 
 export function ReportesView({
   productos,
@@ -204,21 +203,14 @@ export function ReportesView({
         ) : (
           <div className="grid gap-2">
             {filtrados.map((producto, index) => (
-              <div key={producto.id} className="min-w-0 rounded-lg border bg-background p-3 shadow-sm">
-                <p className="flex items-center gap-1.5 font-medium break-words">
-                  <span>
-                    {index + 1}. {producto.nombre} · {producto.kg} kg
-                  </span>
-                  {producto.oferta && (
-                    <span title="En oferta">
-                      <BadgePercent className="size-4 shrink-0 text-amber-600" aria-label="En oferta" />
-                    </span>
-                  )}
-                </p>
-                <p className="text-sm text-muted-foreground">
-                  {PRICE_TRACK_LABELS[precioTrack]}: {currency(precioPorTrack(producto, precioTrack))}
-                </p>
-              </div>
+              <ReporteProductoRow
+                key={producto.id}
+                producto={producto}
+                numero={index + 1}
+                marcaNombre={producto.marca_id ? (marcaPorId.get(producto.marca_id) ?? null) : null}
+                categoriaNombre={producto.categoria_id ? (categoriaPorId.get(producto.categoria_id) ?? null) : null}
+                proveedorNombre={producto.proveedor_id ? (proveedorPorId.get(producto.proveedor_id) ?? null) : null}
+              />
             ))}
           </div>
         )}

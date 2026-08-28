@@ -13,6 +13,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { uppercaseOnChange } from "@/lib/productos/uppercase-input";
 
 export function CreateCategoriaSheet({
   open,
@@ -64,11 +65,18 @@ export function CreateCategoriaSheet({
           <form action={handleSubmit} className="flex flex-col gap-4 px-4">
             <div className="space-y-2">
               <Label htmlFor="nombre">Nombre</Label>
-              <Input id="nombre" name="nombre" maxLength={100} placeholder="Ej. Perro adulto" required />
+              <Input
+                id="nombre"
+                name="nombre"
+                maxLength={100}
+                placeholder="Ej. PERRO ADULTO"
+                onChange={uppercaseOnChange}
+                required
+              />
             </div>
             <div className="space-y-2">
               <Label htmlFor="descripcion">Descripción (opcional)</Label>
-              <Input id="descripcion" name="descripcion" maxLength={500} />
+              <Input id="descripcion" name="descripcion" maxLength={500} onChange={uppercaseOnChange} />
             </div>
             {error && (
               <p role="alert" className="text-sm text-destructive">

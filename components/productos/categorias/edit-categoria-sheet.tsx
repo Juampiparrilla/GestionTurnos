@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import { uppercaseOnChange } from "@/lib/productos/uppercase-input";
 import type { Categoria } from "@/types/categoria";
 
 export function EditCategoriaSheet({
@@ -70,7 +71,14 @@ export function EditCategoriaSheet({
           <form action={handleSubmit} className="flex flex-col gap-4 px-4">
             <div className="space-y-2">
               <Label htmlFor="nombre">Nombre</Label>
-              <Input id="nombre" name="nombre" defaultValue={categoria.nombre} maxLength={100} required />
+              <Input
+                id="nombre"
+                name="nombre"
+                defaultValue={categoria.nombre}
+                maxLength={100}
+                onChange={uppercaseOnChange}
+                required
+              />
             </div>
             <div className="space-y-2">
               <Label htmlFor="descripcion">Descripción (opcional)</Label>
@@ -79,6 +87,7 @@ export function EditCategoriaSheet({
                 name="descripcion"
                 defaultValue={categoria.descripcion ?? ""}
                 maxLength={500}
+                onChange={uppercaseOnChange}
               />
             </div>
             <div className="flex items-center justify-between rounded-lg border p-3">

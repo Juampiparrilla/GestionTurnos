@@ -13,6 +13,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { uppercaseOnChange } from "@/lib/productos/uppercase-input";
 
 export function CreateProveedorSheet({
   open,
@@ -67,11 +68,11 @@ export function CreateProveedorSheet({
           <form action={handleSubmit} className="flex flex-col gap-4 px-4">
             <div className="space-y-2">
               <Label htmlFor="nombre">Nombre</Label>
-              <Input id="nombre" name="nombre" maxLength={100} required />
+              <Input id="nombre" name="nombre" maxLength={100} onChange={uppercaseOnChange} required />
             </div>
             <div className="space-y-2">
               <Label htmlFor="contacto">Contacto (persona)</Label>
-              <Input id="contacto" name="contacto" maxLength={100} />
+              <Input id="contacto" name="contacto" maxLength={100} onChange={uppercaseOnChange} />
             </div>
             <div className="space-y-2">
               <Label htmlFor="telefono">Teléfono</Label>
@@ -83,7 +84,7 @@ export function CreateProveedorSheet({
             </div>
             <div className="space-y-2">
               <Label htmlFor="notas">Notas</Label>
-              <Input id="notas" name="notas" maxLength={500} />
+              <Input id="notas" name="notas" maxLength={500} onChange={uppercaseOnChange} />
             </div>
             {error && (
               <p role="alert" className="text-sm text-destructive">

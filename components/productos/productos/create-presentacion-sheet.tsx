@@ -99,7 +99,7 @@ export function CreatePresentacionSheet({
               </div>
               <div className="space-y-2">
                 <Label htmlFor="sku">SKU (opcional)</Label>
-                <Input id="sku" value={sku} onChange={(e) => setSku(e.target.value)} />
+                <Input id="sku" value={sku} onChange={(e) => setSku(e.target.value.toUpperCase())} />
               </div>
             </div>
             <div className="space-y-2">

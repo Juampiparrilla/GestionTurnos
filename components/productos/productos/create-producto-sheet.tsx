@@ -13,15 +13,11 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { uppercaseOnChange } from "@/lib/productos/uppercase-input";
 import type { Categoria } from "@/types/categoria";
 import type { Proveedor } from "@/types/proveedor";
+import { CategoriaSelectField } from "./categoria-select-field";
+import { ProveedorSelectField } from "./proveedor-select-field";
 
 export function CreateProductoSheet({
   open,
@@ -40,6 +36,11 @@ export function CreateProductoSheet({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const [categoriaOptions, setCategoriaOptions] = useState(categorias);
+  const [proveedorOptions, setProveedorOptions] = useState(proveedores);
+  const [categoriaId, setCategoriaId] = useState("");
+  const [proveedorId, setProveedorId] = useState("");
+
   async function handleSubmit(formData: FormData) {
     setIsSubmitting(true);
     setError(null);
@@ -47,8 +48,8 @@ export function CreateProductoSheet({
     const payload = {
       nombre: formData.get("nombre"),
       marca: formData.get("marca"),
-      categoriaId: formData.get("categoriaId"),
-      proveedorId: formData.get("proveedorId"),
+      categoriaId,
+      proveedorId,
       descripcion: formData.get("descripcion"),
     };
 
@@ -82,52 +83,50 @@ export function CreateProductoSheet({
           <form action={handleSubmit} className="flex flex-col gap-4 px-4">
             <div className="space-y-2">
               <Label htmlFor="nombre">Nombre</Label>
-              <Input id="nombre" name="nombre" maxLength={150} placeholder="Ej. Adulto raza pequeña" required />
+              <Input
+                id="nombre"
+                name="nombre"
+                maxLength={150}
+                placeholder="Ej. ADULTO RAZA PEQUEÑA"
+                onChange={uppercaseOnChange}
+                required
+              />
             </div>
             <div className="space-y-2">
               <Label htmlFor="marca">Marca</Label>
-              <Input id="marca" name="marca" list="marcas-list" maxLength={100} placeholder="Ej. Belcan" />
+              <Input
+                id="marca"
+                name="marca"
+                list="marcas-list"
+                maxLength={100}
+                placeholder="Ej. BELCAN"
+                onChange={uppercaseOnChange}
+              />
               <datalist id="marcas-list">
                 {marcas.map((marca) => (
                   <option key={marca} value={marca} />
                 ))}
               </datalist>
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="categoriaId">Categoría</Label>
-              <Select name="categoriaId" defaultValue="">
-                <SelectTrigger id="categoriaId">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="">Sin categoría</SelectItem>
-                  {categorias.map((categoria) => (
-                    <SelectItem key={categoria.id} value={categoria.id}>
-                      {categoria.nombre}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="proveedorId">Proveedor</Label>
-              <Select name="proveedorId" defaultValue="">
-                <SelectTrigger id="proveedorId">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="">Sin proveedor</SelectItem>
-                  {proveedores.map((proveedor) => (
-                    <SelectItem key={proveedor.id} value={proveedor.id}>
-                      {proveedor.nombre}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+            <CategoriaSelectField
+              categorias={categoriaOptions}
+              value={categoriaId}
+              onChange={setCategoriaId}
+              onCategoriaCreated={(nueva) =>
+                setCategoriaOptions((prev) => [...prev, nueva].sort((a, b) => a.nombre.localeCompare(b.nombre)))
+              }
+            />
+            <ProveedorSelectField
+              proveedores={proveedorOptions}
+              value={proveedorId}
+              onChange={setProveedorId}
+              onProveedorCreated={(nuevo) =>
+                setProveedorOptions((prev) => [...prev, nuevo].sort((a, b) => a.nombre.localeCompare(b.nombre)))
+              }
+            />
             <div className="space-y-2">
               <Label htmlFor="descripcion">Descripción (opcional)</Label>
-              <Input id="descripcion" name="descripcion" maxLength={500} />
+              <Input id="descripcion" name="descripcion" maxLength={500} onChange={uppercaseOnChange} />
             </div>
             {error && (
               <p role="alert" className="text-sm text-destructive">

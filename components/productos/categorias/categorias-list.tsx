@@ -15,10 +15,10 @@ export function CategoriasList({ categorias, descripcion }: { categorias: Catego
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between gap-4">
-        <p className="text-sm text-muted-foreground">{descripcion}</p>
-        <Button onClick={() => setCreateOpen(true)}>+ Crear categoría</Button>
-      </div>
+      <p className="text-sm text-muted-foreground">{descripcion}</p>
+      <Button onClick={() => setCreateOpen(true)} className="w-full">
+        + Crear categoría
+      </Button>
       <SearchInput value={query} onChange={setQuery} placeholder="Buscar categoría..." />
       {filtradas.length === 0 ? (
         <div className="rounded-lg border border-dashed p-8 text-center text-sm text-muted-foreground">

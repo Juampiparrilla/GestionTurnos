@@ -34,10 +34,10 @@ export function ProductosList({
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between gap-4">
-        <p className="text-sm text-muted-foreground">{descripcion}</p>
-        <Button onClick={() => setCreateOpen(true)}>+ Crear producto</Button>
-      </div>
+      <p className="text-sm text-muted-foreground">{descripcion}</p>
+      <Button onClick={() => setCreateOpen(true)} className="w-full">
+        + Crear producto
+      </Button>
       <SearchInput value={query} onChange={setQuery} placeholder="Buscar producto..." />
       {filtrados.length === 0 ? (
         <div className="rounded-lg border border-dashed p-8 text-center text-sm text-muted-foreground">

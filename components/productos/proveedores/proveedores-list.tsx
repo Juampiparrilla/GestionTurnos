@@ -15,10 +15,10 @@ export function ProveedoresList({ proveedores, descripcion }: { proveedores: Pro
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between gap-4">
-        <p className="text-sm text-muted-foreground">{descripcion}</p>
-        <Button onClick={() => setCreateOpen(true)}>+ Crear proveedor</Button>
-      </div>
+      <p className="text-sm text-muted-foreground">{descripcion}</p>
+      <Button onClick={() => setCreateOpen(true)} className="w-full">
+        + Crear proveedor
+      </Button>
       <SearchInput value={query} onChange={setQuery} placeholder="Buscar proveedor..." />
       {filtrados.length === 0 ? (
         <div className="rounded-lg border border-dashed p-8 text-center text-sm text-muted-foreground">

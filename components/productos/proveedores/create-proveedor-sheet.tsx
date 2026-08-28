@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { PendingOverlay } from "@/components/pending-overlay";
 import {
@@ -24,11 +24,10 @@ export function CreateProveedorSheet({
   onOpenChange: (open: boolean) => void;
 }) {
   const router = useRouter();
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
 
-  async function handleSubmit(formData: FormData) {
-    setIsSubmitting(true);
+  function handleSubmit(formData: FormData) {
     setError(null);
 
     const payload = {
@@ -39,29 +38,29 @@ export function CreateProveedorSheet({
       notas: formData.get("notas"),
     };
 
-    const res = await fetch("/api/proveedores", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
+    startTransition(async () => {
+      const res = await fetch("/api/proveedores", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error ?? "No se pudo crear el proveedor.");
+        return;
+      }
+
+      onOpenChange(false);
+      showSuccessToast("Proveedor creado con éxito");
+      router.refresh();
     });
-
-    const data = await res.json();
-
-    if (!res.ok) {
-      setError(data.error ?? "No se pudo crear el proveedor.");
-      setIsSubmitting(false);
-      return;
-    }
-
-    setIsSubmitting(false);
-    onOpenChange(false);
-    showSuccessToast("Proveedor creado con éxito");
-    router.refresh();
   }
 
   return (
     <>
-      <PendingOverlay pending={isSubmitting} />
+      <PendingOverlay pending={isPending} />
       <Sheet open={open} onOpenChange={onOpenChange}>
         <SheetContent side="right" className="w-full sm:max-w-md">
           <SheetHeader>
@@ -94,8 +93,8 @@ export function CreateProveedorSheet({
               </p>
             )}
             <SheetFooter className="px-0">
-              <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? "Creando..." : "Crear proveedor"}
+              <Button type="submit" disabled={isPending}>
+                {isPending ? "Creando..." : "Crear proveedor"}
               </Button>
             </SheetFooter>
           </form>

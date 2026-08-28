@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { PendingOverlay } from "@/components/pending-overlay";
 import {
@@ -27,12 +27,11 @@ export function EditProveedorSheet({
   onOpenChange: (open: boolean) => void;
 }) {
   const router = useRouter();
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const [active, setActive] = useState(proveedor.active);
 
-  async function handleSubmit(formData: FormData) {
-    setIsSubmitting(true);
+  function handleSubmit(formData: FormData) {
     setError(null);
 
     const payload = {
@@ -44,28 +43,28 @@ export function EditProveedorSheet({
       active,
     };
 
-    const res = await fetch(`/api/proveedores/${proveedor.id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
+    startTransition(async () => {
+      const res = await fetch(`/api/proveedores/${proveedor.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error ?? "No se pudo guardar el cambio.");
+        return;
+      }
+
+      onOpenChange(false);
+      router.refresh();
     });
-
-    const data = await res.json();
-
-    if (!res.ok) {
-      setError(data.error ?? "No se pudo guardar el cambio.");
-      setIsSubmitting(false);
-      return;
-    }
-
-    setIsSubmitting(false);
-    onOpenChange(false);
-    router.refresh();
   }
 
   return (
     <>
-      <PendingOverlay pending={isSubmitting} />
+      <PendingOverlay pending={isPending} />
       <Sheet open={open} onOpenChange={onOpenChange}>
         <SheetContent side="right" className="w-full sm:max-w-md">
           <SheetHeader>
@@ -121,8 +120,8 @@ export function EditProveedorSheet({
               </p>
             )}
             <SheetFooter className="px-0">
-              <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? "Guardando..." : "Guardar cambios"}
+              <Button type="submit" disabled={isPending}>
+                {isPending ? "Guardando..." : "Guardar cambios"}
               </Button>
             </SheetFooter>
           </form>

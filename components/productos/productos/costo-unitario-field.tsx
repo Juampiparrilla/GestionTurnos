@@ -20,6 +20,11 @@ function redondear(value: number): number {
 //   se le resta un % de descuento para llegar al costo real.
 // Los dos modos son excluyentes entre sí y con la carga directa -- lo
 // único que se guarda siempre es el costo unitario resultante.
+//
+// "¿Viene en un paquete de varias?" es un solo campo compartido entre
+// "unidades" y "descuento" (antes estaba duplicado, uno adentro de cada
+// modo) -- aparece apenas se activa cualquiera de los dos, no es algo
+// específico de "descuento".
 export function CostoUnitarioField({
   costo,
   onCostoChange,
@@ -29,37 +34,43 @@ export function CostoUnitarioField({
 }) {
   const [modo, setModo] = useState<Modo>("directo");
 
-  const [cantidad, setCantidad] = useState(1);
+  const [cantidadPaquete, setCantidadPaquete] = useState(1);
   const [costoTotal, setCostoTotal] = useState(0);
-
   const [precioLista, setPrecioLista] = useState(0);
   const [descuento, setDescuento] = useState(0);
-  const [cantidadPaquete, setCantidadPaquete] = useState(1);
 
   function activarModo(nuevoModo: Modo, activo: boolean) {
     setModo(activo ? nuevoModo : "directo");
   }
 
-  function actualizarUnidades(nuevaCantidad: number, nuevoCostoTotal: number) {
-    setCantidad(nuevaCantidad);
-    setCostoTotal(nuevoCostoTotal);
-    if (nuevaCantidad > 0) {
-      onCostoChange(redondear(nuevoCostoTotal / nuevaCantidad));
+  function recalcular(paquete: number, total: number, lista: number, desc: number) {
+    if (paquete <= 0) return;
+    if (modo === "unidades") {
+      onCostoChange(redondear(total / paquete));
+    } else if (modo === "descuento") {
+      onCostoChange(redondear((lista * (1 - desc / 100)) / paquete));
     }
   }
 
-  // El precio de lista con descuento puede venir de un paquete de varias
-  // unidades (ej. una caja de 12 con precio de lista $40.000 y 25% off:
-  // $30.000 la caja, $2.500 cada una) -- cantidadPaquete en 1 (default)
-  // da el mismo resultado que antes, sin paquete de por medio.
-  function actualizarDescuento(nuevoPrecioLista: number, nuevoDescuento: number, nuevaCantidadPaquete: number) {
+  function actualizarPaquete(nuevoPaquete: number) {
+    setCantidadPaquete(nuevoPaquete);
+    recalcular(nuevoPaquete, costoTotal, precioLista, descuento);
+  }
+
+  function actualizarCostoTotal(nuevoCostoTotal: number) {
+    setCostoTotal(nuevoCostoTotal);
+    recalcular(cantidadPaquete, nuevoCostoTotal, precioLista, descuento);
+  }
+
+  function actualizarDescuento(nuevoPrecioLista: number, nuevoDescuento: number) {
     setPrecioLista(nuevoPrecioLista);
     setDescuento(nuevoDescuento);
-    setCantidadPaquete(nuevaCantidadPaquete);
-    if (nuevaCantidadPaquete > 0) {
-      onCostoChange(redondear((nuevoPrecioLista * (1 - nuevoDescuento / 100)) / nuevaCantidadPaquete));
-    }
+    recalcular(cantidadPaquete, costoTotal, nuevoPrecioLista, nuevoDescuento);
   }
+
+  // El paquete de compra aplica sea Kg o Unidad -- también tiene sentido
+  // comprar varias bolsas de un producto por Kg a un precio combinado.
+  const mostrarCantidadPaquete = modo === "unidades" || modo === "descuento";
 
   return (
     <div className="space-y-2">
@@ -84,28 +95,25 @@ export function CostoUnitarioField({
         />
       </div>
 
+      {mostrarCantidadPaquete && (
+        <div className="space-y-1">
+          <Label htmlFor="cantidad-paquete">¿Viene en un paquete de varias? (dejá 1 si es por unidad)</Label>
+          <Input
+            id="cantidad-paquete"
+            type="number"
+            step="1"
+            min="1"
+            value={cantidadPaquete || ""}
+            onChange={(e) => actualizarPaquete(Number(e.target.value))}
+          />
+        </div>
+      )}
+
       {modo === "unidades" && (
         <div className="space-y-2 rounded-lg border p-3">
-          <div className="grid grid-cols-2 gap-3">
-            <div className="space-y-1">
-              <Label htmlFor="cantidad-unidades">Cantidad</Label>
-              <Input
-                id="cantidad-unidades"
-                type="number"
-                step="1"
-                min="1"
-                value={cantidad || ""}
-                onChange={(e) => actualizarUnidades(Number(e.target.value), costoTotal)}
-              />
-            </div>
-            <div className="space-y-1">
-              <Label htmlFor="costo-total-unidades">Costo total</Label>
-              <MoneyInput
-                id="costo-total-unidades"
-                value={costoTotal}
-                onChange={(value) => actualizarUnidades(cantidad, value)}
-              />
-            </div>
+          <div className="space-y-1">
+            <Label htmlFor="costo-total-unidades">Costo total del paquete</Label>
+            <MoneyInput id="costo-total-unidades" value={costoTotal} onChange={actualizarCostoTotal} />
           </div>
           <p className="text-xs text-muted-foreground">
             Precio de costo unitario: ${costo.toLocaleString("es-AR")}
@@ -121,7 +129,7 @@ export function CostoUnitarioField({
               <MoneyInput
                 id="precio-lista"
                 value={precioLista}
-                onChange={(value) => actualizarDescuento(value, descuento, cantidadPaquete)}
+                onChange={(value) => actualizarDescuento(value, descuento)}
               />
             </div>
             <div className="space-y-1">
@@ -133,22 +141,9 @@ export function CostoUnitarioField({
                 min="0"
                 max="100"
                 value={descuento || ""}
-                onChange={(e) => actualizarDescuento(precioLista, Number(e.target.value) || 0, cantidadPaquete)}
+                onChange={(e) => actualizarDescuento(precioLista, Number(e.target.value) || 0)}
               />
             </div>
-          </div>
-          <div className="space-y-1">
-            <Label htmlFor="cantidad-paquete">
-              Ese precio es de un paquete de (dejá 1 si es por unidad)
-            </Label>
-            <Input
-              id="cantidad-paquete"
-              type="number"
-              step="1"
-              min="1"
-              value={cantidadPaquete || ""}
-              onChange={(e) => actualizarDescuento(precioLista, descuento, Number(e.target.value))}
-            />
           </div>
           <p className="text-xs text-muted-foreground">
             Precio de costo unitario: ${costo.toLocaleString("es-AR")}

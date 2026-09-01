@@ -31,6 +31,17 @@ export function ProductosList({
   const [query, setQuery] = useState("");
   const [filtrosOpen, setFiltrosOpen] = useState(false);
 
+  // Si el servidor manda una lista nueva (ej. RefreshOnFocus trajo cambios
+  // cargados desde otro dispositivo), se refleja acá -- sin esto la copia
+  // local (para las ediciones optimistas) se quedaría con los datos viejos.
+  // Se ajusta durante el render (no en un efecto) siguiendo el patrón que
+  // React recomienda para "resetear estado cuando cambia una prop".
+  const [prevProductos, setPrevProductos] = useState(productos);
+  if (productos !== prevProductos) {
+    setPrevProductos(productos);
+    setItems(productos);
+  }
+
   const filtros = useProductoFiltros(items);
   const filtrados = filtros.filtrados.filter((p) =>
     p.nombre.toLowerCase().includes(query.trim().toLowerCase()),

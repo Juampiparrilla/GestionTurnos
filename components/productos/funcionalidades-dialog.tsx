@@ -57,6 +57,11 @@ const FUNCIONALIDADES = [
     descripcion:
       "Descargá una plantilla vacía para cargar varios productos nuevos de una, o tu catálogo actual para editarlo en Excel y volver a subirlo — actualiza los productos existentes en vez de duplicarlos. Marca, categoría y proveedor se crean solos si escribís un nombre que no existe todavía.",
   },
+  {
+    titulo: "Actualización automática",
+    descripcion:
+      "Si cargaste algo desde el celular y tenías esta pantalla abierta en la compu (o al revés), no hace falta apretar F5 -- se actualiza sola al volver a esa pestaña.",
+  },
 ];
 
 export function FuncionalidadesDialog() {

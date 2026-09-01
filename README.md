@@ -4,6 +4,8 @@ Aplicación web para que negocios con uno o varios locales organicen los turnos 
 
 Es **multi-tenant**: cada empresa que la usa está completamente aislada de las demás (a nivel de base de datos, no solo de interfaz).
 
+Si tenés una pestaña abierta en la compu y cargás algo desde el celular, no hace falta apretar F5: al volver a esa pestaña (cambiar de ventana o app y volver) se actualiza sola.
+
 Producción: [gestion-turnos-nu.vercel.app](https://gestion-turnos-nu.vercel.app)
 
 ## Cómo se organiza

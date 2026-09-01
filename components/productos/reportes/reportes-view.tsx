@@ -31,6 +31,15 @@ export function ReportesView({
 }) {
   const [organization, setOrganization] = useState(organizationProp);
   const [pdfOpen, setPdfOpen] = useState(false);
+
+  // Ajuste durante el render (no en un efecto) para reflejar un cambio
+  // externo (ej. RefreshOnFocus) sin pisar una edición hecha en esta misma
+  // pestaña vía OrganizationContactCard.
+  const [prevOrganizationProp, setPrevOrganizationProp] = useState(organizationProp);
+  if (organizationProp !== prevOrganizationProp) {
+    setPrevOrganizationProp(organizationProp);
+    setOrganization(organizationProp);
+  }
   const filtros = useProductoFiltros(productos);
   const { filtrados } = filtros;
 

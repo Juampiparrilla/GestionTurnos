@@ -80,7 +80,6 @@ function filaProducto(p: Producto, contexto: ContextoPdf, opciones: OpcionesPdf)
   if (opciones.modo === "negocio") {
     return [
       p.nombre,
-      p.codigo ?? "",
       formatCantidad(p.kg, p.unidad_medida),
       p.marca_id ? (contexto.marcaPorId.get(p.marca_id) ?? "") : "",
       p.categoria_id ? (contexto.categoriaPorId.get(p.categoria_id) ?? "") : "",
@@ -95,7 +94,6 @@ function filaProducto(p: Producto, contexto: ContextoPdf, opciones: OpcionesPdf)
   }
   return [
     p.nombre,
-    p.codigo ?? "",
     formatCantidad(p.kg, p.unidad_medida),
     ...opciones.precioTracks.map((track) =>
       esPorUnidad && track === "abierta" ? "-" : currency(precioPorTrack(p, track)),
@@ -132,7 +130,6 @@ function construirDocumentoPdf(productos: Producto[], contexto: ContextoPdf, opc
       ? [
           [
             "Nombre",
-            "Código",
             "Cantidad",
             "Marca",
             "Categoría",
@@ -145,7 +142,7 @@ function construirDocumentoPdf(productos: Producto[], contexto: ContextoPdf, opc
             "Oferta",
           ],
         ]
-      : [["Nombre", "Código", "Cantidad", ...opciones.precioTracks.map((track) => PRICE_TRACK_LABELS[track])]];
+      : [["Nombre", "Cantidad", ...opciones.precioTracks.map((track) => PRICE_TRACK_LABELS[track])]];
 
   const columnas = head[0].length;
   const grupos = agruparProductos(productos, opciones.agrupacion, contexto);
@@ -154,7 +151,11 @@ function construirDocumentoPdf(productos: Producto[], contexto: ContextoPdf, opc
     const filas: RowInput[] = grupo.productos.map((p) => filaProducto(p, contexto, opciones));
     if (grupo.label === null) return filas;
     const encabezado: RowInput = [
-      { content: grupo.label, colSpan: columnas, styles: { fontStyle: "bold", fillColor: [244, 244, 245] } },
+      {
+        content: grupo.label,
+        colSpan: columnas,
+        styles: { fontStyle: "bold", fillColor: [0, 0, 0], textColor: [255, 255, 255] },
+      },
     ];
     return [encabezado, ...filas];
   });

@@ -45,12 +45,12 @@ const FUNCIONALIDADES = [
   {
     titulo: "PDF y WhatsApp",
     descripcion:
-      "Generá un PDF horizontal interno (con costos y porcentajes) o uno para el cliente (con los precios que elijas mostrar y una fecha de validez opcional) y compartilo directo por WhatsApp desde el celular. Lleva el nombre y teléfono del negocio como marca de agua.",
+      "Generá un PDF horizontal interno (con costos y porcentajes) o uno para el cliente (con los precios que elijas mostrar y una fecha de validez opcional) y compartilo directo por WhatsApp desde el celular. Lleva el nombre y teléfono del negocio como marca de agua. Cuando agrupás por categoría, marca o proveedor, cada grupo se separa con una fila en negro para distinguirlo fácil de los productos.",
   },
   {
     titulo: "Código de producto",
     descripcion:
-      "Cada producto recibe un código único generado a partir de su nombre, para identificarlo rápido en listados, reportes y PDFs.",
+      "Cada producto recibe un código único generado a partir de su nombre, para identificarlo rápido en el listado y en la pantalla de Reportes (no aparece en los PDF, ahí solo interesa el nombre).",
   },
   {
     titulo: "Importar Excel",

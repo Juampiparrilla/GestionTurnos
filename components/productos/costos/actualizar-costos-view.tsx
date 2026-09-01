@@ -64,7 +64,7 @@ export function ActualizarCostosView({
     });
   }
 
-  function toggleSeleccionarVisibles() {
+  function toggleSeleccionarTodos() {
     setSeleccionados((prev) => {
       const next = new Set(prev);
       if (todosVisiblesSeleccionados) {
@@ -74,10 +74,6 @@ export function ActualizarCostosView({
       }
       return next;
     });
-  }
-
-  function seleccionarTodos() {
-    setSeleccionados(new Set(productos.map((p) => p.id)));
   }
 
   function limpiarSeleccion() {
@@ -131,7 +127,6 @@ export function ActualizarCostosView({
 
       <Button
         type="button"
-        variant="outline"
         className="w-full justify-between"
         onClick={() => setFiltrosOpen((v) => !v)}
       >
@@ -190,20 +185,10 @@ export function ActualizarCostosView({
               variant="ghost"
               size="sm"
               className="h-auto px-2 py-1 text-muted-foreground"
-              disabled={productos.length === 0}
-              onClick={seleccionarTodos}
-            >
-              Seleccionar todos ({productos.length})
-            </Button>
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              className="h-auto px-2 py-1 text-muted-foreground"
               disabled={filtrados.length === 0}
-              onClick={toggleSeleccionarVisibles}
+              onClick={toggleSeleccionarTodos}
             >
-              {todosVisiblesSeleccionados ? "Deseleccionar visibles" : "Seleccionar visibles"}
+              {todosVisiblesSeleccionados ? `Deseleccionar todos (${filtrados.length})` : `Seleccionar todos (${filtrados.length})`}
             </Button>
             {seleccionados.size > 0 && (
               <Button

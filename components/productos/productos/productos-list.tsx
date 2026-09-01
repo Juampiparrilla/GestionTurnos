@@ -64,7 +64,6 @@ export function ProductosList({
 
       <Button
         type="button"
-        variant="outline"
         className="w-full justify-between"
         onClick={() => setFiltrosOpen((v) => !v)}
       >

@@ -42,7 +42,7 @@ export function OrganizationContactCard({
   }
 
   return (
-    <div className="space-y-2 rounded-lg border border-blue-200 bg-blue-50 p-3 dark:border-blue-900 dark:bg-blue-950/40">
+    <div className="space-y-2 rounded-lg border border-zinc-300 bg-zinc-100 p-3 dark:border-zinc-700 dark:bg-zinc-800">
       <div className="flex items-center justify-between">
         <p className="text-sm font-medium">Datos para reportes</p>
         {!editing && (

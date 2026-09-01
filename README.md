@@ -20,7 +20,7 @@ Producción: [gestion-turnos-nu.vercel.app](https://gestion-turnos-nu.vercel.app
 Catálogo de productos del negocio, con **Marcas**, **Categorías** y **Proveedores** como entidades propias (ABM completo: crear, editar, desactivar/reactivar y borrar en forma definitiva).
 
 - Un producto se vende por **Kg** o por **Unidad**. Por Kg tiene **tres pistas de precio independientes** — bolsa cerrada, bolsa abierta (venta suelta por kg) y por mayor —, cada una con su % de ganancia o un precio fijado a mano; el precio por kg se calcula solo a partir de la bolsa abierta. Por Unidad solo tiene precio unitario y por mayor — no aplica "bolsa abierta" a algo que no se vende suelto (ej. un sachet, un accesorio).
-- Un producto con varias cantidades (ej. 15 kg y 25 kg) son simplemente dos filas del catálogo con el mismo nombre y marca, no una entidad "presentación" aparte.
+- Un producto con varias cantidades (ej. 15 kg y 25 kg) son simplemente dos filas del catálogo con el mismo nombre y marca, no una entidad "presentación" aparte. Al escribir el nombre, se sugieren productos ya cargados con nombres parecidos (autocompletado nativo), para evitar cargar el mismo dos veces con una pequeña diferencia de tipeo.
 - Cada producto recibe un **código único** autogenerado a partir de su nombre, para identificarlo rápido en listados, reportes y PDFs.
 - El costo se puede cargar directo, calcularlo a partir de una compra por varias unidades (ej. "3 bolsas por $18.000" → $6.000 c/u), o a partir de un precio de lista con % de descuento — en cualquiera de los dos casos, si venía en un paquete de varias (ej. una caja de 12), esa cantidad entra en la misma cuenta.
 - No se puede cargar dos veces el mismo producto (mismo nombre y misma cantidad) en la misma organización.

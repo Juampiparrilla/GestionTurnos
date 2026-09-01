@@ -31,6 +31,7 @@ export function CreateProductoSheet({
   marcas,
   categorias,
   proveedores,
+  nombresExistentes,
   onCreated,
 }: {
   open: boolean;
@@ -38,6 +39,7 @@ export function CreateProductoSheet({
   marcas: Marca[];
   categorias: Categoria[];
   proveedores: Proveedor[];
+  nombresExistentes: string[];
   onCreated: (producto: Producto) => void;
 }) {
   const [isPending, startTransition] = useTransition();
@@ -163,7 +165,14 @@ export function CreateProductoSheet({
                 value={nombre}
                 onChange={(e) => setNombre(e.target.value.toUpperCase())}
                 required
+                list="nombres-productos"
+                autoComplete="off"
               />
+              <datalist id="nombres-productos">
+                {nombresExistentes.map((n) => (
+                  <option key={n} value={n} />
+                ))}
+              </datalist>
             </div>
             <div className="space-y-2">
               <Label htmlFor="unidad-medida">Se vende por</Label>
@@ -181,11 +190,11 @@ export function CreateProductoSheet({
                 }}
               >
                 <SelectTrigger id="unidad-medida" className="w-full">
-                  <SelectValue>{(v: "kg" | "unidad") => (v === "kg" ? "Kg" : "Unidad")}</SelectValue>
+                  <SelectValue>{(v: "kg" | "unidad") => (v === "kg" ? "KG" : "UNIDAD")}</SelectValue>
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="kg">Kg</SelectItem>
-                  <SelectItem value="unidad">Unidad</SelectItem>
+                  <SelectItem value="kg">KG</SelectItem>
+                  <SelectItem value="unidad">UNIDAD</SelectItem>
                 </SelectContent>
               </Select>
             </div>

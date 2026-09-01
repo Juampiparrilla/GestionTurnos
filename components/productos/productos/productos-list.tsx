@@ -32,6 +32,7 @@ export function ProductosList({
   const proveedorPorId = new Map(proveedores.map((p) => [p.id, p.nombre]));
 
   const filtrados = items.filter((p) => p.nombre.toLowerCase().includes(query.trim().toLowerCase()));
+  const nombresExistentes = Array.from(new Set(items.map((p) => p.nombre))).sort();
 
   function handleCreated(producto: Producto) {
     setItems((prev) => [...prev, producto].sort((a, b) => a.nombre.localeCompare(b.nombre)));
@@ -71,6 +72,7 @@ export function ProductosList({
               marcas={marcas}
               categorias={categorias}
               proveedores={proveedores}
+              nombresExistentes={nombresExistentes}
               onUpdated={handleUpdated}
               onDeleted={handleDeleted}
             />
@@ -83,6 +85,7 @@ export function ProductosList({
         marcas={marcas}
         categorias={categorias}
         proveedores={proveedores}
+        nombresExistentes={nombresExistentes}
         onCreated={handleCreated}
       />
     </div>

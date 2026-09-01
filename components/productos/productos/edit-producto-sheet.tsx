@@ -32,6 +32,7 @@ export function EditProductoSheet({
   marcas,
   categorias,
   proveedores,
+  nombresExistentes,
   onUpdated,
 }: {
   producto: Producto;
@@ -40,6 +41,7 @@ export function EditProductoSheet({
   marcas: Marca[];
   categorias: Categoria[];
   proveedores: Proveedor[];
+  nombresExistentes: string[];
   onUpdated: (producto: Producto) => void;
 }) {
   const [isPending, startTransition] = useTransition();
@@ -134,7 +136,16 @@ export function EditProductoSheet({
                 maxLength={150}
                 onChange={uppercaseOnChange}
                 required
+                list="nombres-productos-edit"
+                autoComplete="off"
               />
+              <datalist id="nombres-productos-edit">
+                {nombresExistentes
+                  .filter((n) => n !== producto.nombre)
+                  .map((n) => (
+                    <option key={n} value={n} />
+                  ))}
+              </datalist>
             </div>
             <div className="space-y-2">
               <Label htmlFor="unidad-medida">Se vende por</Label>
@@ -148,11 +159,11 @@ export function EditProductoSheet({
                 }}
               >
                 <SelectTrigger id="unidad-medida" className="w-full">
-                  <SelectValue>{(v: "kg" | "unidad") => (v === "kg" ? "Kg" : "Unidad")}</SelectValue>
+                  <SelectValue>{(v: "kg" | "unidad") => (v === "kg" ? "KG" : "UNIDAD")}</SelectValue>
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="kg">Kg</SelectItem>
-                  <SelectItem value="unidad">Unidad</SelectItem>
+                  <SelectItem value="kg">KG</SelectItem>
+                  <SelectItem value="unidad">UNIDAD</SelectItem>
                 </SelectContent>
               </Select>
             </div>

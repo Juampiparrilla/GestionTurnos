@@ -15,7 +15,7 @@ const FUNCIONALIDADES = [
   {
     titulo: "Productos",
     descripcion:
-      "Alta, edición y baja de productos con costo y precios de venta, cada uno con su % de ganancia o un precio manual. Se venden por Kg (bolsa cerrada, bolsa abierta y por mayor) o por Unidad (precio unitario y por mayor, para productos que no se venden sueltos, como un sachet o un accesorio).",
+      "Alta, edición y baja de productos con costo y precios de venta, cada uno con su % de ganancia o un precio manual. Se venden por Kg (bolsa cerrada, bolsa abierta y por mayor) o por Unidad (precio unitario y por mayor, para productos que no se venden sueltos, como un sachet o un accesorio). Al tipear el nombre te sugiere productos que ya tenés cargados, para no repetir uno con una pequeña diferencia.",
   },
   {
     titulo: "Marcas, categorías y proveedores",

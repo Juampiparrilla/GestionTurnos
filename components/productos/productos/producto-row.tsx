@@ -23,6 +23,7 @@ export function ProductoRow({
   marcas,
   categorias,
   proveedores,
+  nombresExistentes,
   onUpdated,
   onDeleted,
 }: {
@@ -34,6 +35,7 @@ export function ProductoRow({
   marcas: Marca[];
   categorias: Categoria[];
   proveedores: Proveedor[];
+  nombresExistentes: string[];
   onUpdated: (producto: Producto) => void;
   onDeleted: (id: string) => void;
 }) {
@@ -194,6 +196,7 @@ export function ProductoRow({
         marcas={marcas}
         categorias={categorias}
         proveedores={proveedores}
+        nombresExistentes={nombresExistentes}
         onUpdated={onUpdated}
       />
     </>

@@ -1,5 +1,5 @@
 import jsPDF from "jspdf";
-import autoTable, { type CellHookData, type CellInput, type RowInput } from "jspdf-autotable";
+import autoTable, { type CellInput, type RowInput } from "jspdf-autotable";
 import type { Producto } from "@/types/producto";
 import { PRICE_TRACK_LABELS, precioPorTrack, type PriceTrack } from "./price-track";
 import { formatCantidad } from "./formato-cantidad";
@@ -28,25 +28,27 @@ type ContextoPdf = {
 };
 
 function dibujarMarcaDeAgua(doc: jsPDF, organization: ContextoPdf["organization"]) {
-  const texto = organization.phone ? `${organization.name} - ${organization.phone}` : organization.name;
+  // Nombre y teléfono van en líneas separadas (no concatenados en un solo
+  // string): mucho más corto cada uno, así entra sin recortarse al
+  // rotarlo 45° aunque el nombre del negocio sea largo.
+  const lineas = organization.phone ? [organization.name, organization.phone] : [organization.name];
   const pageWidth = doc.internal.pageSize.getWidth();
   const pageHeight = doc.internal.pageSize.getHeight();
 
   doc.saveGraphicsState();
   doc.setGState(doc.GState({ opacity: 0.08 }));
 
-  // Con nombre + teléfono el texto puede ser largo -- si a tamaño fijo no
-  // entra en la hoja (rotado 45°, se corta contra el borde), se achica en
-  // proporción a lo que sobra en vez de tapar el teléfono.
+  // Por las dudas con un nombre de negocio muy largo, se achica la fuente
+  // en proporción si ni con las líneas separadas entra.
   const fontSizeMaximo = 28;
   doc.setFontSize(fontSizeMaximo);
-  const anchoTexto = doc.getTextWidth(texto);
+  const anchoMaximo = Math.max(...lineas.map((linea) => doc.getTextWidth(linea)));
   const anchoDisponible = Math.min(pageWidth, pageHeight) * 0.85;
-  const fontSize = anchoTexto > anchoDisponible ? fontSizeMaximo * (anchoDisponible / anchoTexto) : fontSizeMaximo;
+  const fontSize = anchoMaximo > anchoDisponible ? fontSizeMaximo * (anchoDisponible / anchoMaximo) : fontSizeMaximo;
   doc.setFontSize(fontSize);
 
   doc.setTextColor(24, 24, 27);
-  doc.text(texto, pageWidth / 2, pageHeight / 2, { angle: 45, align: "center" });
+  doc.text(lineas, pageWidth / 2, pageHeight / 2, { angle: 45, align: "center" });
   doc.restoreGraphicsState();
   doc.setTextColor(0);
 }
@@ -84,21 +86,6 @@ function agruparProductos(
     .map(([label, productos]) => ({ label, productos }));
 }
 
-// Evita que una fila de agrupamiento (ej. "GRAN CAMPEÓN") quede sola al
-// final de una hoja sin ningún producto debajo -- autoTable decide el
-// salto de página fila por fila, y una fila de una sola línea casi siempre
-// "entra" aunque quede huérfana. Se le fuerza una altura mínima más alta
-// que una fila normal (pero moderada, no exagerada) para que cuando el
-// espacio que resta en la hoja no le alcance ni para ella ni para la
-// primera fila de productos, autoTable la mande entera a la hoja
-// siguiente en vez de imprimirla sola.
-function evitarEncabezadoHuerfano(data: CellHookData) {
-  const esEncabezadoDeGrupo = data.row.section === "body" && Array.isArray(data.row.raw) && data.row.raw.length === 1;
-  if (esEncabezadoDeGrupo) {
-    data.cell.styles.minCellHeight = 16;
-  }
-}
-
 function filaProducto(p: Producto, contexto: ContextoPdf, opciones: OpcionesPdf): CellInput[] {
   const esPorUnidad = p.unidad_medida === "unidad";
 
@@ -130,6 +117,11 @@ function construirDocumentoPdf(productos: Producto[], contexto: ContextoPdf, opc
   const doc = new jsPDF({ orientation: "landscape" });
   const fecha = new Date().toLocaleDateString("es-AR");
   const pageWidth = doc.internal.pageSize.getWidth();
+  const pageHeight = doc.internal.pageSize.getHeight();
+  // Mismo margen por defecto que usa autoTable cuando no se le pasa `margin`
+  // explícito, para que la cuenta de "cuánto lugar queda en la hoja" (más
+  // abajo) coincida con lo que la librería va a usar en realidad.
+  const margen = 40 / doc.internal.scaleFactor;
 
   doc.setFontSize(14);
   doc.text(opciones.modo === "negocio" ? "Reporte de productos" : "Lista de precios", 14, 15);
@@ -172,28 +164,57 @@ function construirDocumentoPdf(productos: Producto[], contexto: ContextoPdf, opc
   const columnas = head[0].length;
   const grupos = agruparProductos(productos, opciones.agrupacion, contexto);
 
-  const body: RowInput[] = grupos.flatMap((grupo) => {
-    const filas: RowInput[] = grupo.productos.map((p) => filaProducto(p, contexto, opciones));
-    if (grupo.label === null) return filas;
-    const encabezado: RowInput = [
-      {
-        content: grupo.label,
-        colSpan: columnas,
-        styles: { fontStyle: "bold", fillColor: [0, 0, 0], textColor: [255, 255, 255] },
-      },
-    ];
-    return [encabezado, ...filas];
-  });
+  // Una llamada a autoTable por grupo (encadenadas por startY) en vez de
+  // una sola con todas las filas: así, antes de empezar cada grupo, se
+  // puede medir el lugar real que queda en la hoja (con doc.lastAutoTable,
+  // no una estimación) y si no alcanza ni para el título del grupo ni para
+  // al menos un producto debajo, se pasa a la hoja siguiente a mano --
+  // evita que el título quede solo al pie de la hoja, como pasaba antes.
+  const ESPACIO_MINIMO_GRUPO = 24;
+  let cursorY = inicioTabla;
+  let inicioDePagina = true;
 
-  autoTable(doc, {
-    head,
-    body,
-    startY: inicioTabla,
-    styles: { fontSize: 9 },
-    headStyles: { fillColor: [24, 24, 27] },
-    didParseCell: evitarEncabezadoHuerfano,
-    didDrawPage: () => dibujarMarcaDeAgua(doc, contexto.organization),
-  });
+  for (const grupo of grupos) {
+    if (grupo.label !== null && !inicioDePagina) {
+      const espacioRestante = pageHeight - margen - cursorY;
+      if (espacioRestante < ESPACIO_MINIMO_GRUPO) {
+        doc.addPage();
+        cursorY = margen;
+        inicioDePagina = true;
+      }
+    }
+
+    const filas: RowInput[] = grupo.productos.map((p) => filaProducto(p, contexto, opciones));
+    const body: RowInput[] =
+      grupo.label === null
+        ? filas
+        : [
+            [
+              {
+                content: grupo.label,
+                colSpan: columnas,
+                styles: { fontStyle: "bold", fillColor: [0, 0, 0], textColor: [255, 255, 255] },
+              },
+            ],
+            ...filas,
+          ];
+
+    autoTable(doc, {
+      // El encabezado de columnas ("Nombre", "Cantidad", ...) solo se repite
+      // al arrancar una hoja nueva -- si se le pasara siempre, al continuar
+      // un grupo en la misma hoja que el anterior aparecería una fila de
+      // columnas de más, sin ningún salto de página que la justifique.
+      head: inicioDePagina ? head : [],
+      body,
+      startY: cursorY,
+      styles: { fontSize: 9 },
+      headStyles: { fillColor: [24, 24, 27] },
+      didDrawPage: () => dibujarMarcaDeAgua(doc, contexto.organization),
+    });
+
+    cursorY = (doc as unknown as { lastAutoTable?: { finalY?: number } }).lastAutoTable?.finalY ?? cursorY;
+    inicioDePagina = false;
+  }
 
   return doc;
 }

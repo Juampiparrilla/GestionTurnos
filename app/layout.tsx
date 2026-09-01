@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Gestión de Turnos",
+  title: "Mi Negocio",
   description: "Planificación de turnos de empleados por local",
 };
 

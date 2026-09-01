@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { Pin, PinOff } from "lucide-react";
 import { PendingOverlay } from "@/components/pending-overlay";
 import {
   Sheet,
@@ -45,6 +46,7 @@ export function CreateProductoSheet({
 }) {
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
+  const [anclado, setAnclado] = useState(false);
 
   const [marcaOptions, setMarcaOptions] = useState(marcas);
   const [categoriaOptions, setCategoriaOptions] = useState(categorias);
@@ -141,7 +143,7 @@ export function CreateProductoSheet({
       }
 
       resetForm();
-      onOpenChange(false);
+      if (!anclado) onOpenChange(false);
       showSuccessToast("Producto creado con éxito");
       onCreated(data.producto);
     });
@@ -153,7 +155,24 @@ export function CreateProductoSheet({
       <Sheet open={open} onOpenChange={handleOpenChange}>
         <SheetContent side="right" className="w-full sm:max-w-md">
           <SheetHeader>
-            <SheetTitle>Crear producto</SheetTitle>
+            <div className="flex items-center justify-between gap-2">
+              <SheetTitle>Crear producto</SheetTitle>
+              <Button
+                type="button"
+                variant={anclado ? "secondary" : "ghost"}
+                size="sm"
+                onClick={() => setAnclado((v) => !v)}
+                className="gap-1.5"
+                title={
+                  anclado
+                    ? "El formulario queda abierto después de crear"
+                    : "Anclar: dejar el formulario abierto para cargar varios seguidos"
+                }
+              >
+                {anclado ? <Pin className="size-4" aria-hidden="true" /> : <PinOff className="size-4" aria-hidden="true" />}
+                {anclado ? "Anclado" : "Anclar"}
+              </Button>
+            </div>
           </SheetHeader>
           <form action={handleSubmit} className="flex flex-col gap-4 px-4">
             <NombreProductoField value={nombre} onChange={setNombre} nombresExistentes={nombresExistentes} />

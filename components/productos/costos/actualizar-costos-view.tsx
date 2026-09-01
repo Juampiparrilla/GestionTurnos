@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { PendingOverlay } from "@/components/pending-overlay";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { SearchInput } from "@/components/productos/search-input";
@@ -38,11 +39,42 @@ export function ActualizarCostosView({
   const [filtrosOpen, setFiltrosOpen] = useState(false);
   const [porcentaje, setPorcentaje] = useState(0);
   const [error, setError] = useState<string | null>(null);
+  // Los filtros solo acotan qué se ve en la lista -- lo que efectivamente
+  // se ajusta es lo que se tilda a mano, así se puede buscar varias veces
+  // (ej. "chizitos", después "agility") y armar la selección de a poco
+  // sin perder lo ya elegido.
+  const [seleccionados, setSeleccionados] = useState<Set<string>>(new Set());
 
   const filtros = useProductoFiltros(productos);
   const filtrados = filtros.filtrados.filter((p) =>
     p.nombre.toLowerCase().includes(query.trim().toLowerCase()),
   );
+
+  const todosVisiblesSeleccionados = filtrados.length > 0 && filtrados.every((p) => seleccionados.has(p.id));
+
+  function toggleSeleccion(id: string) {
+    setSeleccionados((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
+      return next;
+    });
+  }
+
+  function toggleSeleccionarVisibles() {
+    setSeleccionados((prev) => {
+      const next = new Set(prev);
+      if (todosVisiblesSeleccionados) {
+        filtrados.forEach((p) => next.delete(p.id));
+      } else {
+        filtrados.forEach((p) => next.add(p.id));
+      }
+      return next;
+    });
+  }
 
   function aplicarAjuste() {
     setError(null);
@@ -51,17 +83,21 @@ export function ActualizarCostosView({
       setError("Ingresá un porcentaje distinto de 0.");
       return;
     }
-    if (filtrados.length === 0) return;
+    if (seleccionados.size === 0) {
+      setError("Seleccioná al menos un producto de la lista.");
+      return;
+    }
 
+    const ids = Array.from(seleccionados);
     const signo = porcentaje > 0 ? "un aumento" : "una baja";
-    const pregunta = `¿Aplicar ${signo} del ${Math.abs(porcentaje)}% al costo de ${filtrados.length} ${filtrados.length === 1 ? "producto" : "productos"}? Los precios de venta se recalculan solos con el % de ganancia que ya tenga cada pista (no toca las que tenés fijadas manualmente).`;
+    const pregunta = `¿Aplicar ${signo} del ${Math.abs(porcentaje)}% al costo de ${ids.length} ${ids.length === 1 ? "producto seleccionado" : "productos seleccionados"}? Los precios de venta se recalculan solos con el % de ganancia que ya tenga cada pista (no toca las que tenés fijadas manualmente).`;
     if (!confirm(pregunta)) return;
 
     startTransition(async () => {
       const res = await fetch("/api/productos/ajustar-costo", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ productoIds: filtrados.map((p) => p.id), porcentaje }),
+        body: JSON.stringify({ productoIds: ids, porcentaje }),
       });
 
       const data = await res.json();
@@ -72,6 +108,7 @@ export function ActualizarCostosView({
       }
 
       setPorcentaje(0);
+      setSeleccionados(new Set());
       showSuccessToast(`Se actualizaron ${data.updated} ${data.updated === 1 ? "producto" : "productos"}`);
       router.refresh();
     });
@@ -124,20 +161,29 @@ export function ActualizarCostosView({
             {error}
           </p>
         )}
-        <Button
-          type="button"
-          className="w-full"
-          disabled={isPending || filtrados.length === 0}
-          onClick={aplicarAjuste}
-        >
-          {isPending ? "Aplicando..." : `Aplicar a ${filtrados.length} ${filtrados.length === 1 ? "producto" : "productos"}`}
+        <Button type="button" className="w-full" disabled={isPending || seleccionados.size === 0} onClick={aplicarAjuste}>
+          {isPending
+            ? "Aplicando..."
+            : `Aplicar a ${seleccionados.size} ${seleccionados.size === 1 ? "producto seleccionado" : "productos seleccionados"}`}
         </Button>
       </div>
 
       <div className="space-y-2">
-        <p className="text-sm text-muted-foreground">
-          {filtrados.length} {filtrados.length === 1 ? "producto encontrado" : "productos encontrados"}
-        </p>
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <p className="text-sm text-muted-foreground">
+            {filtrados.length} {filtrados.length === 1 ? "producto encontrado" : "productos encontrados"}
+          </p>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            className="h-auto px-2 py-1 text-muted-foreground"
+            disabled={filtrados.length === 0}
+            onClick={toggleSeleccionarVisibles}
+          >
+            {todosVisiblesSeleccionados ? "Deseleccionar visibles" : "Seleccionar visibles"}
+          </Button>
+        </div>
         {filtrados.length === 0 ? (
           <div className="rounded-lg border border-dashed p-8 text-center text-sm text-muted-foreground">
             No se encontraron productos con estos filtros.
@@ -145,15 +191,19 @@ export function ActualizarCostosView({
         ) : (
           <div className="grid gap-2">
             {filtrados.map((producto, index) => (
-              <div
+              <label
                 key={producto.id}
-                className="flex items-center justify-between gap-2 rounded-lg border bg-background p-3 text-sm"
+                className="flex items-center gap-3 rounded-lg border bg-background p-3 text-sm has-[[data-checked]]:border-primary"
               >
-                <span className="min-w-0 break-words">
+                <Checkbox
+                  checked={seleccionados.has(producto.id)}
+                  onCheckedChange={() => toggleSeleccion(producto.id)}
+                />
+                <span className="min-w-0 flex-1 break-words">
                   {index + 1}. {producto.nombre} · {formatCantidad(producto.kg, producto.unidad_medida)}
                 </span>
                 <span className="shrink-0 font-medium">{currency(producto.costo)}</span>
-              </div>
+              </label>
             ))}
           </div>
         )}

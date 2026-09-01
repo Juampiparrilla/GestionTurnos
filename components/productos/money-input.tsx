@@ -1,11 +1,17 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
 import { Input } from "@/components/ui/input";
 
-// Input de dinero: muestra "$" + separador de miles (formato es-AR) y solo
-// deja tipear dígitos -- internamente siempre maneja un número entero de
-// pesos, sin decimales (los costos/precios de este negocio son siempre
-// montos redondos).
+function formatMonto(value: number) {
+  return value ? value.toLocaleString("es-AR", { maximumFractionDigits: 2 }) : "";
+}
+
+// Input de dinero: muestra "$" + formato es-AR (punto de miles, coma
+// decimal). Se guarda el texto tipeado aparte del valor numérico -- si se
+// reformateara en cada tecla, la coma decimal desaparecería del input antes
+// de poder escribir los decimales (ej. al tipear "1253," se perdería la
+// coma apenas se reformatea a "1.253").
 export function MoneyInput({
   id,
   value,
@@ -17,11 +23,39 @@ export function MoneyInput({
   onChange: (value: number) => void;
   required?: boolean;
 }) {
-  const display = value ? value.toLocaleString("es-AR") : "";
+  const [text, setText] = useState(() => formatMonto(value));
+  const ultimoEmitido = useRef(value);
+
+  useEffect(() => {
+    if (value !== ultimoEmitido.current) {
+      setText(formatMonto(value));
+      ultimoEmitido.current = value;
+    }
+  }, [value]);
 
   function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
-    const digits = event.target.value.replace(/\D/g, "");
-    onChange(digits ? Number(digits) : 0);
+    const soloValidos = event.target.value.replace(/[^\d,]/g, "");
+    const primeraComa = soloValidos.indexOf(",");
+    let normalizado =
+      primeraComa === -1
+        ? soloValidos
+        : soloValidos.slice(0, primeraComa + 1) + soloValidos.slice(primeraComa + 1).replace(/,/g, "");
+    if (primeraComa !== -1) {
+      const [entero, decimales] = normalizado.split(",");
+      normalizado = `${entero},${decimales.slice(0, 2)}`;
+    }
+
+    const comoNumero = normalizado.replace(",", ".");
+    const parsed = comoNumero === "" || comoNumero === "." ? 0 : Number(comoNumero);
+    const final = Number.isNaN(parsed) ? 0 : parsed;
+
+    setText(normalizado);
+    ultimoEmitido.current = final;
+    onChange(final);
+  }
+
+  function handleBlur() {
+    setText(formatMonto(value));
   }
 
   return (
@@ -31,10 +65,11 @@ export function MoneyInput({
       </span>
       <Input
         id={id}
-        inputMode="numeric"
+        inputMode="decimal"
         required={required}
-        value={display}
+        value={text}
         onChange={handleChange}
+        onBlur={handleBlur}
         className="pl-6"
       />
     </div>

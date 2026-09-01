@@ -21,6 +21,7 @@ import type { Categoria } from "@/types/categoria";
 import type { Proveedor } from "@/types/proveedor";
 import type { Producto } from "@/types/producto";
 import { NombreProductoField } from "./nombre-producto-field";
+import { CantidadInput } from "./cantidad-input";
 import { MarcaSelectField } from "./marca-select-field";
 import { CategoriaSelectField } from "./categoria-select-field";
 import { ProveedorSelectField } from "./proveedor-select-field";
@@ -159,15 +160,7 @@ export function EditProductoSheet({
             </div>
             <div className="space-y-2">
               <Label htmlFor="kg">{unidadMedida === "kg" ? "Kg de la bolsa" : "Cantidad de unidades"}</Label>
-              <Input
-                id="kg"
-                type="number"
-                step="0.01"
-                min="0.01"
-                required
-                value={kg || ""}
-                onChange={(e) => setKg(Number(e.target.value))}
-              />
+              <CantidadInput id="kg" value={kg} onChange={setKg} required />
               {unidadMedida === "unidad" && (
                 <p className="text-xs text-muted-foreground">
                   Normalmente 1 (se vende de a una). Si compraste un paquete con varias adentro, esa cantidad va en

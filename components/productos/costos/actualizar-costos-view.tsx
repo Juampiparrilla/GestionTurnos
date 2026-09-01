@@ -76,6 +76,14 @@ export function ActualizarCostosView({
     });
   }
 
+  function seleccionarTodos() {
+    setSeleccionados(new Set(productos.map((p) => p.id)));
+  }
+
+  function limpiarSeleccion() {
+    setSeleccionados(new Set());
+  }
+
   function aplicarAjuste() {
     setError(null);
 
@@ -146,9 +154,7 @@ export function ActualizarCostosView({
       )}
 
       <div className="space-y-2 rounded-lg border p-3">
-        <Label htmlFor="porcentaje-ajuste-costo">
-          % de ajuste sobre el costo (positivo para aumentar, negativo para bajar)
-        </Label>
+        <Label htmlFor="porcentaje-ajuste-costo">% de ajuste sobre el costo</Label>
         <Input
           id="porcentaje-ajuste-costo"
           type="number"
@@ -156,6 +162,9 @@ export function ActualizarCostosView({
           value={porcentaje || ""}
           onChange={(e) => setPorcentaje(e.target.value ? Number(e.target.value) : 0)}
         />
+        <p className="text-xs text-muted-foreground">
+          Para aumentar escribí solo el número (ej. 15). Para bajar, escribí el signo &quot;-&quot; adelante (ej. -15).
+        </p>
         {error && (
           <p role="alert" className="text-sm text-destructive">
             {error}
@@ -172,17 +181,42 @@ export function ActualizarCostosView({
         <div className="flex flex-wrap items-center justify-between gap-2">
           <p className="text-sm text-muted-foreground">
             {filtrados.length} {filtrados.length === 1 ? "producto encontrado" : "productos encontrados"}
+            {seleccionados.size > 0 &&
+              ` · ${seleccionados.size} ${seleccionados.size === 1 ? "seleccionado" : "seleccionados"}`}
           </p>
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            className="h-auto px-2 py-1 text-muted-foreground"
-            disabled={filtrados.length === 0}
-            onClick={toggleSeleccionarVisibles}
-          >
-            {todosVisiblesSeleccionados ? "Deseleccionar visibles" : "Seleccionar visibles"}
-          </Button>
+          <div className="flex flex-wrap gap-1">
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className="h-auto px-2 py-1 text-muted-foreground"
+              disabled={productos.length === 0}
+              onClick={seleccionarTodos}
+            >
+              Seleccionar todos ({productos.length})
+            </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className="h-auto px-2 py-1 text-muted-foreground"
+              disabled={filtrados.length === 0}
+              onClick={toggleSeleccionarVisibles}
+            >
+              {todosVisiblesSeleccionados ? "Deseleccionar visibles" : "Seleccionar visibles"}
+            </Button>
+            {seleccionados.size > 0 && (
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                className="h-auto px-2 py-1 text-muted-foreground"
+                onClick={limpiarSeleccion}
+              >
+                Limpiar selección
+              </Button>
+            )}
+          </div>
         </div>
         {filtrados.length === 0 ? (
           <div className="rounded-lg border border-dashed p-8 text-center text-sm text-muted-foreground">

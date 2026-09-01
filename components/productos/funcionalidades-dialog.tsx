@@ -35,7 +35,7 @@ const FUNCIONALIDADES = [
   {
     titulo: "Actualizar costos",
     descripcion:
-      "Buscá o filtrá para encontrar los productos (por categoría, marca, proveedor, cantidad, oferta o precio), tildalos a mano de la lista -- de a uno, o todos los que están visibles con un solo botón -- y aplicales un % de aumento o baja sobre el costo actual de una sola vez, por ejemplo cuando un proveedor sube toda su lista un 15%. La selección se mantiene aunque cambies la búsqueda, así se puede armar de a partes. Las tres pistas de precio se recalculan solas con el % de ganancia que ya tenía cada una, sin tocar las que están fijadas manualmente.",
+      "Buscá o filtrá para encontrar los productos (por categoría, marca, proveedor, cantidad, oferta o precio) y tildalos a mano de la lista -- de a uno, todos los que están visibles, o el catálogo completo, cada uno con su propio botón. La selección se mantiene aunque cambies la búsqueda, así se puede armar de a partes. Al % de ajuste se le pone solo el número para aumentar (ej. 15) o el signo \"-\" adelante para bajar (ej. -15), y se aplica de una al costo de todo lo tildado -- por ejemplo cuando un proveedor sube toda su lista un 15%. Las tres pistas de precio se recalculan solas con el % de ganancia que ya tenía cada una, sin tocar las que están fijadas manualmente.",
   },
   {
     titulo: "Reportes con filtros",

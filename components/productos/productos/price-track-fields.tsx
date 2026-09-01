@@ -19,6 +19,7 @@ export function PriceTrackFields({
   onManualChange,
   precioManual,
   onPrecioManualChange,
+  kgPorBolsa,
 }: {
   label: string;
   namePrefix: string;
@@ -29,8 +30,16 @@ export function PriceTrackFields({
   onManualChange: (value: boolean) => void;
   precioManual: number;
   onPrecioManualChange: (value: number) => void;
+  // Solo para la pista "Bolsa abierta": el costo/precio de esta pista es
+  // sobre la bolsa entera (misma base que "Bolsa cerrada"), así que acá se
+  // muestra además a cuánto equivale el kg suelto -- lo que realmente se
+  // usa al vender por peso. Si se pasa, se agrega esa línea extra.
+  kgPorBolsa?: number;
 }) {
   const precioCalculado = costo > 0 ? Math.round(costo * (1 + porcentaje / 100) * 100) / 100 : 0;
+  const precioFinal = manual ? precioManual : precioCalculado;
+  const precioPorKg =
+    kgPorBolsa && kgPorBolsa > 0 ? Math.round((precioFinal / kgPorBolsa) * 100) / 100 : null;
 
   return (
     <fieldset className="flex flex-col gap-3 rounded-lg border border-zinc-300 bg-zinc-100 p-3 dark:border-zinc-700 dark:bg-zinc-800">
@@ -52,6 +61,9 @@ export function PriceTrackFields({
             value={precioManual}
             onChange={onPrecioManualChange}
           />
+          {precioPorKg !== null && (
+            <p className="text-xs text-muted-foreground">Precio por kg: ${precioPorKg.toLocaleString("es-AR")}</p>
+          )}
         </div>
       ) : (
         <div className="space-y-2">
@@ -67,6 +79,9 @@ export function PriceTrackFields({
           <p className="text-xs text-muted-foreground">
             Precio de venta: ${precioCalculado.toLocaleString("es-AR")}
           </p>
+          {precioPorKg !== null && (
+            <p className="text-xs text-muted-foreground">Precio por kg: ${precioPorKg.toLocaleString("es-AR")}</p>
+          )}
         </div>
       )}
     </fieldset>

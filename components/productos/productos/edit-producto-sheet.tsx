@@ -234,6 +234,7 @@ export function EditProductoSheet({
                 onManualChange={setManualAbierta}
                 precioManual={precioManualAbierta}
                 onPrecioManualChange={setPrecioManualAbierta}
+                kgPorBolsa={kg}
               />
             )}
             <PriceTrackFields

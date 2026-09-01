@@ -15,7 +15,7 @@ const FUNCIONALIDADES = [
   {
     titulo: "Productos",
     descripcion:
-      "Alta, edición y baja de productos con costo y precios de venta, cada uno con su % de ganancia o un precio manual. Se venden por Kg (bolsa cerrada, bolsa abierta y por mayor) o por Unidad (precio unitario y por mayor, para productos que no se venden sueltos, como un sachet o un accesorio). Al tipear el nombre te sugiere productos que ya tenés cargados, para no repetir uno con una pequeña diferencia. El formulario de alta se puede \"anclar\" para que quede abierto después de crear cada producto, útil para cargar varios seguidos, y siempre confirma con un mensaje cuando se creó con éxito. El listado también se puede filtrar por categoría, marca, proveedor, cantidad, oferta y precio, igual que en Reportes.",
+      "Alta, edición y baja de productos con costo y precios de venta, cada uno con su % de ganancia o un precio manual. Se venden por Kg (bolsa cerrada, bolsa abierta y por mayor) o por Unidad (precio unitario y por mayor, para productos que no se venden sueltos, como un sachet o un accesorio). En Bolsa abierta el formulario también muestra a cuánto equivale el precio por kg suelto, calculado sobre el precio de la bolsa entera. Al tipear el nombre te sugiere productos que ya tenés cargados, para no repetir uno con una pequeña diferencia. El formulario de alta se puede \"anclar\" para que quede abierto después de crear cada producto, útil para cargar varios seguidos, y siempre confirma con un mensaje cuando se creó con éxito. El listado también se puede filtrar por categoría, marca, proveedor, cantidad, oferta y precio, igual que en Reportes.",
   },
   {
     titulo: "Marcas, categorías y proveedores",

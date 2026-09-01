@@ -66,18 +66,17 @@ export function CategoriaRow({
     <>
       <PendingOverlay pending={isPending} />
       <div className="min-w-0 rounded-lg border bg-background shadow-sm">
-        <div className="flex min-w-0 items-center justify-between gap-3 p-4">
-          <div className="flex min-w-0 items-center gap-3">
-            <span className="w-6 shrink-0 text-sm text-muted-foreground">{numero}.</span>
-            <div className="min-w-0">
-              <p className="truncate font-medium">{categoria.nombre}</p>
-              {categoria.descripcion && (
-                <p className="truncate text-sm text-muted-foreground">{categoria.descripcion}</p>
-              )}
-            </div>
+        <div className="flex flex-col gap-2 p-4">
+          <div className="min-w-0">
+            <p className="truncate font-medium">
+              {numero}. {categoria.nombre}
+            </p>
+            {categoria.descripcion && (
+              <p className="truncate text-sm text-muted-foreground">{categoria.descripcion}</p>
+            )}
           </div>
-          <div className="flex shrink-0 items-center gap-2">
-            {!categoria.active && <Badge variant="outline">Inactiva</Badge>}
+          <div className="flex items-center justify-end gap-1">
+            {!categoria.active && <Badge variant="outline" className="mr-auto">Inactiva</Badge>}
             <Button
               variant="ghost"
               size="icon-sm"

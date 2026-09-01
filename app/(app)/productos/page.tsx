@@ -50,19 +50,19 @@ export default async function ProductosHomePage() {
         ))}
       </div>
       <Link
-        href="/productos/reportes"
-        className="flex items-center justify-center gap-2 rounded-lg bg-zinc-900 p-4 text-center text-white shadow-sm transition-colors hover:bg-zinc-800"
-      >
-        <FileText className="size-5" aria-hidden="true" />
-        <span className="font-medium">Reportes</span>
-        <LinkPendingSpinner />
-      </Link>
-      <Link
         href="/productos/actualizar-costos"
         className="flex items-center justify-center gap-2 rounded-lg bg-zinc-900 p-4 text-center text-white shadow-sm transition-colors hover:bg-zinc-800"
       >
         <Percent className="size-5" aria-hidden="true" />
         <span className="font-medium">Actualizar costos</span>
+        <LinkPendingSpinner />
+      </Link>
+      <Link
+        href="/productos/reportes"
+        className="flex items-center justify-center gap-2 rounded-lg bg-zinc-900 p-4 text-center text-white shadow-sm transition-colors hover:bg-zinc-800"
+      >
+        <FileText className="size-5" aria-hidden="true" />
+        <span className="font-medium">Reportes</span>
         <LinkPendingSpinner />
       </Link>
     </div>

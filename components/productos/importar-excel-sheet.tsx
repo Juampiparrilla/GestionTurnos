@@ -68,7 +68,7 @@ export function ImportarExcelSheet() {
         className="flex w-full items-center justify-center gap-2 rounded-lg bg-zinc-900 p-4 text-center text-white shadow-sm transition-colors hover:bg-zinc-800"
       >
         <FileSpreadsheet className="size-5" aria-hidden="true" />
-        <span className="font-medium">Importar Excel</span>
+        <span className="font-medium">Importar / Actualizar Excel</span>
       </button>
 
       <Sheet open={open} onOpenChange={handleOpenChange}>
@@ -99,7 +99,7 @@ export function ImportarExcelSheet() {
               </a>
             </div>
 
-            <div className="space-y-2 rounded-lg border p-3">
+            <div className="space-y-2 rounded-lg border border-zinc-300 bg-zinc-100 p-3 dark:border-zinc-700 dark:bg-zinc-800">
               <p className="text-sm font-medium">Actualizar productos existentes</p>
               <p className="text-xs text-muted-foreground">
                 Descargá tu catálogo actual (ya viene con el ID de cada producto), editá lo que necesites y subilo de
@@ -108,7 +108,7 @@ export function ImportarExcelSheet() {
               {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- descarga un archivo, no navega a una página; Link rompería la descarga */}
               <a
                 href="/api/productos/import/exportar"
-                className={cn(buttonVariants({ variant: "outline" }), "w-full gap-1.5")}
+                className={cn(buttonVariants({ variant: "default" }), "w-full gap-1.5")}
               >
                 <Download className="size-4" aria-hidden="true" />
                 Descargar catálogo actual

@@ -2,6 +2,7 @@ import ExcelJS from "exceljs";
 import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/auth/require-role";
 import { IMPORT_COLUMNAS } from "@/lib/productos/importar-excel";
+import { formatFechaHoraArchivo } from "@/lib/format-date";
 
 export const runtime = "nodejs";
 
@@ -21,7 +22,7 @@ export async function GET() {
   return new NextResponse(buffer, {
     headers: {
       "Content-Type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-      "Content-Disposition": 'attachment; filename="plantilla-productos.xlsx"',
+      "Content-Disposition": `attachment; filename="plantilla-productos-${formatFechaHoraArchivo()}.xlsx"`,
     },
   });
 }

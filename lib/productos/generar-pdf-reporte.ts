@@ -3,6 +3,7 @@ import autoTable, { type CellInput, type RowInput } from "jspdf-autotable";
 import type { Producto } from "@/types/producto";
 import { PRICE_TRACK_LABELS, precioPorTrack, type PriceTrack } from "./price-track";
 import { formatCantidad } from "./formato-cantidad";
+import { formatFechaHoraArchivo } from "@/lib/format-date";
 
 const currency = (value: number) => `$${value.toLocaleString("es-AR")}`;
 
@@ -172,7 +173,7 @@ function construirDocumentoPdf(productos: Producto[], contexto: ContextoPdf, opc
 
 function nombreArchivoPdf(opciones: OpcionesPdf): string {
   const sufijo = opciones.modo === "negocio" ? "interno" : "cliente";
-  return `reporte-productos-${sufijo}-${Date.now()}.pdf`;
+  return `reporte-productos-${sufijo}-${formatFechaHoraArchivo()}.pdf`;
 }
 
 export function generarPdfReporte(productos: Producto[], contexto: ContextoPdf, opciones: OpcionesPdf) {

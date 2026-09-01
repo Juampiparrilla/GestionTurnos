@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { requireAdmin } from "@/lib/auth/require-role";
 import { IMPORT_COLUMNAS } from "@/lib/productos/importar-excel";
+import { formatFechaHoraArchivo } from "@/lib/format-date";
 import type { Producto } from "@/types/producto";
 
 export const runtime = "nodejs";
@@ -56,7 +57,7 @@ export async function GET() {
   return new NextResponse(buffer, {
     headers: {
       "Content-Type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-      "Content-Disposition": 'attachment; filename="catalogo-productos.xlsx"',
+      "Content-Disposition": `attachment; filename="catalogo-productos-${formatFechaHoraArchivo()}.xlsx"`,
     },
   });
 }

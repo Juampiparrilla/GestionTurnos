@@ -78,7 +78,9 @@ export async function POST(request: Request) {
   const faltantes = IMPORT_COLUMNAS.filter((c) => !columnaPorClave.has(c.key));
   if (faltantes.length > 0) {
     return NextResponse.json(
-      { error: `Faltan columnas en la planilla: ${faltantes.map((c) => c.header).join(", ")}.` },
+      {
+        error: `Faltan columnas en la planilla: ${faltantes.map((c) => c.header).join(", ")}. Puede ser una plantilla vieja -- descargala de nuevo y usá esa base.`,
+      },
       { status: 400 },
     );
   }

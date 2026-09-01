@@ -66,7 +66,8 @@ function catalogoDePrueba(): Producto[] {
   return productos;
 }
 
-const HEAD_NEGOCIO = [["Nombre", "Cantidad", "Marca", "Proveedor", "Costo", "Cerrada", "Abierta", "Por mayor", "$/Kg", "Oferta"]];
+const HEAD_NEGOCIO = [["#", "Nombre", "Cantidad", "Marca", "Proveedor", "Costo", "Cerrada", "Abierta", "Por mayor", "$/Kg", "Oferta"]];
+const INDICE_MARCA = 3;
 
 describe("construirDocumentoPdf", () => {
   it("genera varias hojas sin tirar error con muchos grupos", () => {
@@ -99,18 +100,22 @@ describe("construirDocumentoPdf", () => {
     // esa llamada habría calculado su propio ancho de "Marca" en base a su
     // propio contenido, más angosto que el ancho de referencia de abajo.
     const anchoMarcaUltimoGrupo = (doc as unknown as { lastAutoTable: { columns: { width: number }[] } })
-      .lastAutoTable.columns[2].width;
+      .lastAutoTable.columns[INDICE_MARCA].width;
 
     // Ancho de referencia: el mismo cálculo que hace construirDocumentoPdf
-    // a partir de TODO el catálogo (incluye la marca larga del grupo 20).
+    // a partir de TODO el catálogo (incluye la marca larga del grupo 20). Se
+    // antepone el número de fila DENTRO de su grupo (1 o 2, como arma
+    // catalogoDePrueba: cada grupo tiene exactamente 2 productos) para que
+    // la columna "#" tenga el mismo ancho natural que en la tabla real y no
+    // corra levemente el resto de las columnas al repartir el sobrante.
     const docDeReferencia = new jsPDF({ orientation: "landscape" });
     const tablaDeReferencia = __createTable(docDeReferencia, {
       head: HEAD_NEGOCIO,
-      body: productos.map((p) => filaProducto(p, contexto, opciones)),
+      body: productos.map((p, i) => [(i % 2) + 1, ...filaProducto(p, contexto, opciones)]),
       styles: { fontSize: 9 },
       headStyles: { fillColor: [24, 24, 27] },
     });
 
-    expect(anchoMarcaUltimoGrupo).toBeCloseTo(tablaDeReferencia.columns[2].width, 5);
+    expect(anchoMarcaUltimoGrupo).toBeCloseTo(tablaDeReferencia.columns[INDICE_MARCA].width, 5);
   });
 });

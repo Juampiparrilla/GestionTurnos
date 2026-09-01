@@ -42,7 +42,7 @@ export function OrganizationContactCard({
   }
 
   return (
-    <div className="space-y-2 rounded-lg border p-3">
+    <div className="space-y-2 rounded-lg border border-blue-200 bg-blue-50 p-3 dark:border-blue-900 dark:bg-blue-950/40">
       <div className="flex items-center justify-between">
         <p className="text-sm font-medium">Datos para reportes</p>
         {!editing && (
@@ -92,7 +92,7 @@ export function OrganizationContactCard({
       ) : (
         <p className="text-sm text-muted-foreground">
           {organization.name}
-          {organization.phone ? ` · ${organization.phone}` : " · Sin teléfono cargado (no aparece en la marca de agua)"}
+          {organization.phone ? ` · ${organization.phone}` : " · Sin teléfono cargado (no aparece en el encabezado del PDF)"}
         </p>
       )}
     </div>

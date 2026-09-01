@@ -45,7 +45,7 @@ const FUNCIONALIDADES = [
   {
     titulo: "PDF y WhatsApp",
     descripcion:
-      "Generá un PDF horizontal interno (con costos y porcentajes) o uno para el cliente (con los precios que elijas mostrar y una fecha de validez opcional) y compartilo directo por WhatsApp desde el celular. Lleva el nombre del negocio como marca de agua, tenue para no tapar la tabla (el teléfono ya se ve arriba de cada hoja). Cuando agrupás por categoría, marca o proveedor, cada grupo se separa con una fila en negro para distinguirlo fácil de los productos, y nunca queda el título de un grupo solo al pie de una hoja.",
+      "Generá un PDF horizontal interno (con costos y porcentajes) o uno para el cliente (con los precios que elijas mostrar y una fecha de validez opcional) y compartilo directo por WhatsApp desde el celular. Cada producto va numerado en la primera columna. Lleva el nombre del negocio como marca de agua, tenue para no tapar la tabla (el teléfono ya se ve arriba de cada hoja). Cuando agrupás por categoría, marca o proveedor, cada grupo se separa con una fila en negro para distinguirlo fácil de los productos (nunca queda el título solo al pie de una hoja) y la numeración arranca de nuevo en cada grupo.",
   },
   {
     titulo: "Código de producto",

@@ -153,6 +153,7 @@ export function construirDocumentoPdf(productos: Producto[], contexto: ContextoP
     opciones.modo === "negocio"
       ? [
           [
+            "#",
             "Nombre",
             "Cantidad",
             "Marca",
@@ -165,7 +166,7 @@ export function construirDocumentoPdf(productos: Producto[], contexto: ContextoP
             "Oferta",
           ],
         ]
-      : [["Nombre", "Cantidad", ...opciones.precioTracks.map((track) => PRICE_TRACK_LABELS[track])]];
+      : [["#", "Nombre", "Cantidad", ...opciones.precioTracks.map((track) => PRICE_TRACK_LABELS[track])]];
 
   const columnas = head[0].length;
   const grupos = agruparProductos(productos, opciones.agrupacion, contexto);
@@ -177,7 +178,9 @@ export function construirDocumentoPdf(productos: Producto[], contexto: ContextoP
   // __createTable solo arma y mide la tabla, no la dibuja.
   const tablaDeMedicion = __createTable(doc, {
     head,
-    body: productos.map((p) => filaProducto(p, contexto, opciones)),
+    body: grupos.flatMap((grupo) =>
+      grupo.productos.map((p, i): CellInput[] => [i + 1, ...filaProducto(p, contexto, opciones)]),
+    ),
     styles: { fontSize: 9 },
     headStyles: { fillColor: [24, 24, 27] },
   });
@@ -205,7 +208,10 @@ export function construirDocumentoPdf(productos: Producto[], contexto: ContextoP
       }
     }
 
-    const filas: RowInput[] = grupo.productos.map((p) => filaProducto(p, contexto, opciones));
+    // La numeración arranca de nuevo en cada grupo (1, 2, 3...) -- si no
+    // hay agrupamiento, "grupos" tiene un único elemento con todo el
+    // catálogo, así que el efecto es una numeración corrida normal.
+    const filas: RowInput[] = grupo.productos.map((p, i) => [i + 1, ...filaProducto(p, contexto, opciones)]);
     const body: RowInput[] =
       grupo.label === null
         ? filas

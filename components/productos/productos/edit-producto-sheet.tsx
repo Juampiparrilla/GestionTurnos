@@ -19,6 +19,7 @@ import type { Marca } from "@/types/marca";
 import type { Categoria } from "@/types/categoria";
 import type { Proveedor } from "@/types/proveedor";
 import type { Producto } from "@/types/producto";
+import { NombreProductoField } from "./nombre-producto-field";
 import { MarcaSelectField } from "./marca-select-field";
 import { CategoriaSelectField } from "./categoria-select-field";
 import { ProveedorSelectField } from "./proveedor-select-field";
@@ -47,6 +48,7 @@ export function EditProductoSheet({
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const [active, setActive] = useState(producto.active);
+  const [nombre, setNombre] = useState(producto.nombre);
 
   const [marcaOptions, setMarcaOptions] = useState(marcas);
   const [categoriaOptions, setCategoriaOptions] = useState(categorias);
@@ -78,7 +80,7 @@ export function EditProductoSheet({
     }
 
     const payload = {
-      nombre: formData.get("nombre"),
+      nombre,
       marcaId,
       categoriaId,
       proveedorId,
@@ -127,26 +129,12 @@ export function EditProductoSheet({
             <SheetTitle>Editar producto</SheetTitle>
           </SheetHeader>
           <form action={handleSubmit} className="flex flex-col gap-4 px-4">
-            <div className="space-y-2">
-              <Label htmlFor="nombre">Nombre</Label>
-              <Input
-                id="nombre"
-                name="nombre"
-                defaultValue={producto.nombre}
-                maxLength={150}
-                onChange={uppercaseOnChange}
-                required
-                list="nombres-productos-edit"
-                autoComplete="off"
-              />
-              <datalist id="nombres-productos-edit">
-                {nombresExistentes
-                  .filter((n) => n !== producto.nombre)
-                  .map((n) => (
-                    <option key={n} value={n} />
-                  ))}
-              </datalist>
-            </div>
+            <NombreProductoField
+              value={nombre}
+              onChange={setNombre}
+              nombresExistentes={nombresExistentes}
+              excluir={producto.nombre}
+            />
             <div className="space-y-2">
               <Label htmlFor="unidad-medida">Se vende por</Label>
               <Select

@@ -18,6 +18,7 @@ import { showSuccessToast } from "@/lib/toast";
 import type { Marca } from "@/types/marca";
 import type { Categoria } from "@/types/categoria";
 import type { Proveedor } from "@/types/proveedor";
+import { NombreProductoField } from "./nombre-producto-field";
 import { MarcaSelectField } from "./marca-select-field";
 import { CategoriaSelectField } from "./categoria-select-field";
 import { ProveedorSelectField } from "./proveedor-select-field";
@@ -155,25 +156,7 @@ export function CreateProductoSheet({
             <SheetTitle>Crear producto</SheetTitle>
           </SheetHeader>
           <form action={handleSubmit} className="flex flex-col gap-4 px-4">
-            <div className="space-y-2">
-              <Label htmlFor="nombre">Nombre</Label>
-              <Input
-                id="nombre"
-                name="nombre"
-                maxLength={150}
-                placeholder="Ej. ADULTO RAZA PEQUEÑA"
-                value={nombre}
-                onChange={(e) => setNombre(e.target.value.toUpperCase())}
-                required
-                list="nombres-productos"
-                autoComplete="off"
-              />
-              <datalist id="nombres-productos">
-                {nombresExistentes.map((n) => (
-                  <option key={n} value={n} />
-                ))}
-              </datalist>
-            </div>
+            <NombreProductoField value={nombre} onChange={setNombre} nombresExistentes={nombresExistentes} />
             <div className="space-y-2">
               <Label htmlFor="unidad-medida">Se vende por</Label>
               <Select

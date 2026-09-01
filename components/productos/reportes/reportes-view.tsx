@@ -14,7 +14,7 @@ import type { Proveedor } from "@/types/proveedor";
 import type { Producto } from "@/types/producto";
 import type { Organization } from "@/types/organization";
 import { GenerarPdfSheet } from "./generar-pdf-sheet";
-import { MultiSelectFilter } from "./multi-select-filter";
+import { MultiSelectFilter } from "@/components/productos/multi-select-filter";
 import { OrganizationContactCard } from "./organization-contact-card";
 import { ReporteProductoRow } from "./reporte-producto-row";
 

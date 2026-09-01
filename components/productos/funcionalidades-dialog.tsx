@@ -33,6 +33,11 @@ const FUNCIONALIDADES = [
       "Desde la pantalla de un proveedor se actualiza el % de ganancia de todos sus productos de una sola vez, sin pisar los precios marcados como manuales.",
   },
   {
+    titulo: "Actualizar costos",
+    descripcion:
+      "Buscá o filtrá cualquier grupo de productos (por categoría, marca, proveedor, cantidad, oferta o precio) y aplicales un % de aumento o baja sobre el costo actual de todos a la vez -- por ejemplo cuando un proveedor sube toda su lista un 15%. Las tres pistas de precio se recalculan solas con el % de ganancia que ya tenía cada una, sin tocar las que están fijadas manualmente.",
+  },
+  {
     titulo: "Reportes con filtros",
     descripcion:
       "Filtrá productos por categoría, marca, proveedor, cantidad, oferta y precio (podés elegir varias opciones a la vez en cada filtro), con un botón para limpiar todo, y agrupalos por categoría, marca o proveedor.",

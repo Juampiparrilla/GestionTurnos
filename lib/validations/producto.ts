@@ -58,6 +58,18 @@ const nombreEntidadSchema = z
 // plantilla. `id` vacío = crear producto nuevo; con valor = actualizar
 // ese producto puntual (columna "ID" de la planilla, se completa sola al
 // descargar el catálogo actual, no la carga el usuario).
+// Ajuste masivo de costo sobre un conjunto de productos ya filtrado en la
+// pantalla (no por proveedor como el otro ajuste masivo): el % se aplica
+// sobre el costo actual de cada producto, no sobre el % de ganancia.
+export const bulkUpdateCostoSchema = z.object({
+  productoIds: z.array(z.string().uuid()).min(1, "Elegí al menos un producto."),
+  porcentaje: z
+    .number()
+    .gt(-100, "El porcentaje no puede bajar el costo a cero o menos.")
+    .max(1000, "Porcentaje demasiado alto.")
+    .refine((v) => v !== 0, "Ingresá un porcentaje distinto de 0."),
+});
+
 export const importProductoRowSchema = z.object({
   id: z.union([z.string().uuid(), z.literal("")]).optional(),
   nombre: nombreSchema,

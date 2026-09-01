@@ -1,5 +1,5 @@
 import jsPDF from "jspdf";
-import autoTable, { type CellInput, type RowInput } from "jspdf-autotable";
+import autoTable, { __createTable, type CellInput, type RowInput } from "jspdf-autotable";
 import type { Producto } from "@/types/producto";
 import { PRICE_TRACK_LABELS, precioPorTrack, type PriceTrack } from "./price-track";
 import { formatCantidad } from "./formato-cantidad";
@@ -20,7 +20,7 @@ export type OpcionesPdf =
   | { modo: "negocio"; agrupacion: Agrupacion }
   | { modo: "cliente"; precioTracks: PriceTrack[]; agrupacion: Agrupacion; validoHasta: Date | null };
 
-type ContextoPdf = {
+export type ContextoPdf = {
   marcaPorId: Map<string, string>;
   categoriaPorId: Map<string, string>;
   proveedorPorId: Map<string, string>;
@@ -28,27 +28,29 @@ type ContextoPdf = {
 };
 
 function dibujarMarcaDeAgua(doc: jsPDF, organization: ContextoPdf["organization"]) {
-  // Nombre y teléfono van en líneas separadas (no concatenados en un solo
-  // string): mucho más corto cada uno, así entra sin recortarse al
-  // rotarlo 45° aunque el nombre del negocio sea largo.
-  const lineas = organization.phone ? [organization.name, organization.phone] : [organization.name];
+  // Solo el nombre -- el teléfono ya se muestra bien legible arriba de
+  // cada hoja (ver datosOrganizacion más abajo), no hace falta repetirlo
+  // acá. Concatenar los dos en un solo string rotado a 45° terminaba sin
+  // entrar en la hoja con nombres largos, y separarlos en dos líneas se
+  // veía raro (jsPDF no las apila bien cuando el texto está rotado).
+  const texto = organization.name;
   const pageWidth = doc.internal.pageSize.getWidth();
   const pageHeight = doc.internal.pageSize.getHeight();
 
   doc.saveGraphicsState();
-  doc.setGState(doc.GState({ opacity: 0.08 }));
+  doc.setGState(doc.GState({ opacity: 0.05 }));
 
-  // Por las dudas con un nombre de negocio muy largo, se achica la fuente
-  // en proporción si ni con las líneas separadas entra.
+  // Por las dudas con un nombre muy largo, se achica la fuente en
+  // proporción si no entra en la hoja.
   const fontSizeMaximo = 28;
   doc.setFontSize(fontSizeMaximo);
-  const anchoMaximo = Math.max(...lineas.map((linea) => doc.getTextWidth(linea)));
+  const anchoTexto = doc.getTextWidth(texto);
   const anchoDisponible = Math.min(pageWidth, pageHeight) * 0.85;
-  const fontSize = anchoMaximo > anchoDisponible ? fontSizeMaximo * (anchoDisponible / anchoMaximo) : fontSizeMaximo;
+  const fontSize = anchoTexto > anchoDisponible ? fontSizeMaximo * (anchoDisponible / anchoTexto) : fontSizeMaximo;
   doc.setFontSize(fontSize);
 
   doc.setTextColor(24, 24, 27);
-  doc.text(lineas, pageWidth / 2, pageHeight / 2, { angle: 45, align: "center" });
+  doc.text(texto, pageWidth / 2, pageHeight / 2, { angle: 45, align: "center" });
   doc.restoreGraphicsState();
   doc.setTextColor(0);
 }
@@ -86,7 +88,10 @@ function agruparProductos(
     .map(([label, productos]) => ({ label, productos }));
 }
 
-function filaProducto(p: Producto, contexto: ContextoPdf, opciones: OpcionesPdf): CellInput[] {
+// Exportada también para poder armar, en el test, las mismas filas que usa
+// construirDocumentoPdf y así comparar anchos de columna contra un cálculo
+// de referencia independiente.
+export function filaProducto(p: Producto, contexto: ContextoPdf, opciones: OpcionesPdf): CellInput[] {
   const esPorUnidad = p.unidad_medida === "unidad";
 
   if (opciones.modo === "negocio") {
@@ -94,7 +99,6 @@ function filaProducto(p: Producto, contexto: ContextoPdf, opciones: OpcionesPdf)
       p.nombre,
       formatCantidad(p.kg, p.unidad_medida),
       p.marca_id ? (contexto.marcaPorId.get(p.marca_id) ?? "") : "",
-      p.categoria_id ? (contexto.categoriaPorId.get(p.categoria_id) ?? "") : "",
       p.proveedor_id ? (contexto.proveedorPorId.get(p.proveedor_id) ?? "") : "",
       currency(p.costo),
       currency(p.precio_venta_cerrada),
@@ -113,7 +117,10 @@ function filaProducto(p: Producto, contexto: ContextoPdf, opciones: OpcionesPdf)
   ];
 }
 
-function construirDocumentoPdf(productos: Producto[], contexto: ContextoPdf, opciones: OpcionesPdf): jsPDF {
+// Exportado (además de usado internamente) para poder probar la
+// paginación/anchos de columna en generar-pdf-reporte.test.ts sin pasar
+// por generarPdfReporte, que llama a doc.save() (API de navegador).
+export function construirDocumentoPdf(productos: Producto[], contexto: ContextoPdf, opciones: OpcionesPdf): jsPDF {
   const doc = new jsPDF({ orientation: "landscape" });
   const fecha = new Date().toLocaleDateString("es-AR");
   const pageWidth = doc.internal.pageSize.getWidth();
@@ -149,7 +156,6 @@ function construirDocumentoPdf(productos: Producto[], contexto: ContextoPdf, opc
             "Nombre",
             "Cantidad",
             "Marca",
-            "Categoría",
             "Proveedor",
             "Costo",
             "Cerrada",
@@ -163,6 +169,21 @@ function construirDocumentoPdf(productos: Producto[], contexto: ContextoPdf, opc
 
   const columnas = head[0].length;
   const grupos = agruparProductos(productos, opciones.agrupacion, contexto);
+
+  // Los anchos de columna se calculan una sola vez a partir de TODO el
+  // catálogo -- si cada llamada de autoTable de abajo (una por grupo) los
+  // calculara por su cuenta según su propio contenido, terminan quedando
+  // distintos entre un grupo y otro y las columnas se ven desalineadas.
+  // __createTable solo arma y mide la tabla, no la dibuja.
+  const tablaDeMedicion = __createTable(doc, {
+    head,
+    body: productos.map((p) => filaProducto(p, contexto, opciones)),
+    styles: { fontSize: 9 },
+    headStyles: { fillColor: [24, 24, 27] },
+  });
+  const columnStyles = Object.fromEntries(
+    tablaDeMedicion.columns.map((columna, indice) => [indice, { cellWidth: columna.width }]),
+  );
 
   // Una llamada a autoTable por grupo (encadenadas por startY) en vez de
   // una sola con todas las filas: así, antes de empezar cada grupo, se
@@ -209,6 +230,7 @@ function construirDocumentoPdf(productos: Producto[], contexto: ContextoPdf, opc
       startY: cursorY,
       styles: { fontSize: 9 },
       headStyles: { fillColor: [24, 24, 27] },
+      columnStyles,
       didDrawPage: () => dibujarMarcaDeAgua(doc, contexto.organization),
     });
 

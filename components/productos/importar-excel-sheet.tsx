@@ -7,6 +7,7 @@ import { buttonVariants } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { PendingOverlay } from "@/components/pending-overlay";
+import { showErrorToast, showSuccessToast } from "@/lib/toast";
 import { cn } from "@/lib/utils";
 
 type ResultadoImportacion = {
@@ -51,11 +52,24 @@ export function ImportarExcelSheet() {
     setIsUploading(false);
 
     if (!res.ok || !data) {
-      setError(data?.error ?? "No se pudo importar el archivo.");
+      const mensaje = data?.error ?? "No se pudo importar el archivo.";
+      setError(mensaje);
+      showErrorToast("No se pudo importar", mensaje);
       return;
     }
 
     setResultado(data);
+
+    const resumen = `${data.creados} creados, ${data.actualizados} actualizados`;
+    if (data.errores.length > 0) {
+      showErrorToast(
+        `${data.errores.length} ${data.errores.length === 1 ? "fila con error" : "filas con error"}`,
+        resumen,
+      );
+    } else {
+      showSuccessToast("Importación completa", resumen);
+    }
+
     if (data.creados > 0 || data.actualizados > 0) router.refresh();
   }
 

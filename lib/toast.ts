@@ -6,6 +6,10 @@ import { Toast } from "@base-ui/react/toast";
 // montado una sola vez en el layout raíz se suscribe a este mismo manager.
 export const toastManager = Toast.createToastManager();
 
-export function showSuccessToast(title: string) {
-  toastManager.add({ title, type: "success", timeout: 3000 });
+export function showSuccessToast(title: string, description?: string) {
+  toastManager.add({ title, description, type: "success", timeout: 3000 });
+}
+
+export function showErrorToast(title: string, description?: string) {
+  toastManager.add({ title, description, type: "error", timeout: 5000 });
 }

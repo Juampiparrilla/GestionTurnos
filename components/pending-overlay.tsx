@@ -16,7 +16,11 @@ export function PendingOverlay({ pending }: { pending: boolean }) {
   if (!overlay) return null;
 
   return createPortal(
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/50 backdrop-blur-sm">
+    // z-100 (no z-50): tiene que quedar arriba de cualquier Sheet/Dialog
+    // abierto -- con el mismo z-index, el portal del sheet se monta
+    // después en el DOM y lo tapa. El Toaster usa el mismo z-100 por la
+    // misma razón.
+    <div className="fixed inset-0 z-100 flex items-center justify-center bg-background/50 backdrop-blur-sm">
       <div className="flex items-center justify-center rounded-full bg-background p-4 shadow-lg ring-1 ring-border">
         <Loader2 className="size-8 animate-spin text-foreground" />
       </div>

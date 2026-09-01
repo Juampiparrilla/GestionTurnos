@@ -1,7 +1,7 @@
 "use client";
 
 import { Toast } from "@base-ui/react/toast";
-import { CheckCircle2, X } from "lucide-react";
+import { AlertCircle, CheckCircle2, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toastManager } from "@/lib/toast";
 
@@ -19,6 +19,9 @@ function ToastList() {
     >
       {toast.type === "success" && (
         <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-green-600" aria-hidden="true" />
+      )}
+      {toast.type === "error" && (
+        <AlertCircle className="mt-0.5 size-4 shrink-0 text-destructive" aria-hidden="true" />
       )}
       <div className="flex-1 space-y-0.5">
         {toast.title && <Toast.Title className="text-sm font-medium" />}

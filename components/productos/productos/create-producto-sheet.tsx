@@ -47,6 +47,7 @@ export function CreateProductoSheet({
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const [anclado, setAnclado] = useState(false);
+  const [costoFieldKey, setCostoFieldKey] = useState(0);
 
   const [marcaOptions, setMarcaOptions] = useState(marcas);
   const [categoriaOptions, setCategoriaOptions] = useState(categorias);
@@ -92,6 +93,10 @@ export function CreateProductoSheet({
     setPrecioManualPorMayor(0);
     setOferta(false);
     setError(null);
+    // CostoUnitarioField guarda su propio estado interno (modo, cantidades,
+    // etc.) que no depende de props -- sin esto, al anclar el formulario y
+    // crear varios seguidos, el costo del producto anterior queda pegado.
+    setCostoFieldKey((k) => k + 1);
   }
 
   function handleOpenChange(next: boolean) {
@@ -253,7 +258,12 @@ export function CreateProductoSheet({
               />
             </div>
 
-            <CostoUnitarioField costo={costo} onCostoChange={setCosto} unidadMedida={unidadMedida} />
+            <CostoUnitarioField
+              key={costoFieldKey}
+              costo={costo}
+              onCostoChange={setCosto}
+              unidadMedida={unidadMedida}
+            />
 
             <PriceTrackFields
               label={unidadMedida === "kg" ? "Bolsa cerrada" : "Precio unitario"}

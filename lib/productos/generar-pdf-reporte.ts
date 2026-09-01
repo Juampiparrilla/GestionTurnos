@@ -1,5 +1,5 @@
 import jsPDF from "jspdf";
-import autoTable, { type CellInput, type RowInput } from "jspdf-autotable";
+import autoTable, { type CellHookData, type CellInput, type RowInput } from "jspdf-autotable";
 import type { Producto } from "@/types/producto";
 import { PRICE_TRACK_LABELS, precioPorTrack, type PriceTrack } from "./price-track";
 import { formatCantidad } from "./formato-cantidad";
@@ -34,7 +34,17 @@ function dibujarMarcaDeAgua(doc: jsPDF, organization: ContextoPdf["organization"
 
   doc.saveGraphicsState();
   doc.setGState(doc.GState({ opacity: 0.08 }));
-  doc.setFontSize(28);
+
+  // Con nombre + teléfono el texto puede ser largo -- si a tamaño fijo no
+  // entra en la hoja (rotado 45°, se corta contra el borde), se achica en
+  // proporción a lo que sobra en vez de tapar el teléfono.
+  const fontSizeMaximo = 28;
+  doc.setFontSize(fontSizeMaximo);
+  const anchoTexto = doc.getTextWidth(texto);
+  const anchoDisponible = Math.min(pageWidth, pageHeight) * 0.85;
+  const fontSize = anchoTexto > anchoDisponible ? fontSizeMaximo * (anchoDisponible / anchoTexto) : fontSizeMaximo;
+  doc.setFontSize(fontSize);
+
   doc.setTextColor(24, 24, 27);
   doc.text(texto, pageWidth / 2, pageHeight / 2, { angle: 45, align: "center" });
   doc.restoreGraphicsState();
@@ -72,6 +82,21 @@ function agruparProductos(
   return Array.from(grupos.entries())
     .sort(([a], [b]) => a.localeCompare(b))
     .map(([label, productos]) => ({ label, productos }));
+}
+
+// Evita que una fila de agrupamiento (ej. "GRAN CAMPEÓN") quede sola al
+// final de una hoja sin ningún producto debajo -- autoTable decide el
+// salto de página fila por fila, y una fila de una sola línea casi siempre
+// "entra" aunque quede huérfana. Se le fuerza una altura mínima más alta
+// que una fila normal (pero moderada, no exagerada) para que cuando el
+// espacio que resta en la hoja no le alcance ni para ella ni para la
+// primera fila de productos, autoTable la mande entera a la hoja
+// siguiente en vez de imprimirla sola.
+function evitarEncabezadoHuerfano(data: CellHookData) {
+  const esEncabezadoDeGrupo = data.row.section === "body" && Array.isArray(data.row.raw) && data.row.raw.length === 1;
+  if (esEncabezadoDeGrupo) {
+    data.cell.styles.minCellHeight = 16;
+  }
 }
 
 function filaProducto(p: Producto, contexto: ContextoPdf, opciones: OpcionesPdf): CellInput[] {
@@ -166,6 +191,7 @@ function construirDocumentoPdf(productos: Producto[], contexto: ContextoPdf, opc
     startY: inicioTabla,
     styles: { fontSize: 9 },
     headStyles: { fillColor: [24, 24, 27] },
+    didParseCell: evitarEncabezadoHuerfano,
     didDrawPage: () => dibujarMarcaDeAgua(doc, contexto.organization),
   });
 

@@ -28,7 +28,7 @@ export function ProductoFiltrosPanel({
   filtros: ReturnType<typeof useProductoFiltros>;
 }) {
   return (
-    <div className="flex flex-col gap-4 rounded-lg bg-muted/40 p-3">
+    <div className="flex flex-col gap-4 rounded-lg border border-zinc-300 bg-zinc-100 p-3 dark:border-zinc-700 dark:bg-zinc-800">
       <div className="flex items-center justify-between">
         <p className="text-sm font-medium">Filtros</p>
         <Button

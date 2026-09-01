@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { Ban, Pencil, RotateCcw, Trash2 } from "lucide-react";
+import { Ban, Pencil, Percent, RotateCcw, Trash2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { PendingOverlay } from "@/components/pending-overlay";
@@ -70,8 +70,13 @@ export function ProveedorRow({ proveedor, numero }: { proveedor: Proveedor; nume
         </div>
         <div className="flex shrink-0 items-center gap-2">
           {!proveedor.active && <Badge variant="outline">Inactivo</Badge>}
-          <Button variant="outline" size="sm" onClick={() => setAjustarOpen(true)}>
-            Ajustar %
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            onClick={() => setAjustarOpen(true)}
+            aria-label="Ajustar % de ganancia"
+          >
+            <Percent className="size-4" aria-hidden="true" />
           </Button>
           <Button variant="ghost" size="icon-sm" onClick={() => setEditOpen(true)} aria-label="Editar">
             <Pencil className="size-4" aria-hidden="true" />

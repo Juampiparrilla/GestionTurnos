@@ -15,6 +15,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { uppercaseOnChange } from "@/lib/productos/uppercase-input";
+import { showSuccessToast } from "@/lib/toast";
 import type { Proveedor } from "@/types/proveedor";
 
 export function EditProveedorSheet({
@@ -58,6 +59,7 @@ export function EditProveedorSheet({
       }
 
       onOpenChange(false);
+      showSuccessToast("Proveedor actualizado con éxito");
       router.refresh();
     });
   }

@@ -6,6 +6,7 @@ import { Ban, Pencil, RotateCcw, Trash2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { PendingOverlay } from "@/components/pending-overlay";
+import { showSuccessToast, showErrorToast } from "@/lib/toast";
 import type { Marca } from "@/types/marca";
 import { EditMarcaSheet } from "./edit-marca-sheet";
 
@@ -21,11 +22,17 @@ export function MarcaRow({ marca, numero }: { marca: Marca; numero: number }) {
     if (!confirm(pregunta)) return;
 
     startTransition(async () => {
-      await fetch(`/api/marcas/${marca.id}`, {
+      const res = await fetch(`/api/marcas/${marca.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ active: !marca.active }),
       });
+      if (!res.ok) {
+        const data = await res.json().catch(() => null);
+        showErrorToast(data?.error ?? "No se pudo guardar el cambio.");
+        return;
+      }
+      showSuccessToast(marca.active ? "Marca desactivada" : "Marca reactivada");
       router.refresh();
     });
   }
@@ -37,9 +44,10 @@ export function MarcaRow({ marca, numero }: { marca: Marca; numero: number }) {
       const res = await fetch(`/api/marcas/${marca.id}`, { method: "DELETE" });
       if (!res.ok) {
         const data = await res.json().catch(() => null);
-        alert(data?.error ?? "No se pudo borrar la marca.");
+        showErrorToast(data?.error ?? "No se pudo borrar la marca.");
         return;
       }
+      showSuccessToast("Marca borrada");
       router.refresh();
     });
   }

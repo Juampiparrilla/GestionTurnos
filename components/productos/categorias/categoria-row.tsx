@@ -6,6 +6,7 @@ import { Ban, Pencil, RotateCcw, Trash2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { PendingOverlay } from "@/components/pending-overlay";
+import { showSuccessToast, showErrorToast } from "@/lib/toast";
 import type { Categoria } from "@/types/categoria";
 import { EditCategoriaSheet } from "./edit-categoria-sheet";
 
@@ -21,11 +22,17 @@ export function CategoriaRow({ categoria, numero }: { categoria: Categoria; nume
     if (!confirm(pregunta)) return;
 
     startTransition(async () => {
-      await fetch(`/api/categorias/${categoria.id}`, {
+      const res = await fetch(`/api/categorias/${categoria.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ active: !categoria.active }),
       });
+      if (!res.ok) {
+        const data = await res.json().catch(() => null);
+        showErrorToast(data?.error ?? "No se pudo guardar el cambio.");
+        return;
+      }
+      showSuccessToast(categoria.active ? "Categoría desactivada" : "Categoría reactivada");
       router.refresh();
     });
   }
@@ -37,9 +44,10 @@ export function CategoriaRow({ categoria, numero }: { categoria: Categoria; nume
       const res = await fetch(`/api/categorias/${categoria.id}`, { method: "DELETE" });
       if (!res.ok) {
         const data = await res.json().catch(() => null);
-        alert(data?.error ?? "No se pudo borrar la categoría.");
+        showErrorToast(data?.error ?? "No se pudo borrar la categoría.");
         return;
       }
+      showSuccessToast("Categoría borrada");
       router.refresh();
     });
   }

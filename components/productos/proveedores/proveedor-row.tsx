@@ -6,6 +6,7 @@ import { Ban, Pencil, RotateCcw, Trash2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { PendingOverlay } from "@/components/pending-overlay";
+import { showSuccessToast, showErrorToast } from "@/lib/toast";
 import type { Proveedor } from "@/types/proveedor";
 import { EditProveedorSheet } from "./edit-proveedor-sheet";
 import { AjustarPorcentajeSheet } from "./ajustar-porcentaje-sheet";
@@ -23,11 +24,17 @@ export function ProveedorRow({ proveedor, numero }: { proveedor: Proveedor; nume
     if (!confirm(pregunta)) return;
 
     startTransition(async () => {
-      await fetch(`/api/proveedores/${proveedor.id}`, {
+      const res = await fetch(`/api/proveedores/${proveedor.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ active: !proveedor.active }),
       });
+      if (!res.ok) {
+        const data = await res.json().catch(() => null);
+        showErrorToast(data?.error ?? "No se pudo guardar el cambio.");
+        return;
+      }
+      showSuccessToast(proveedor.active ? "Proveedor desactivado" : "Proveedor reactivado");
       router.refresh();
     });
   }
@@ -39,9 +46,10 @@ export function ProveedorRow({ proveedor, numero }: { proveedor: Proveedor; nume
       const res = await fetch(`/api/proveedores/${proveedor.id}`, { method: "DELETE" });
       if (!res.ok) {
         const data = await res.json().catch(() => null);
-        alert(data?.error ?? "No se pudo borrar el proveedor.");
+        showErrorToast(data?.error ?? "No se pudo borrar el proveedor.");
         return;
       }
+      showSuccessToast("Proveedor borrado");
       router.refresh();
     });
   }

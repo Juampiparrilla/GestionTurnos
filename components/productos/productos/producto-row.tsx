@@ -10,6 +10,7 @@ import type { Categoria } from "@/types/categoria";
 import type { Proveedor } from "@/types/proveedor";
 import type { Producto } from "@/types/producto";
 import { formatCantidad } from "@/lib/productos/formato-cantidad";
+import { showSuccessToast, showErrorToast } from "@/lib/toast";
 import { EditProductoSheet } from "./edit-producto-sheet";
 
 const currency = (value: number) => `$${value.toLocaleString("es-AR")}`;
@@ -84,7 +85,10 @@ export function ProductoRow({
       });
       const data = await res.json().catch(() => null);
       if (res.ok && data?.producto) {
+        showSuccessToast(producto.active ? "Producto desactivado" : "Producto reactivado");
         onUpdated(data.producto);
+      } else {
+        showErrorToast(data?.error ?? "No se pudo guardar el cambio.");
       }
     });
   }
@@ -96,9 +100,10 @@ export function ProductoRow({
       const res = await fetch(`/api/productos/${producto.id}`, { method: "DELETE" });
       if (!res.ok) {
         const data = await res.json().catch(() => null);
-        alert(data?.error ?? "No se pudo borrar el producto.");
+        showErrorToast(data?.error ?? "No se pudo borrar el producto.");
         return;
       }
+      showSuccessToast("Producto borrado");
       onDeleted(producto.id);
     });
   }

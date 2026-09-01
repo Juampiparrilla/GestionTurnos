@@ -14,6 +14,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { showSuccessToast } from "@/lib/toast";
 import type { Proveedor } from "@/types/proveedor";
 
 export function AjustarPorcentajeSheet({
@@ -59,6 +60,7 @@ export function AjustarPorcentajeSheet({
       }
 
       setResult(data.updated as number);
+      showSuccessToast(`Se actualizaron ${data.updated} ${data.updated === 1 ? "presentación" : "presentaciones"}`);
       router.refresh();
     });
   }

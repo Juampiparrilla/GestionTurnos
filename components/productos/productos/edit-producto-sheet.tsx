@@ -15,6 +15,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { uppercaseOnChange } from "@/lib/productos/uppercase-input";
+import { showSuccessToast } from "@/lib/toast";
 import type { Marca } from "@/types/marca";
 import type { Categoria } from "@/types/categoria";
 import type { Proveedor } from "@/types/proveedor";
@@ -116,6 +117,7 @@ export function EditProductoSheet({
       }
 
       onOpenChange(false);
+      showSuccessToast("Producto actualizado con éxito");
       onUpdated(data.producto);
     });
   }

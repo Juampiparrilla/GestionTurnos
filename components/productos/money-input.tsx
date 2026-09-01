@@ -7,6 +7,10 @@ function formatMonto(value: number) {
   return value ? value.toLocaleString("es-AR", { maximumFractionDigits: 2 }) : "";
 }
 
+function formatEntero(digitos: string) {
+  return digitos ? Number(digitos).toLocaleString("es-AR") : "";
+}
+
 // Input de dinero: muestra "$" + formato es-AR (punto de miles, coma
 // decimal). Se guarda el texto tipeado aparte del valor numérico -- si se
 // reformateara en cada tecla, la coma decimal desaparecería del input antes
@@ -36,17 +40,17 @@ export function MoneyInput({
   function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
     const soloValidos = event.target.value.replace(/[^\d,]/g, "");
     const primeraComa = soloValidos.indexOf(",");
-    let normalizado =
-      primeraComa === -1
-        ? soloValidos
-        : soloValidos.slice(0, primeraComa + 1) + soloValidos.slice(primeraComa + 1).replace(/,/g, "");
-    if (primeraComa !== -1) {
-      const [entero, decimales] = normalizado.split(",");
-      normalizado = `${entero},${decimales.slice(0, 2)}`;
-    }
+    const tieneComa = primeraComa !== -1;
+    const enteroDigitos = tieneComa ? soloValidos.slice(0, primeraComa) : soloValidos;
+    const decimales = tieneComa ? soloValidos.slice(primeraComa + 1).replace(/,/g, "").slice(0, 2) : "";
 
-    const comoNumero = normalizado.replace(",", ".");
-    const parsed = comoNumero === "" || comoNumero === "." ? 0 : Number(comoNumero);
+    // El entero se reformatea con el punto de miles en cada tecla (como
+    // antes de admitir decimales); la parte decimal se deja tal cual se
+    // tipea para no perder la coma a mitad de camino.
+    const normalizado = tieneComa ? `${formatEntero(enteroDigitos)},${decimales}` : formatEntero(enteroDigitos);
+
+    const comoNumero = `${enteroDigitos || "0"}.${decimales || "0"}`;
+    const parsed = Number(comoNumero);
     const final = Number.isNaN(parsed) ? 0 : parsed;
 
     setText(normalizado);

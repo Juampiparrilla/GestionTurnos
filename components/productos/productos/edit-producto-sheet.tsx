@@ -146,7 +146,9 @@ export function EditProductoSheet({
                 onValueChange={(v) => {
                   const nueva = (v as "kg" | "unidad") ?? "kg";
                   setUnidadMedida(nueva);
-                  if (nueva === "unidad" && kg === 0) setKg(1);
+                  // Tampoco puede quedar un decimal arrastrado de cuando
+                  // el producto era por Kg.
+                  if (nueva === "unidad" && (kg === 0 || !Number.isInteger(kg))) setKg(Math.round(kg) || 1);
                 }}
               >
                 <SelectTrigger id="unidad-medida" className="w-full">
@@ -160,7 +162,13 @@ export function EditProductoSheet({
             </div>
             <div className="space-y-2">
               <Label htmlFor="kg">{unidadMedida === "kg" ? "Kg de la bolsa" : "Cantidad de unidades"}</Label>
-              <CantidadInput id="kg" value={kg} onChange={setKg} required />
+              <CantidadInput
+                id="kg"
+                value={kg}
+                onChange={setKg}
+                soloEnteros={unidadMedida === "unidad"}
+                required
+              />
               {unidadMedida === "unidad" && (
                 <p className="text-xs text-muted-foreground">
                   Normalmente 1 (se vende de a una). Si compraste un paquete con varias adentro, esa cantidad va en

@@ -21,15 +21,6 @@ export function NavHeader({ profile }: { profile: Profile }) {
           </p>
         </div>
         <nav className="flex items-center gap-3">
-          <Link
-            href="/tableros"
-            title={isAdmin ? "Horarios" : "Mis horarios"}
-            aria-label={isAdmin ? "Horarios" : "Mis horarios"}
-            className="inline-flex items-center text-muted-foreground hover:text-foreground"
-          >
-            <CalendarClock className="size-5" aria-hidden="true" />
-            <LinkPendingSpinner />
-          </Link>
           {isSuperAdmin && (
             <Link
               href="/usuarios"
@@ -41,6 +32,15 @@ export function NavHeader({ profile }: { profile: Profile }) {
               <LinkPendingSpinner />
             </Link>
           )}
+          <Link
+            href="/tableros"
+            title={isAdmin ? "Horarios" : "Mis horarios"}
+            aria-label={isAdmin ? "Horarios" : "Mis horarios"}
+            className="inline-flex items-center text-muted-foreground hover:text-foreground"
+          >
+            <CalendarClock className="size-5" aria-hidden="true" />
+            <LinkPendingSpinner />
+          </Link>
           <Link
             href="/productos"
             title="Productos"

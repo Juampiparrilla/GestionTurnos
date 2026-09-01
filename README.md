@@ -19,7 +19,7 @@ Producción: [gestion-turnos-nu.vercel.app](https://gestion-turnos-nu.vercel.app
 
 ## Productos
 
-Catálogo de productos del negocio, con **Marcas**, **Categorías** y **Proveedores** como entidades propias (ABM completo: crear, editar, desactivar/reactivar y borrar en forma definitiva).
+Catálogo de productos del negocio, con **Marcas**, **Categorías** y **Proveedores** como entidades propias (ABM completo: crear, editar, desactivar/reactivar y borrar en forma definitiva). En Marcas y Categorías, cada fila se puede desplegar para ver sus productos (cargados bajo demanda) y reasignar cualquiera a otra marca/categoría ahí mismo, sin pasar por el formulario completo de edición.
 
 - Un producto se vende por **Kg** o por **Unidad**. Por Kg tiene **tres pistas de precio independientes** — bolsa cerrada, bolsa abierta (venta suelta por kg) y por mayor —, cada una con su % de ganancia o un precio fijado a mano; el precio de Bolsa abierta se calcula sobre la bolsa entera (misma base que la cerrada) y el formulario muestra al lado a cuánto equivale el kg suelto. Por Unidad solo tiene precio unitario y por mayor — no aplica "bolsa abierta" a algo que no se vende suelto (ej. un sachet, un accesorio). La cantidad admite decimales por Kg (ej. 0.5) pero nunca por Unidad, donde tiene que ser un número entero.
 - Un producto con varias cantidades (ej. 15 kg y 25 kg) son simplemente dos filas del catálogo con el mismo nombre y marca, no una entidad "presentación" aparte. Al escribir el nombre, se sugieren productos ya cargados con nombres parecidos, para evitar cargar el mismo dos veces con una pequeña diferencia de tipeo.

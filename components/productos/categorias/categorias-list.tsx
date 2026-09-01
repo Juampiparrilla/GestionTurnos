@@ -27,7 +27,7 @@ export function CategoriasList({ categorias, descripcion }: { categorias: Catego
       ) : (
         <div className="grid gap-3">
           {filtradas.map((categoria, index) => (
-            <CategoriaRow key={categoria.id} categoria={categoria} numero={index + 1} />
+            <CategoriaRow key={categoria.id} categoria={categoria} numero={index + 1} categorias={categorias} />
           ))}
         </div>
       )}

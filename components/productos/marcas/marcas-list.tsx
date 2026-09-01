@@ -27,7 +27,7 @@ export function MarcasList({ marcas, descripcion }: { marcas: Marca[]; descripci
       ) : (
         <div className="grid gap-3">
           {filtradas.map((marca, index) => (
-            <MarcaRow key={marca.id} marca={marca} numero={index + 1} />
+            <MarcaRow key={marca.id} marca={marca} numero={index + 1} marcas={marcas} />
           ))}
         </div>
       )}

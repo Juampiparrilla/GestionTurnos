@@ -2,17 +2,19 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { Ban, Pencil, RotateCcw, Trash2 } from "lucide-react";
+import { Ban, ChevronDown, ChevronUp, Pencil, RotateCcw, Trash2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { PendingOverlay } from "@/components/pending-overlay";
+import { ProductosDeEntidad } from "@/components/productos/productos-de-entidad";
 import { showSuccessToast, showErrorToast } from "@/lib/toast";
 import type { Marca } from "@/types/marca";
 import { EditMarcaSheet } from "./edit-marca-sheet";
 
-export function MarcaRow({ marca, numero }: { marca: Marca; numero: number }) {
+export function MarcaRow({ marca, numero, marcas }: { marca: Marca; numero: number; marcas: Marca[] }) {
   const router = useRouter();
   const [editOpen, setEditOpen] = useState(false);
+  const [expanded, setExpanded] = useState(false);
   const [isPending, startTransition] = useTransition();
 
   function toggleActive() {
@@ -55,40 +57,64 @@ export function MarcaRow({ marca, numero }: { marca: Marca; numero: number }) {
   return (
     <>
       <PendingOverlay pending={isPending} />
-      <div className="flex min-w-0 items-center justify-between gap-3 rounded-lg border bg-background p-4 shadow-sm">
-        <div className="flex min-w-0 items-center gap-3">
-          <span className="w-6 shrink-0 text-sm text-muted-foreground">{numero}.</span>
-          <p className="truncate font-medium">{marca.nombre}</p>
+      <div className="min-w-0 rounded-lg border bg-background shadow-sm">
+        <div className="flex min-w-0 items-center justify-between gap-3 p-4">
+          <div className="flex min-w-0 items-center gap-3">
+            <span className="w-6 shrink-0 text-sm text-muted-foreground">{numero}.</span>
+            <p className="truncate font-medium">{marca.nombre}</p>
+          </div>
+          <div className="flex shrink-0 items-center gap-2">
+            {!marca.active && <Badge variant="outline">Inactiva</Badge>}
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              onClick={() => setExpanded((v) => !v)}
+              aria-label={expanded ? "Ocultar productos" : "Ver productos"}
+            >
+              {expanded ? (
+                <ChevronUp className="size-4" aria-hidden="true" />
+              ) : (
+                <ChevronDown className="size-4" aria-hidden="true" />
+              )}
+            </Button>
+            <Button variant="ghost" size="icon-sm" onClick={() => setEditOpen(true)} aria-label="Editar">
+              <Pencil className="size-4" aria-hidden="true" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              onClick={toggleActive}
+              disabled={isPending}
+              aria-label={marca.active ? "Desactivar" : "Reactivar"}
+            >
+              {marca.active ? (
+                <Ban className="size-4" aria-hidden="true" />
+              ) : (
+                <RotateCcw className="size-4" aria-hidden="true" />
+              )}
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              onClick={deleteForever}
+              disabled={isPending}
+              aria-label="Borrar definitivamente"
+              className="text-destructive hover:text-destructive"
+            >
+              <Trash2 className="size-4" aria-hidden="true" />
+            </Button>
+          </div>
         </div>
-        <div className="flex shrink-0 items-center gap-2">
-          {!marca.active && <Badge variant="outline">Inactiva</Badge>}
-          <Button variant="ghost" size="icon-sm" onClick={() => setEditOpen(true)} aria-label="Editar">
-            <Pencil className="size-4" aria-hidden="true" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon-sm"
-            onClick={toggleActive}
-            disabled={isPending}
-            aria-label={marca.active ? "Desactivar" : "Reactivar"}
-          >
-            {marca.active ? (
-              <Ban className="size-4" aria-hidden="true" />
-            ) : (
-              <RotateCcw className="size-4" aria-hidden="true" />
-            )}
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon-sm"
-            onClick={deleteForever}
-            disabled={isPending}
-            aria-label="Borrar definitivamente"
-            className="text-destructive hover:text-destructive"
-          >
-            <Trash2 className="size-4" aria-hidden="true" />
-          </Button>
-        </div>
+        {expanded && (
+          <ProductosDeEntidad
+            endpoint={`/api/marcas/${marca.id}/productos`}
+            campo="marcaId"
+            placeholder="Cambiar marca"
+            opciones={marcas
+              .filter((m) => m.id !== marca.id && m.active)
+              .map((m) => ({ value: m.id, label: m.nombre }))}
+          />
+        )}
       </div>
       <EditMarcaSheet marca={marca} open={editOpen} onOpenChange={setEditOpen} />
     </>

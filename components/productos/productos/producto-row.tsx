@@ -10,6 +10,7 @@ import type { Categoria } from "@/types/categoria";
 import type { Proveedor } from "@/types/proveedor";
 import type { Producto } from "@/types/producto";
 import { formatCantidad } from "@/lib/productos/formato-cantidad";
+import { productoAPayloadEdicion } from "@/lib/productos/producto-a-payload";
 import { showSuccessToast, showErrorToast } from "@/lib/toast";
 import { EditProductoSheet } from "./edit-producto-sheet";
 
@@ -61,27 +62,7 @@ export function ProductoRow({
       const res = await fetch(`/api/productos/${producto.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          nombre: producto.nombre,
-          marcaId: producto.marca_id ?? "",
-          categoriaId: producto.categoria_id ?? "",
-          proveedorId: producto.proveedor_id ?? "",
-          descripcion: producto.descripcion ?? "",
-          kg: producto.kg,
-          unidadMedida: producto.unidad_medida,
-          costo: producto.costo,
-          porcentajeCerrada: producto.porcentaje_ganancia_cerrada,
-          manualCerrada: producto.precio_manual_cerrada,
-          precioManualCerrada: producto.precio_venta_cerrada,
-          porcentajeAbierta: producto.porcentaje_ganancia_abierta,
-          manualAbierta: producto.precio_manual_abierta,
-          precioManualAbierta: producto.precio_venta_abierta,
-          porcentajePorMayor: producto.porcentaje_ganancia_por_mayor,
-          manualPorMayor: producto.precio_manual_por_mayor,
-          precioManualPorMayor: producto.precio_venta_por_mayor,
-          oferta: producto.oferta,
-          active: !producto.active,
-        }),
+        body: JSON.stringify(productoAPayloadEdicion(producto, { active: !producto.active })),
       });
       const data = await res.json().catch(() => null);
       if (res.ok && data?.producto) {

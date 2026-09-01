@@ -62,6 +62,11 @@ const FUNCIONALIDADES = [
     descripcion:
       "Si cargaste algo desde el celular y tenías esta pantalla abierta en la compu (o al revés), no hace falta apretar F5 -- se actualiza sola al volver a esa pestaña.",
   },
+  {
+    titulo: "Saltar entre secciones",
+    descripcion:
+      "La flecha junto al título de cada pantalla (Productos, Marcas, Categorías, Proveedores, Actualizar costos, Reportes) abre un menú para ir directo a cualquier otra sección o al inicio, sin tener que volver primero al menú principal.",
+  },
 ];
 
 export function FuncionalidadesDialog() {

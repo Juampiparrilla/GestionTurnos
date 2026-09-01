@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { requireAdmin } from "@/lib/auth/require-role";
 import { createClient } from "@/lib/supabase/server";
 import { ReportesView } from "@/components/productos/reportes/reportes-view";
-import { VolverAProductosLink } from "@/components/productos/volver-a-productos-link";
+import { MenuSecciones } from "@/components/productos/menu-secciones";
 import type { Marca } from "@/types/marca";
 import type { Categoria } from "@/types/categoria";
 import type { Proveedor } from "@/types/proveedor";
@@ -29,7 +29,7 @@ export default async function ReportesPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between gap-4">
         <h1 className="text-xl font-semibold">Reportes</h1>
-        <VolverAProductosLink />
+        <MenuSecciones />
       </div>
       <ReportesView
         productos={(productos as Producto[] | null) ?? []}

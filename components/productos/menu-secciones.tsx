@@ -1,7 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { ArrowLeft, FileText, Home, LayoutGrid, Package, Percent, Tag, Truck } from "lucide-react";
+import { LinkPendingSpinner } from "@/components/link-pending-spinner";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -21,9 +23,12 @@ const SECCIONES = [
 
 // Reemplaza el "volver" simple de cada pantalla de Productos por un menú:
 // saltar directo a cualquier otra sección (antes había que volver al hub y
-// entrar de nuevo) o al inicio, sin sumar una fila nueva de navegación en
-// la pantalla -- ocupa el mismo lugar que ya ocupaba la flechita.
+// entrar de nuevo) o al inicio (el hub de Productos), sin sumar una fila
+// nueva de navegación en la pantalla -- ocupa el mismo lugar que ya
+// ocupaba la flechita. No lista la sección en la que ya se está parado.
 export function MenuSecciones() {
+  const pathname = usePathname();
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
@@ -38,23 +43,25 @@ export function MenuSecciones() {
           </button>
         }
       />
-      <DropdownMenuContent align="end">
+      <DropdownMenuContent align="end" className="w-56">
         <DropdownMenuItem
           render={
-            <Link href="/">
+            <Link href="/productos">
               <Home className="size-4" aria-hidden="true" />
               Inicio
+              <LinkPendingSpinner />
             </Link>
           }
         />
         <DropdownMenuSeparator />
-        {SECCIONES.map(({ href, label, icon: Icon }) => (
+        {SECCIONES.filter(({ href }) => href !== pathname).map(({ href, label, icon: Icon }) => (
           <DropdownMenuItem
             key={href}
             render={
               <Link href={href}>
                 <Icon className="size-4" aria-hidden="true" />
                 {label}
+                <LinkPendingSpinner />
               </Link>
             }
           />

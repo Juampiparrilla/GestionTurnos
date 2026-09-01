@@ -11,6 +11,7 @@ import { cn } from "@/lib/utils";
 
 type ResultadoImportacion = {
   creados: number;
+  actualizados: number;
   errores: { fila: number; mensaje: string }[];
 };
 
@@ -55,7 +56,7 @@ export function ImportarExcelSheet() {
     }
 
     setResultado(data);
-    if (data.creados > 0) router.refresh();
+    if (data.creados > 0 || data.actualizados > 0) router.refresh();
   }
 
   return (
@@ -75,20 +76,44 @@ export function ImportarExcelSheet() {
           <SheetHeader>
             <SheetTitle>Importar productos desde Excel</SheetTitle>
             <SheetDescription>
-              Descargá la plantilla, completala fuera de la app (nombre, kg, marca, categoría, proveedor, costo y los
-              tres % de ganancia) y subila de vuelta para crear varios productos de una sola vez.
+              Subí una planilla para crear productos nuevos, actualizar los que ya tenés cargados, o las dos cosas a
+              la vez — cada fila con la columna ID vacía crea un producto, y cada fila con ID actualiza ese producto
+              puntual.
             </SheetDescription>
           </SheetHeader>
 
           <div className="flex flex-col gap-4 px-4">
-            {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- descarga un archivo, no navega a una página; Link rompería la descarga */}
-            <a
-              href="/api/productos/import/plantilla"
-              className={cn(buttonVariants({ variant: "outline" }), "gap-1.5")}
-            >
-              <Download className="size-4" aria-hidden="true" />
-              Descargar plantilla
-            </a>
+            <div className="space-y-2 rounded-lg border p-3">
+              <p className="text-sm font-medium">Crear productos nuevos</p>
+              <p className="text-xs text-muted-foreground">
+                Descargá la plantilla vacía, completala (nombre, cantidad, marca, categoría, proveedor, costo y los
+                tres % de ganancia) y subila más abajo.
+              </p>
+              {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- descarga un archivo, no navega a una página; Link rompería la descarga */}
+              <a
+                href="/api/productos/import/plantilla"
+                className={cn(buttonVariants({ variant: "outline" }), "w-full gap-1.5")}
+              >
+                <Download className="size-4" aria-hidden="true" />
+                Descargar plantilla vacía
+              </a>
+            </div>
+
+            <div className="space-y-2 rounded-lg border p-3">
+              <p className="text-sm font-medium">Actualizar productos existentes</p>
+              <p className="text-xs text-muted-foreground">
+                Descargá tu catálogo actual (ya viene con el ID de cada producto), editá lo que necesites y subilo de
+                vuelta más abajo.
+              </p>
+              {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- descarga un archivo, no navega a una página; Link rompería la descarga */}
+              <a
+                href="/api/productos/import/exportar"
+                className={cn(buttonVariants({ variant: "outline" }), "w-full gap-1.5")}
+              >
+                <Download className="size-4" aria-hidden="true" />
+                Descargar catálogo actual
+              </a>
+            </div>
 
             <div className="space-y-2">
               <Label htmlFor="archivo-excel">Subir planilla completa</Label>
@@ -123,7 +148,8 @@ export function ImportarExcelSheet() {
             {resultado && (
               <div className="space-y-2 rounded-lg border p-3 text-sm">
                 <p className="font-medium">
-                  {resultado.creados} {resultado.creados === 1 ? "producto importado" : "productos importados"}
+                  {resultado.creados} {resultado.creados === 1 ? "producto creado" : "productos creados"},{" "}
+                  {resultado.actualizados} {resultado.actualizados === 1 ? "actualizado" : "actualizados"}
                 </p>
                 {resultado.errores.length > 0 && (
                   <div className="space-y-1">

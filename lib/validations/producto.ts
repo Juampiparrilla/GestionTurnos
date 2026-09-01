@@ -55,8 +55,11 @@ const nombreEntidadSchema = z
 // createProductoSchema, marca/categoría/proveedor llegan como texto (se
 // resuelven por nombre contra la base, no como uuid) y no admite precio
 // manual/oferta/descripción -- no forman parte de las columnas de la
-// plantilla.
+// plantilla. `id` vacío = crear producto nuevo; con valor = actualizar
+// ese producto puntual (columna "ID" de la planilla, se completa sola al
+// descargar el catálogo actual, no la carga el usuario).
 export const importProductoRowSchema = z.object({
+  id: z.union([z.string().uuid(), z.literal("")]).optional(),
   nombre: nombreSchema,
   kg: z.number().positive("Tiene que ser mayor a 0"),
   unidadMedida: unidadMedidaSchema,

@@ -3,6 +3,7 @@
 // parsea de vuelta (POST /api/productos/import) -- si se cambia una acá,
 // cambia en los dos lugares a la vez.
 export const IMPORT_COLUMNAS = [
+  { header: "ID (no editar, vacío = producto nuevo)", key: "id", width: 12 },
   { header: "Nombre", key: "nombre", width: 45 },
   { header: "Cantidad", key: "kg", width: 10 },
   { header: "Unidad de medida (kg o unidad)", key: "unidadMedida", width: 26 },

@@ -109,6 +109,7 @@ export async function POST(request: Request) {
   }
 
   let creados = 0;
+  let actualizados = 0;
   const errores: { fila: number; mensaje: string }[] = [];
 
   for (let numeroFila = 2; numeroFila <= sheet.rowCount; numeroFila++) {
@@ -117,6 +118,7 @@ export async function POST(request: Request) {
     if (!nombre && row.actualCellCount === 0) continue; // fila vacía al final de la planilla
 
     const crudo = {
+      id: celda(row, "id"),
       nombre: nombre.toUpperCase(),
       kg: celdaNumero(row, "kg"),
       unidadMedida: celda(row, "unidadMedida").toLowerCase() || "kg",
@@ -149,6 +151,55 @@ export async function POST(request: Request) {
           ? calcularPrecioVenta({ costo: d.costo, porcentaje: d.porcentajeAbierta, manual: false, precioManual: 0 })
           : { precio: 0, porcentaje: 0 };
       const porMayor = calcularPrecioVenta({ costo: d.costo, porcentaje: d.porcentajePorMayor, manual: false, precioManual: 0 });
+
+      if (d.id) {
+        // Fila con ID -- actualiza ese producto puntual en vez de crear
+        // uno nuevo. No toca `codigo` (tampoco lo hace la edición manual),
+        // ni oferta/descripción/precio manual -- fuera del alcance del
+        // Excel, igual que en el alta.
+        const { data: existente } = await supabase
+          .from("productos")
+          .select("id")
+          .eq("id", d.id)
+          .eq("organization_id", actor.organization_id)
+          .maybeSingle();
+
+        if (!existente) {
+          errores.push({ fila: numeroFila, mensaje: "Producto no encontrado (puede haber sido borrado)." });
+          continue;
+        }
+
+        const { error } = await supabase
+          .from("productos")
+          .update({
+            nombre: d.nombre,
+            marca_id: marcaId,
+            categoria_id: categoriaId,
+            proveedor_id: proveedorId,
+            kg: d.kg,
+            unidad_medida: d.unidadMedida,
+            costo: d.costo,
+            porcentaje_ganancia_cerrada: cerrada.porcentaje,
+            precio_venta_cerrada: cerrada.precio,
+            precio_manual_cerrada: false,
+            porcentaje_ganancia_abierta: abierta.porcentaje,
+            precio_venta_abierta: abierta.precio,
+            precio_manual_abierta: false,
+            porcentaje_ganancia_por_mayor: porMayor.porcentaje,
+            precio_venta_por_mayor: porMayor.precio,
+            precio_manual_por_mayor: false,
+          })
+          .eq("id", d.id);
+
+        if (error) {
+          const mensaje = error.code === "23505" ? "Ya existe un producto con ese nombre y esa cantidad." : "No se pudo actualizar el producto.";
+          errores.push({ fila: numeroFila, mensaje });
+          continue;
+        }
+
+        actualizados++;
+        continue;
+      }
 
       const resultado = await insertarProducto(supabase, {
         organization_id: actor.organization_id,
@@ -188,5 +239,5 @@ export async function POST(request: Request) {
     }
   }
 
-  return NextResponse.json({ ok: true, creados, errores });
+  return NextResponse.json({ ok: true, creados, actualizados, errores });
 }

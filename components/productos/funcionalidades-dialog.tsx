@@ -50,7 +50,7 @@ const FUNCIONALIDADES = [
   {
     titulo: "Importar Excel",
     descripcion:
-      "Descargá una plantilla, completala con varios productos a la vez y subila para cargarlos todos juntos en vez de uno por uno.",
+      "Descargá una plantilla vacía para cargar varios productos nuevos de una, o tu catálogo actual para editarlo en Excel y volver a subirlo — actualiza los productos existentes en vez de duplicarlos. Marca, categoría y proveedor se crean solos si escribís un nombre que no existe todavía.",
   },
 ];
 

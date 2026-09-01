@@ -87,11 +87,11 @@ export function ProductosDeEntidad({
                     {producto.nombre} · {formatCantidad(producto.kg, producto.unidad_medida)}
                   </span>
                   <Select value="" onValueChange={(v) => v && reasignar(producto, v)}>
-                    <SelectTrigger size="sm" className="w-40 shrink-0" aria-label={placeholder}>
+                    <SelectTrigger size="sm" className="shrink-0" aria-label={placeholder}>
                       <ArrowRightLeft className="size-3.5" aria-hidden="true" />
                       <SelectValue>{() => placeholder}</SelectValue>
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="border border-zinc-300 bg-zinc-100 dark:border-zinc-700 dark:bg-zinc-800">
                       {opciones.map((opcion) => (
                         <SelectItem key={opcion.value} value={opcion.value}>
                           {opcion.label}

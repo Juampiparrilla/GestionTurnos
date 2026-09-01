@@ -22,7 +22,7 @@ export default async function MarcasPage() {
       </div>
       <MarcasList
         marcas={(marcas as Marca[] | null) ?? []}
-        descripcion="Marcas de alimento (Belcan, Agility, etc.)."
+        descripcion="Marcas de alimento (Belcan, Agility, etc.). Desplegá una para ver sus productos y reasignarlos a otra marca."
       />
     </div>
   );

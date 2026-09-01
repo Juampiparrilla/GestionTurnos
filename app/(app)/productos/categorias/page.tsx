@@ -22,7 +22,7 @@ export default async function CategoriasPage() {
       </div>
       <CategoriasList
         categorias={(categorias as Categoria[] | null) ?? []}
-        descripcion="Clasificación de productos (alimento perro, gato, etc.)."
+        descripcion="Clasificación de productos (alimento perro, gato, etc.). Desplegá una para ver sus productos y reasignarlos a otra categoría."
       />
     </div>
   );

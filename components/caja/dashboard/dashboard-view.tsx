@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { ChevronDown, ChevronUp, List, Plus, Tag } from "lucide-react";
+import { ChevronDown, ChevronUp, HandCoins, List, Plus, Tag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
@@ -120,7 +120,7 @@ export function DashboardView({
 
   return (
     <div className="space-y-4">
-      <div className={isAdmin ? "grid grid-cols-3 gap-2" : "grid grid-cols-2 gap-3"}>
+      <div className={isAdmin ? "grid grid-cols-2 gap-2" : "grid grid-cols-2 gap-3"}>
         <Link
           href="/caja/nuevo"
           className="flex flex-col items-center justify-center gap-1 rounded-lg bg-zinc-900 p-3 text-center text-white shadow-sm transition-colors hover:bg-zinc-800"
@@ -144,6 +144,16 @@ export function DashboardView({
           >
             <Tag className="size-5" aria-hidden="true" />
             <span className="text-sm font-medium">Etiqueta</span>
+            <LinkPendingSpinner />
+          </Link>
+        )}
+        {isAdmin && (
+          <Link
+            href="/caja/deudas"
+            className="flex flex-col items-center justify-center gap-1 rounded-lg bg-zinc-900 p-3 text-center text-white shadow-sm transition-colors hover:bg-zinc-800"
+          >
+            <HandCoins className="size-5" aria-hidden="true" />
+            <span className="text-sm font-medium">Deuda</span>
             <LinkPendingSpinner />
           </Link>
         )}

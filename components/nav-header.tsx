@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { CalendarClock, Package, Users } from "lucide-react";
+import { CalendarClock, DollarSign, Package, Users } from "lucide-react";
 import { signOut } from "@/lib/auth/actions";
 import { SignOutButton } from "@/components/sign-out-button";
 import { LinkPendingSpinner } from "@/components/link-pending-spinner";
@@ -48,6 +48,15 @@ export function NavHeader({ profile }: { profile: Profile }) {
             className="inline-flex items-center text-muted-foreground hover:text-foreground"
           >
             <Package className="size-5" aria-hidden="true" />
+            <LinkPendingSpinner />
+          </Link>
+          <Link
+            href="/caja"
+            title="Caja"
+            aria-label="Caja"
+            className="inline-flex items-center text-muted-foreground hover:text-foreground"
+          >
+            <DollarSign className="size-5" aria-hidden="true" />
             <LinkPendingSpinner />
           </Link>
           <form action={signOut}>

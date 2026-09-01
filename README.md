@@ -1,6 +1,6 @@
 # Gestión de Turnos
 
-Aplicación web para que negocios con uno o varios locales organicen los turnos de trabajo de sus empleados: quién trabaja qué día, en qué horario, y quién cubre feriados y domingos. Reemplaza la planilla o el cuaderno que se usa hoy para armar los turnos. También incluye un módulo de **Productos** para llevar el catálogo, los costos y los precios de venta del negocio.
+Aplicación web para que negocios con uno o varios locales organicen los turnos de trabajo de sus empleados: quién trabaja qué día, en qué horario, y quién cubre feriados y domingos. Reemplaza la planilla o el cuaderno que se usa hoy para armar los turnos. También incluye un módulo de **Productos** para llevar el catálogo, los costos y los precios de venta del negocio, y un módulo de **Caja** para registrar ingresos y egresos de dinero por local y turno.
 
 Es **multi-tenant**: cada empresa que la usa está completamente aislada de las demás (a nivel de base de datos, no solo de interfaz).
 
@@ -37,6 +37,17 @@ Catálogo de productos del negocio, con **Marcas**, **Categorías** y **Proveedo
 - Botón **Funcionalidades** en la pantalla principal con el detalle de todo lo anterior.
 - Solo Administrador y Super Administrador gestionan y ven costos; el catálogo de solo consulta para Empleado todavía está pendiente.
 
+## Caja
+
+Registro de ingresos y egresos de dinero de cada local, pensado para cargarse rápido desde el celular al cerrar un turno. Reutiliza los **Horarios** (locales) y **Turnos** de la sección anterior — Caja no tiene su propia noción de local ni turno.
+
+- **Dashboard** (`/caja`): tarjetas de Ingresos, Egresos, Balance (Ingresos − Egresos, nunca guardado, siempre calculado) y cantidad de Movimientos, un gráfico de líneas con los ingresos por día y un resumen de ingresos por turno. Todo filtrable por período (Hoy, Ayer, Últimos 7/30 días, Este mes, Mes anterior o un rango a elección), local, turno y tipo, colapsado detrás de un botón "Filtros" como en Productos.
+- **Nuevo movimiento** (`/caja/nuevo`): Tipo (Ingreso ↑ / Egreso ↓) → Etiqueta (filtrada según el tipo elegido; se puede crear una nueva sin salir del formulario) → Importe → Fecha → Local → Turno (o "Sin turno", para gastos que no corresponden a un turno puntual, ej. "Pago Internet") → Observación opcional.
+- **Movimientos** (`/caja/movimientos`): listado filtrable por fecha, local, turno, tipo y etiqueta. Un Administrador o Super Administrador puede editar cualquier campo de un movimiento (por si se cargó mal) o anularlo con un motivo opcional — un movimiento anulado no se borra, queda visible en el historial marcado como "Anulado" y deja de contar en los totales.
+- **Etiquetas** (`/caja/etiquetas`, solo Administrador/Super Administrador): ABM para clasificar los movimientos (ej. "Venta del Día", "Pago del Mes", "Compra Mercadería"). Una etiqueta ya usada en algún movimiento no se puede borrar ni cambiar de tipo (Ingreso/Egreso) — se desactiva en su lugar, y sigue apareciendo en el historial.
+- Un Empleado ve y carga movimientos solo de los locales donde está asignado (igual criterio que en Horarios); editar y anular es exclusivo de Administrador/Super Administrador.
+- Todos los importes se muestran en formato argentino (`$ 185.000`) pero se guardan como número puro, sin signos.
+
 ## Roles
 
 | Rol | Alcance | Qué puede hacer |
@@ -52,6 +63,7 @@ Catálogo de productos del negocio, con **Marcas**, **Categorías** y **Proveedo
 - **Supabase**: Postgres + Auth + Row Level Security como única capa de datos y de aislamiento entre organizaciones
 - **jsPDF** para generar los PDF de Reportes en el navegador, sin backend
 - **exceljs** para la plantilla e importación de productos por Excel (server-side)
+- **recharts** para el gráfico de ingresos por día en el Dashboard de Caja
 - Deploy en **Vercel**, auto-deploy sobre `main`
 
 La seguridad no depende del frontend: todo el aislamiento entre organizaciones y los permisos por rol están reforzados con RLS y funciones de base de datos, no solo con lo que muestra la interfaz.

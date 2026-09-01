@@ -22,7 +22,7 @@ export default async function ProveedoresPage() {
       </div>
       <ProveedoresList
         proveedores={(proveedores as Proveedor[] | null) ?? []}
-        descripcion="Distribuidores a los que se les compra. Ajustá el % de ganancia de todos sus productos desde acá."
+        descripcion="Distribuidores a los que se les compra. Ajustá el % de ganancia de todos sus productos, o desplegá uno para ver sus productos y reasignarlos a otro proveedor."
       />
     </div>
   );

@@ -9,12 +9,12 @@ import { productoAPayloadEdicion } from "@/lib/productos/producto-a-payload";
 import { showSuccessToast, showErrorToast } from "@/lib/toast";
 import type { Producto } from "@/types/producto";
 
-// Lista de productos de una categoría/marca puntual, cargada bajo demanda
-// (se monta solo cuando la fila correspondiente está desplegada, y se pide
-// de nuevo cada vez que se vuelve a desplegar -- así no hace falta traer
-// todo el catálogo de entrada en pantallas de Categorías/Marcas). Cada
-// producto tiene un selector para reasignarlo a otra categoría/marca sin
-// pasar por el formulario completo de edición.
+// Lista de productos de una categoría/marca/proveedor puntual, cargada bajo
+// demanda (se monta solo cuando la fila correspondiente está desplegada, y
+// se pide de nuevo cada vez que se vuelve a desplegar -- así no hace falta
+// traer todo el catálogo de entrada en las pantallas de Categorías/Marcas/
+// Proveedores). Cada producto tiene un selector para reasignarlo sin pasar
+// por el formulario completo de edición.
 export function ProductosDeEntidad({
   endpoint,
   campo,
@@ -22,7 +22,7 @@ export function ProductosDeEntidad({
   placeholder,
 }: {
   endpoint: string;
-  campo: "categoriaId" | "marcaId";
+  campo: "categoriaId" | "marcaId" | "proveedorId";
   opciones: { value: string; label: string }[];
   placeholder: string;
 }) {

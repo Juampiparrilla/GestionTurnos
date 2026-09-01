@@ -27,7 +27,7 @@ export function ProveedoresList({ proveedores, descripcion }: { proveedores: Pro
       ) : (
         <div className="grid gap-3">
           {filtrados.map((proveedor, index) => (
-            <ProveedorRow key={proveedor.id} proveedor={proveedor} numero={index + 1} />
+            <ProveedorRow key={proveedor.id} proveedor={proveedor} numero={index + 1} proveedores={proveedores} />
           ))}
         </div>
       )}

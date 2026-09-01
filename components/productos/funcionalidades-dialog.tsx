@@ -20,7 +20,7 @@ const FUNCIONALIDADES = [
   {
     titulo: "Marcas, categorías y proveedores",
     descripcion:
-      "Se administran desde sus propias pantallas, y también se pueden crear al vuelo sin salir del formulario de producto. En Marcas y Categorías, la flecha de cada fila despliega los productos que tiene (cargados en el momento) y deja reasignar cualquiera a otra marca o categoría sin abrir el formulario completo -- para corregir rápido uno que quedó mal cargado.",
+      "Se administran desde sus propias pantallas, y también se pueden crear al vuelo sin salir del formulario de producto. En las tres, la flecha de cada fila despliega los productos que tiene (cargados en el momento) y deja reasignar cualquiera a otra marca, categoría o proveedor sin abrir el formulario completo -- para corregir rápido uno que quedó mal cargado.",
   },
   {
     titulo: "Costo por varias unidades o por descuento",

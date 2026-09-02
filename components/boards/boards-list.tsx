@@ -1,9 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { BoardCard } from "./board-card";
 import { CreateBoardSheet } from "./create-board-sheet";
+import { FuncionalidadesDialog } from "./funcionalidades-dialog";
 import type { Board } from "@/types/board";
 
 export function BoardsList({
@@ -20,7 +22,13 @@ export function BoardsList({
   if (boards.length === 0) {
     return (
       <div className="space-y-4">
-        {isAdmin && <Button onClick={() => setCreateOpen(true)}>+ Crear horario</Button>}
+        <FuncionalidadesDialog />
+        {isAdmin && (
+          <Button className="w-full" onClick={() => setCreateOpen(true)}>
+            <Plus className="size-4" aria-hidden="true" />
+            Crear horario
+          </Button>
+        )}
         <div className="rounded-lg border border-dashed p-8 text-center text-sm text-muted-foreground">
           {isAdmin
             ? "Todavía no tenés horarios. Creá tu primer horario para comenzar."
@@ -33,7 +41,13 @@ export function BoardsList({
 
   return (
     <div className="space-y-4">
-      {isAdmin && <Button onClick={() => setCreateOpen(true)}>+ Crear horario</Button>}
+      <FuncionalidadesDialog />
+      {isAdmin && (
+        <Button className="w-full" onClick={() => setCreateOpen(true)}>
+          <Plus className="size-4" aria-hidden="true" />
+          Crear horario
+        </Button>
+      )}
       <div className="grid gap-3">
         {boards.map((board) => (
           <BoardCard key={board.id} board={board} memberCount={memberCounts[board.id]} />

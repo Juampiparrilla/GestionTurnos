@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowDown, ArrowUp, Pencil } from "lucide-react";
+import { ArrowDown, ArrowUp, Pencil, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { CreateShiftSheet } from "./create-shift-sheet";
@@ -112,8 +112,9 @@ export function ShiftsManagement({
       )}
 
       {isAdmin && (
-        <Button type="button" variant="outline" onClick={() => setCreateOpen(true)}>
-          + Agregar turno
+        <Button type="button" variant="outline" className="w-full" onClick={() => setCreateOpen(true)}>
+          <Plus className="size-4" aria-hidden="true" />
+          Agregar turno
         </Button>
       )}
 

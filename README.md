@@ -6,6 +6,8 @@ Es **multi-tenant**: cada empresa que la usa está completamente aislada de las 
 
 Si tenés una pestaña abierta en la compu y cargás algo desde el celular, no hace falta apretar F5: al volver a esa pestaña (cambiar de ventana o app y volver) se actualiza sola.
 
+El ícono de la sección en la que estás parado (Usuarios/Horarios/Productos/Caja, arriba a la derecha) se resalta en negro para ubicarte rápido — la app usa solo tonos de blanco, gris y negro, sin colores de marca.
+
 Producción: [gestion-turnos-nu.vercel.app](https://gestion-turnos-nu.vercel.app)
 
 ## Cómo se organiza
@@ -14,8 +16,9 @@ Producción: [gestion-turnos-nu.vercel.app](https://gestion-turnos-nu.vercel.app
 - Cada horario tiene sus propios **Turnos** configurables (ej. Mañana 08:30-13:30, Tarde 16:30-21:30).
 - Para cada turno y día de la semana se arma una **grilla semanal tipo** (recurrente, no fechas puntuales): quién trabaja, o si ese turno está Feriado, Cerrado o Sin asignar.
 - Aparte de la grilla semanal hay dos registros de **fechas reales** independientes — **Feriados** y **Domingos** — donde se anota fecha concreta + quién cubre ese día, con historial de quién hizo el último cambio y cuándo.
-- Un resumen por persona muestra cuántos turnos, domingos y feriados tiene cada uno. El horario se puede descargar como imagen para compartir por WhatsApp.
+- Un resumen por persona muestra cuántos turnos, domingos y feriados tiene cada uno. El horario se puede descargar como imagen para compartir por WhatsApp. La leyenda de Feriado/Cerrado solo aparece si ese horario efectivamente tiene algún día marcado así.
 - No hay registro público de usuarios: un admin crea la cuenta y genera un link de invitación que comparte manualmente (por WhatsApp), sin depender de email. Lo mismo para restablecer una contraseña olvidada.
+- Botón **Funcionalidades** en la lista de Horarios con el detalle de todo lo anterior, mismo patrón que Productos y Caja.
 
 ## Productos
 

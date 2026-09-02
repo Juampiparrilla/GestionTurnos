@@ -3,7 +3,7 @@
 import { useRef, useState } from "react";
 import Link from "next/link";
 import { toPng } from "html-to-image";
-import { Download, Settings } from "lucide-react";
+import { ArrowLeft, Download, Settings } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { AssignmentSheet } from "./assignment-sheet";
@@ -148,9 +148,20 @@ export function BoardCalendar({
     holidayCountByPersonId.set(h.user_id, (holidayCountByPersonId.get(h.user_id) ?? 0) + 1);
   }
 
+  const hayFeriados = assignments.some((a) => a.status === "FERIADO");
+  const hayCerrados = assignments.some((a) => a.status === "CERRADO");
+
   return (
     <div className="space-y-4">
       <PendingOverlay pending={isDownloading} />
+      <Link
+        href="/tableros"
+        className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
+      >
+        <ArrowLeft className="size-4" />
+        Volver a Horarios
+        <LinkPendingSpinner />
+      </Link>
       <div className="flex items-start justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
@@ -282,18 +293,22 @@ export function BoardCalendar({
                 </span>
               );
             })}
-            <span className="inline-flex items-center gap-1">
-              <span className="inline-flex size-5 items-center justify-center rounded-full bg-amber-500/15 text-[9px] font-semibold text-amber-700 dark:text-amber-400">
-                F
+            {hayFeriados && (
+              <span className="inline-flex items-center gap-1">
+                <span className="inline-flex size-5 items-center justify-center rounded-full bg-amber-500/15 text-[9px] font-semibold text-amber-700 dark:text-amber-400">
+                  F
+                </span>
+                Feriado
               </span>
-              Feriado
-            </span>
-            <span className="inline-flex items-center gap-1">
-              <span className="inline-flex size-5 items-center justify-center rounded-full bg-red-500/15 text-[9px] font-semibold text-red-700 dark:text-red-400">
-                C
+            )}
+            {hayCerrados && (
+              <span className="inline-flex items-center gap-1">
+                <span className="inline-flex size-5 items-center justify-center rounded-full bg-red-500/15 text-[9px] font-semibold text-red-700 dark:text-red-400">
+                  C
+                </span>
+                Cerrado
               </span>
-              Cerrado
-            </span>
+            )}
           </div>
         )}
 

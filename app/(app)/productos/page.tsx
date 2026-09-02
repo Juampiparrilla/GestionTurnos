@@ -34,6 +34,10 @@ export default async function ProductosHomePage() {
 
   return (
     <div className="space-y-3">
+      <div>
+        <h1 className="text-xl font-semibold">Productos</h1>
+        <p className="text-sm text-muted-foreground">Catálogo, costos y precios de venta del negocio.</p>
+      </div>
       <FuncionalidadesDialog />
       <ImportarExcelSheet />
       <div className="grid grid-cols-2 gap-3">

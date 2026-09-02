@@ -34,7 +34,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
     })
     .eq("id", id)
     .eq("estado", "activo")
-    .select("id")
+    .select("*")
     .maybeSingle();
 
   if (error) {
@@ -45,5 +45,5 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
     return NextResponse.json({ error: "Movimiento no encontrado o ya estaba anulado." }, { status: 404 });
   }
 
-  return NextResponse.json({ ok: true });
+  return NextResponse.json({ ok: true, movimiento: data });
 }

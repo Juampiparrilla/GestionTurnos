@@ -1,8 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
-import { Ban, Pencil } from "lucide-react";
+import { Ban, ChevronDown, ChevronUp, Pencil } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -49,10 +48,10 @@ export function MovimientoRow({
   shifts: ShiftConfiguration[];
   onUpdated: (movimiento: CajaMovimiento) => void;
 }) {
-  const router = useRouter();
   const [motivo, setMotivo] = useState("");
   const [open, setOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
+  const [expanded, setExpanded] = useState(false);
   const [isPending, startTransition] = useTransition();
 
   function anular() {
@@ -62,14 +61,14 @@ export function MovimientoRow({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ motivo }),
       });
+      const data = await res.json();
       if (!res.ok) {
-        const data = await res.json().catch(() => null);
         showErrorToast(data?.error ?? "No se pudo anular el movimiento.");
         return;
       }
       setOpen(false);
+      onUpdated(data.movimiento);
       showSuccessToast("Movimiento anulado");
-      router.refresh();
     });
   }
 
@@ -88,17 +87,33 @@ export function MovimientoRow({
             {anulado && <Badge variant="outline">Anulado</Badge>}
             <p className="truncate font-medium">{etiquetaNombre}</p>
           </div>
-          <p className="text-sm text-muted-foreground">
-            {formatDateOnly(movimiento.fecha)} · {boardNombre} · {turnoNombre} · {usuarioNombre}
-          </p>
-          {movimiento.observacion && (
-            <p className="mt-1 text-sm text-muted-foreground">{movimiento.observacion}</p>
+          {expanded && (
+            <>
+              <p className="text-sm text-muted-foreground">
+                {formatDateOnly(movimiento.fecha)} · {boardNombre} · {turnoNombre} · {usuarioNombre}
+              </p>
+              {movimiento.observacion && (
+                <p className="mt-1 text-sm text-muted-foreground">{movimiento.observacion}</p>
+              )}
+            </>
           )}
         </div>
-        <div className="flex shrink-0 items-center gap-2">
+        <div className="flex shrink-0 items-center gap-1">
           <p className={`font-semibold ${movimiento.tipo === "ingreso" ? "text-emerald-600" : "text-rose-600"}`}>
             {signo} {formatMonto(movimiento.monto)}
           </p>
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            onClick={() => setExpanded((v) => !v)}
+            aria-label={expanded ? "Ver menos" : "Ver más"}
+          >
+            {expanded ? (
+              <ChevronUp className="size-4" aria-hidden="true" />
+            ) : (
+              <ChevronDown className="size-4" aria-hidden="true" />
+            )}
+          </Button>
           {puedeAnular && !anulado && (
             <>
               <Button

@@ -18,6 +18,7 @@ import { ResumenCards } from "./resumen-cards";
 import { IngresosChart } from "./ingresos-chart";
 import { ResumenTurnos } from "./resumen-turnos";
 import { MejorPeorDia } from "./mejor-peor-dia";
+import { FuncionalidadesDialog } from "@/components/caja/funcionalidades-dialog";
 
 const SIN_TURNO = "sin_turno";
 const PERIODOS: PeriodoCaja[] = ["hoy", "ayer", "ultimos_7", "ultimos_30", "este_mes", "mes_anterior", "personalizado"];
@@ -133,6 +134,8 @@ export function DashboardView({
 
   return (
     <div className="space-y-4">
+      <FuncionalidadesDialog />
+
       <div className="space-y-2">
         <Link
           href="/caja/movimientos"

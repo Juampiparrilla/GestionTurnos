@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { showErrorToast } from "@/lib/toast";
-import { hoyISO, toISODate } from "@/lib/caja/periodos";
+import { resolverRangoPeriodo } from "@/lib/caja/periodos";
 import { TIPO_MOVIMIENTO_LABEL, type CajaEtiqueta, type CajaMovimiento } from "@/types/caja";
 import type { Board, OrgDirectoryEntry } from "@/types/board";
 import type { ShiftConfiguration } from "@/types/shift";
@@ -15,12 +15,6 @@ import { MovimientoRow } from "./movimiento-row";
 import { NuevoMovimientoSheet } from "@/components/caja/nuevo/nuevo-movimiento-sheet";
 
 const SIN_TURNO = "sin_turno";
-
-function hace30Dias() {
-  const d = new Date();
-  d.setDate(d.getDate() - 29);
-  return toISODate(d);
-}
 
 type Filtros = {
   desde: string;
@@ -32,7 +26,8 @@ type Filtros = {
 };
 
 function filtrosPorDefecto(): Filtros {
-  return { desde: hace30Dias(), hasta: hoyISO(), boardId: "", turnoNombre: "", tipo: "", etiquetaId: "" };
+  const { desde, hasta } = resolverRangoPeriodo("este_mes", new Date());
+  return { desde, hasta, boardId: "", turnoNombre: "", tipo: "", etiquetaId: "" };
 }
 
 export function MovimientosView({

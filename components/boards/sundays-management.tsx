@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { LinkPendingSpinner } from "@/components/link-pending-spinner";
 import { CreateSundaySheet } from "./create-sunday-sheet";
@@ -52,13 +52,16 @@ export function SundaysManagement({
         <LinkPendingSpinner />
       </Link>
 
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <h1 className="text-xl font-semibold">Domingos</h1>
-          <p className="text-sm text-muted-foreground">{board.name}</p>
-        </div>
-        {isAdmin && <Button onClick={() => setCreateOpen(true)}>+ Asignar domingo</Button>}
+      <div>
+        <h1 className="text-xl font-semibold">Domingos</h1>
+        <p className="text-sm text-muted-foreground">{board.name}</p>
       </div>
+      {isAdmin && (
+        <Button onClick={() => setCreateOpen(true)} className="w-full">
+          <Plus className="size-4" aria-hidden="true" />
+          Asignar domingo
+        </Button>
+      )}
 
       {sundays.length === 0 ? (
         <p className="text-sm text-muted-foreground">Todavía no hay domingos asignados.</p>

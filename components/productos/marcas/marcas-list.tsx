@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SearchInput } from "@/components/productos/search-input";
 import type { Marca } from "@/types/marca";
@@ -17,7 +18,8 @@ export function MarcasList({ marcas, descripcion }: { marcas: Marca[]; descripci
     <div className="space-y-4">
       <p className="text-sm text-muted-foreground">{descripcion}</p>
       <Button onClick={() => setCreateOpen(true)} className="w-full">
-        + Crear marca
+        <Plus className="size-4" aria-hidden="true" />
+        Crear marca
       </Button>
       <SearchInput value={query} onChange={setQuery} placeholder="Buscar marca..." />
       {filtradas.length === 0 ? (

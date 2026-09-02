@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ESTADO_DEUDA_LABEL, type CajaDeuda, type EstadoDeuda } from "@/types/caja";
@@ -32,7 +33,8 @@ export function DeudasList({ deudas: deudasIniciales }: { deudas: CajaDeuda[] })
         Dashboard.
       </p>
       <Button onClick={() => setCreateOpen(true)} className="w-full">
-        + Registrar deuda
+        <Plus className="size-4" aria-hidden="true" />
+        Registrar deuda
       </Button>
 
       <div className="space-y-1.5">

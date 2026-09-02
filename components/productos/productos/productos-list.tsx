@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { ChevronDown, ChevronUp, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SearchInput } from "@/components/productos/search-input";
 import { useProductoFiltros } from "@/components/productos/use-producto-filtros";
@@ -69,7 +69,8 @@ export function ProductosList({
     <div className="space-y-4">
       <p className="text-sm text-muted-foreground">{descripcion}</p>
       <Button onClick={() => setCreateOpen(true)} className="w-full">
-        + Crear producto
+        <Plus className="size-4" aria-hidden="true" />
+        Crear producto
       </Button>
       <SearchInput value={query} onChange={setQuery} placeholder="Buscar producto..." />
 

@@ -154,14 +154,6 @@ export function BoardCalendar({
   return (
     <div className="space-y-4">
       <PendingOverlay pending={isDownloading} />
-      <Link
-        href="/tableros"
-        className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
-      >
-        <ArrowLeft className="size-4" />
-        Volver a Horarios
-        <LinkPendingSpinner />
-      </Link>
       <div className="flex items-start justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
@@ -195,6 +187,15 @@ export function BoardCalendar({
               <LinkPendingSpinner />
             </Link>
           )}
+          <Link
+            href="/tableros"
+            aria-label="Volver a Horarios"
+            title="Volver a Horarios"
+            className={buttonVariants({ variant: "outline", size: "icon" })}
+          >
+            <ArrowLeft className="size-4" />
+            <LinkPendingSpinner />
+          </Link>
         </div>
       </div>
 

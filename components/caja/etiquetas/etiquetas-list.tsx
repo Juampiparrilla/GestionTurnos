@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SearchInput } from "@/components/productos/search-input";
 import type { CajaEtiqueta } from "@/types/caja";
@@ -26,7 +27,8 @@ export function EtiquetasList({
         cambiar de tipo — se desactiva en su lugar.
       </p>
       <Button onClick={() => setCreateOpen(true)} className="w-full">
-        + Crear etiqueta
+        <Plus className="size-4" aria-hidden="true" />
+        Crear etiqueta
       </Button>
       <SearchInput value={query} onChange={setQuery} placeholder="Buscar etiqueta..." />
       {filtradas.length === 0 ? (

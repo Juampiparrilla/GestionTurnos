@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { Plus } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { LinkPendingSpinner } from "@/components/link-pending-spinner";
@@ -25,7 +26,10 @@ export function OrganizationsList({
 
   return (
     <div className="space-y-4">
-      <Button onClick={() => setCreateOpen(true)}>+ Crear organización</Button>
+      <Button onClick={() => setCreateOpen(true)} className="w-full">
+        <Plus className="size-4" aria-hidden="true" />
+        Crear organización
+      </Button>
 
       {organizations.length === 0 ? (
         <p className="text-sm text-muted-foreground">Todavía no hay organizaciones.</p>

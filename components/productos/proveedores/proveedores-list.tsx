@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SearchInput } from "@/components/productos/search-input";
 import type { Proveedor } from "@/types/proveedor";
@@ -17,7 +18,8 @@ export function ProveedoresList({ proveedores, descripcion }: { proveedores: Pro
     <div className="space-y-4">
       <p className="text-sm text-muted-foreground">{descripcion}</p>
       <Button onClick={() => setCreateOpen(true)} className="w-full">
-        + Crear proveedor
+        <Plus className="size-4" aria-hidden="true" />
+        Crear proveedor
       </Button>
       <SearchInput value={query} onChange={setQuery} placeholder="Buscar proveedor..." />
       {filtrados.length === 0 ? (

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ArrowLeft, HandCoins, Home, List, Plus, Tags } from "lucide-react";
+import { ArrowLeft, HandCoins, Home, List, Tags } from "lucide-react";
 import { LinkPendingSpinner } from "@/components/link-pending-spinner";
 import {
   DropdownMenu,
@@ -17,7 +17,6 @@ export function MenuSecciones({ isAdmin }: { isAdmin: boolean }) {
 
   const secciones = [
     { href: "/caja/movimientos", label: "Movimientos", icon: List },
-    { href: "/caja/nuevo", label: "Nuevo movimiento", icon: Plus },
     ...(isAdmin
       ? [
           { href: "/caja/etiquetas", label: "Etiquetas", icon: Tags },

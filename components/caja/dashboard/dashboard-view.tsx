@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { ChevronDown, ChevronUp, HandCoins, List, Plus, Tag } from "lucide-react";
+import { ChevronDown, ChevronUp, HandCoins, List, Tag, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
@@ -17,6 +17,7 @@ import type { ShiftConfiguration } from "@/types/shift";
 import { ResumenCards } from "./resumen-cards";
 import { IngresosChart } from "./ingresos-chart";
 import { ResumenTurnos } from "./resumen-turnos";
+import { MejorPeorDia } from "./mejor-peor-dia";
 
 const SIN_TURNO = "sin_turno";
 const PERIODOS: PeriodoCaja[] = ["hoy", "ayer", "ultimos_7", "ultimos_30", "este_mes", "mes_anterior", "personalizado"];
@@ -118,44 +119,48 @@ export function DashboardView({
     return Array.from(porTurno.entries()).map(([turno, monto]) => ({ turno, monto }));
   }, [activos, shifts]);
 
+  // Promedio diario = ingresos totales / cantidad de días del período que
+  // efectivamente tuvieron algún ingreso (no los días del rango sin ventas).
+  const promedioDiario = chartData.length > 0 ? ingresos / chartData.length : 0;
+
+  function limpiarFiltros() {
+    setPeriodo("hoy");
+    setRangoPersonalizado({ desde: "", hasta: "" });
+    setBoardId("");
+    setTurnoNombre("");
+    setTipo("");
+  }
+
   return (
     <div className="space-y-4">
-      <div className={isAdmin ? "grid grid-cols-2 gap-2" : "grid grid-cols-2 gap-3"}>
-        <Link
-          href="/caja/nuevo"
-          className="flex flex-col items-center justify-center gap-1 rounded-lg bg-zinc-900 p-3 text-center text-white shadow-sm transition-colors hover:bg-zinc-800"
-        >
-          <Plus className="size-5" aria-hidden="true" />
-          <span className="text-sm font-medium">Movimiento</span>
-          <LinkPendingSpinner />
-        </Link>
+      <div className="space-y-2">
         <Link
           href="/caja/movimientos"
-          className="flex flex-col items-center justify-center gap-1 rounded-lg bg-zinc-900 p-3 text-center text-white shadow-sm transition-colors hover:bg-zinc-800"
+          className="flex items-center justify-center gap-2 rounded-lg bg-zinc-900 p-4 text-center text-white shadow-sm transition-colors hover:bg-zinc-800"
         >
           <List className="size-5" aria-hidden="true" />
-          <span className="text-sm font-medium">Movimientos</span>
+          <span className="font-medium">Movimientos</span>
           <LinkPendingSpinner />
         </Link>
         {isAdmin && (
-          <Link
-            href="/caja/etiquetas"
-            className="flex flex-col items-center justify-center gap-1 rounded-lg bg-zinc-900 p-3 text-center text-white shadow-sm transition-colors hover:bg-zinc-800"
-          >
-            <Tag className="size-5" aria-hidden="true" />
-            <span className="text-sm font-medium">Etiqueta</span>
-            <LinkPendingSpinner />
-          </Link>
-        )}
-        {isAdmin && (
-          <Link
-            href="/caja/deudas"
-            className="flex flex-col items-center justify-center gap-1 rounded-lg bg-zinc-900 p-3 text-center text-white shadow-sm transition-colors hover:bg-zinc-800"
-          >
-            <HandCoins className="size-5" aria-hidden="true" />
-            <span className="text-sm font-medium">Deuda</span>
-            <LinkPendingSpinner />
-          </Link>
+          <div className="grid grid-cols-2 gap-2">
+            <Link
+              href="/caja/etiquetas"
+              className="flex flex-col items-center justify-center gap-1 rounded-lg bg-zinc-900 p-3 text-center text-white shadow-sm transition-colors hover:bg-zinc-800"
+            >
+              <Tag className="size-5" aria-hidden="true" />
+              <span className="text-sm font-medium">Etiqueta</span>
+              <LinkPendingSpinner />
+            </Link>
+            <Link
+              href="/caja/deudas"
+              className="flex flex-col items-center justify-center gap-1 rounded-lg bg-zinc-900 p-3 text-center text-white shadow-sm transition-colors hover:bg-zinc-800"
+            >
+              <HandCoins className="size-5" aria-hidden="true" />
+              <span className="text-sm font-medium">Deuda</span>
+              <LinkPendingSpinner />
+            </Link>
+          </div>
         )}
       </div>
 
@@ -180,6 +185,21 @@ export function DashboardView({
 
       {filtrosOpen && (
       <div className="grid gap-3 rounded-lg border border-zinc-300 bg-zinc-100 p-3 dark:border-zinc-700 dark:bg-zinc-800">
+        <div className="flex items-center justify-between">
+          <p className="text-sm font-medium">Filtros</p>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={limpiarFiltros}
+            disabled={!hayFiltrosActivos}
+            className="h-auto gap-1 px-2 py-1 text-muted-foreground"
+          >
+            <X className="size-3.5" aria-hidden="true" />
+            Limpiar filtros
+          </Button>
+        </div>
+
         <div className="space-y-1.5">
           <Label htmlFor="periodo">Período</Label>
           <Select value={periodo} onValueChange={(v) => setPeriodo((v as PeriodoCaja) ?? "hoy")}>
@@ -274,8 +294,9 @@ export function DashboardView({
         <p className="text-center text-sm text-muted-foreground">Cargando...</p>
       ) : (
         <>
-          <ResumenCards ingresos={ingresos} egresos={egresos} balance={ingresos - egresos} cantidad={activos.length} />
+          <ResumenCards ingresos={ingresos} egresos={egresos} balance={ingresos - egresos} promedioDiario={promedioDiario} />
           <IngresosChart datos={chartData} />
+          <MejorPeorDia datos={chartData} />
           <ResumenTurnos resumen={resumenTurnos} />
         </>
       )}

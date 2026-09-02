@@ -4,18 +4,18 @@ export function ResumenCards({
   ingresos,
   egresos,
   balance,
-  cantidad,
+  promedioDiario,
 }: {
   ingresos: number;
   egresos: number;
   balance: number;
-  cantidad: number;
+  promedioDiario: number;
 }) {
   const cards = [
     { label: "Ingresos", valor: formatMonto(ingresos), className: "text-emerald-600" },
     { label: "Egresos", valor: formatMonto(egresos), className: "text-rose-600" },
     { label: "Balance", valor: formatMonto(balance), className: balance >= 0 ? "text-emerald-600" : "text-rose-600" },
-    { label: "Movimientos", valor: String(cantidad), className: "text-foreground" },
+    { label: "Promedio diario", valor: formatMonto(promedioDiario), className: "text-foreground" },
   ];
 
   return (

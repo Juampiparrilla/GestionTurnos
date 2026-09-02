@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { ChevronDown, ChevronUp, X } from "lucide-react";
+import { ChevronDown, ChevronUp, Plus, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -12,6 +12,7 @@ import { TIPO_MOVIMIENTO_LABEL, type CajaEtiqueta, type CajaMovimiento } from "@
 import type { Board, OrgDirectoryEntry } from "@/types/board";
 import type { ShiftConfiguration } from "@/types/shift";
 import { MovimientoRow } from "./movimiento-row";
+import { NuevoMovimientoSheet } from "@/components/caja/nuevo/nuevo-movimiento-sheet";
 
 const SIN_TURNO = "sin_turno";
 
@@ -36,7 +37,7 @@ function filtrosPorDefecto(): Filtros {
 
 export function MovimientosView({
   boards,
-  etiquetas,
+  etiquetas: etiquetasIniciales,
   shifts,
   directory,
   isAdmin,
@@ -47,11 +48,13 @@ export function MovimientosView({
   directory: OrgDirectoryEntry[];
   isAdmin: boolean;
 }) {
+  const [etiquetas, setEtiquetas] = useState(etiquetasIniciales);
   const [draft, setDraft] = useState<Filtros>(filtrosPorDefecto());
   const [aplicados, setAplicados] = useState<Filtros>(draft);
   const [movimientos, setMovimientos] = useState<CajaMovimiento[]>([]);
   const [loading, setLoading] = useState(true);
   const [filtrosOpen, setFiltrosOpen] = useState(false);
+  const [nuevoOpen, setNuevoOpen] = useState(false);
 
   const porDefecto = filtrosPorDefecto();
   const hayFiltrosActivos =
@@ -113,6 +116,11 @@ export function MovimientosView({
 
   return (
     <div className="space-y-4">
+      <Button type="button" className="w-full" onClick={() => setNuevoOpen(true)}>
+        <Plus className="size-4" aria-hidden="true" />
+        Nuevo movimiento
+      </Button>
+
       <Button
         type="button"
         className="w-full justify-between"
@@ -268,6 +276,16 @@ export function MovimientosView({
           ))}
         </div>
       )}
+
+      <NuevoMovimientoSheet
+        open={nuevoOpen}
+        onOpenChange={setNuevoOpen}
+        etiquetas={etiquetas}
+        boards={boards}
+        shifts={shifts}
+        onCreated={(creado) => setMovimientos((prev) => [creado, ...prev])}
+        onEtiquetaCreated={(nueva) => setEtiquetas((prev) => [...prev, nueva])}
+      />
     </div>
   );
 }

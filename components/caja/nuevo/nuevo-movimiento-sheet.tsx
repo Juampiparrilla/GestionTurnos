@@ -1,6 +1,8 @@
 "use client";
 
 import { useMemo, useState, useTransition } from "react";
+import { Pin, PinOff } from "lucide-react";
+import { PendingOverlay } from "@/components/pending-overlay";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetFooter } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,56 +10,69 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { MontoSumaInput } from "@/components/caja/monto-suma-input";
-import { PendingOverlay } from "@/components/pending-overlay";
 import { showSuccessToast } from "@/lib/toast";
 import { hoyISO } from "@/lib/caja/periodos";
-import { TipoSelector } from "@/components/caja/nuevo/tipo-selector";
+import { TipoSelector } from "./tipo-selector";
+import { EtiquetaSelectField } from "./etiqueta-select-field";
 import type { CajaEtiqueta, CajaMovimiento, TipoMovimientoCaja } from "@/types/caja";
 import type { Board } from "@/types/board";
 import type { ShiftConfiguration } from "@/types/shift";
 
 const SIN_TURNO = "sin_turno";
 
-export function EditMovimientoSheet({
-  movimiento,
-  etiquetas,
-  boards,
-  shifts,
+export function NuevoMovimientoSheet({
   open,
   onOpenChange,
-  onUpdated,
+  etiquetas: etiquetasIniciales,
+  boards,
+  shifts,
+  onCreated,
+  onEtiquetaCreated,
 }: {
-  movimiento: CajaMovimiento;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
   etiquetas: CajaEtiqueta[];
   boards: Board[];
   shifts: ShiftConfiguration[];
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  onUpdated: (movimiento: CajaMovimiento) => void;
+  onCreated: (movimiento: CajaMovimiento) => void;
+  onEtiquetaCreated: (etiqueta: CajaEtiqueta) => void;
 }) {
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
+  const [anclado, setAnclado] = useState(false);
 
-  const [tipo, setTipo] = useState<TipoMovimientoCaja>(movimiento.tipo);
-  const [etiquetaId, setEtiquetaId] = useState(movimiento.etiqueta_id);
-  const [monto, setMonto] = useState(movimiento.monto);
-  const [fecha, setFecha] = useState(movimiento.fecha);
-  const [boardId, setBoardId] = useState(movimiento.board_id);
-  const [shiftConfigurationId, setShiftConfigurationId] = useState(movimiento.shift_configuration_id ?? SIN_TURNO);
-  const [observacion, setObservacion] = useState(movimiento.observacion ?? "");
+  const [etiquetas, setEtiquetas] = useState(etiquetasIniciales);
+  const [tipo, setTipo] = useState<TipoMovimientoCaja>("ingreso");
+  const [etiquetaId, setEtiquetaId] = useState("");
+  const [monto, setMonto] = useState(0);
+  const [fecha, setFecha] = useState(hoyISO());
+  const [boardId, setBoardId] = useState(boards.length === 1 ? boards[0].id : "");
+  const [shiftConfigurationId, setShiftConfigurationId] = useState(SIN_TURNO);
+  const [observacion, setObservacion] = useState("");
+  const [montoFieldKey, setMontoFieldKey] = useState(0);
 
-  // Incluye la etiqueta actual del movimiento aunque esté inactiva o sea de
-  // otro tipo (recién elegido) -- si no, desaparecería del selector al editar.
-  const etiquetasDelTipo = useMemo(() => {
-    const delTipo = etiquetas.filter((e) => e.tipo === tipo && e.active);
-    const actual = etiquetas.find((e) => e.id === etiquetaId);
-    if (actual && actual.tipo === tipo && !delTipo.some((e) => e.id === actual.id)) {
-      return [...delTipo, actual];
-    }
-    return delTipo;
-  }, [etiquetas, tipo, etiquetaId]);
-
+  const etiquetasDelTipo = useMemo(() => etiquetas.filter((e) => e.tipo === tipo), [etiquetas, tipo]);
   const turnosDelLocal = useMemo(() => shifts.filter((s) => s.board_id === boardId), [shifts, boardId]);
+
+  function resetForm() {
+    setTipo("ingreso");
+    setEtiquetaId("");
+    setMonto(0);
+    setFecha(hoyISO());
+    setBoardId(boards.length === 1 ? boards[0].id : "");
+    setShiftConfigurationId(SIN_TURNO);
+    setObservacion("");
+    setError(null);
+    // MontoSumaInput guarda su propia expresión interna ("5000+3000") --
+    // sin remontarlo, al anclar y cargar varios movimientos seguidos
+    // quedaría pegada la suma del anterior.
+    setMontoFieldKey((k) => k + 1);
+  }
+
+  function handleOpenChange(next: boolean) {
+    if (next) resetForm();
+    onOpenChange(next);
+  }
 
   function handleTipoChange(nuevoTipo: TipoMovimientoCaja) {
     setTipo(nuevoTipo);
@@ -81,6 +96,10 @@ export function EditMovimientoSheet({
       setError("El monto tiene que ser mayor a 0.");
       return;
     }
+    if (!boardId) {
+      setError("Elegí un local.");
+      return;
+    }
 
     const payload = {
       tipo,
@@ -93,8 +112,8 @@ export function EditMovimientoSheet({
     };
 
     startTransition(async () => {
-      const res = await fetch(`/api/caja/movimientos/${movimiento.id}`, {
-        method: "PATCH",
+      const res = await fetch("/api/caja/movimientos", {
+        method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
@@ -102,23 +121,41 @@ export function EditMovimientoSheet({
       const data = await res.json();
 
       if (!res.ok) {
-        setError(data.error ?? "No se pudo guardar el cambio.");
+        setError(data.error ?? "No se pudo crear el movimiento.");
         return;
       }
 
-      onUpdated(data.movimiento);
-      onOpenChange(false);
-      showSuccessToast("Movimiento actualizado con éxito");
+      onCreated(data.movimiento);
+      resetForm();
+      if (!anclado) onOpenChange(false);
+      showSuccessToast("Movimiento registrado con éxito");
     });
   }
 
   return (
     <>
       <PendingOverlay pending={isPending} />
-      <Sheet open={open} onOpenChange={onOpenChange}>
+      <Sheet open={open} onOpenChange={handleOpenChange}>
         <SheetContent side="right" className="w-full sm:max-w-md">
           <SheetHeader>
-            <SheetTitle>Editar movimiento</SheetTitle>
+            <div className="flex items-center justify-between gap-2">
+              <SheetTitle>Nuevo movimiento</SheetTitle>
+              <Button
+                type="button"
+                variant={anclado ? "secondary" : "ghost"}
+                size="sm"
+                onClick={() => setAnclado((v) => !v)}
+                className="gap-1.5"
+                title={
+                  anclado
+                    ? "El formulario queda abierto después de guardar"
+                    : "Anclar: dejar el formulario abierto para cargar varios seguidos"
+                }
+              >
+                {anclado ? <Pin className="size-4" aria-hidden="true" /> : <PinOff className="size-4" aria-hidden="true" />}
+                {anclado ? "Anclado" : "Anclar"}
+              </Button>
+            </div>
           </SheetHeader>
           <form onSubmit={handleSubmit} className="flex flex-col gap-4 px-4">
             <div className="space-y-2">
@@ -126,33 +163,26 @@ export function EditMovimientoSheet({
               <TipoSelector value={tipo} onChange={handleTipoChange} />
             </div>
 
+            <EtiquetaSelectField
+              etiquetas={etiquetasDelTipo}
+              tipo={tipo}
+              value={etiquetaId}
+              onChange={setEtiquetaId}
+              onEtiquetaCreated={(nueva) => {
+                setEtiquetas((prev) => [...prev, nueva]);
+                onEtiquetaCreated(nueva);
+              }}
+            />
+
             <div className="space-y-2">
-              <Label htmlFor="edit-etiqueta">Etiqueta</Label>
-              <Select value={etiquetaId} onValueChange={(v) => setEtiquetaId(v ?? "")}>
-                <SelectTrigger id="edit-etiqueta" className="w-full">
-                  <SelectValue>
-                    {(v: string) => etiquetasDelTipo.find((e) => e.id === v)?.nombre ?? "Seleccione una etiqueta..."}
-                  </SelectValue>
-                </SelectTrigger>
-                <SelectContent>
-                  {etiquetasDelTipo.map((e) => (
-                    <SelectItem key={e.id} value={e.id}>
-                      {e.nombre}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <Label htmlFor="monto">Importe</Label>
+              <MontoSumaInput key={montoFieldKey} id="monto" value={monto} onChange={setMonto} required />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="edit-monto">Importe</Label>
-              <MontoSumaInput id="edit-monto" value={monto} onChange={setMonto} required />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="edit-fecha">Fecha</Label>
+              <Label htmlFor="fecha">Fecha</Label>
               <Input
-                id="edit-fecha"
+                id="fecha"
                 type="date"
                 value={fecha}
                 onChange={(e) => setFecha(e.target.value)}
@@ -162,9 +192,9 @@ export function EditMovimientoSheet({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="edit-local">Local</Label>
+              <Label htmlFor="local">Local</Label>
               <Select value={boardId} onValueChange={(v) => handleBoardChange(v ?? "")}>
-                <SelectTrigger id="edit-local" className="w-full">
+                <SelectTrigger id="local" className="w-full">
                   <SelectValue>{(v: string) => boards.find((b) => b.id === v)?.name ?? "Seleccione un local..."}</SelectValue>
                 </SelectTrigger>
                 <SelectContent>
@@ -178,9 +208,9 @@ export function EditMovimientoSheet({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="edit-turno">Turno</Label>
+              <Label htmlFor="turno">Turno</Label>
               <Select value={shiftConfigurationId} onValueChange={(v) => setShiftConfigurationId(v ?? SIN_TURNO)}>
-                <SelectTrigger id="edit-turno" className="w-full">
+                <SelectTrigger id="turno" className="w-full" disabled={!boardId}>
                   <SelectValue>
                     {(v: string) =>
                       v === SIN_TURNO ? "Sin turno" : turnosDelLocal.find((s) => s.id === v)?.name ?? "Sin turno"
@@ -199,13 +229,14 @@ export function EditMovimientoSheet({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="edit-observacion">Observación (opcional)</Label>
+              <Label htmlFor="observacion">Observación (opcional)</Label>
               <Textarea
-                id="edit-observacion"
+                id="observacion"
                 value={observacion}
                 onChange={(e) => setObservacion(e.target.value.toUpperCase())}
                 maxLength={500}
                 rows={2}
+                placeholder="Ej. PAGO CORRESPONDIENTE AL MES DE SEPTIEMBRE."
               />
             </div>
 
@@ -217,7 +248,7 @@ export function EditMovimientoSheet({
 
             <SheetFooter className="px-0">
               <Button type="submit" disabled={isPending}>
-                {isPending ? "Guardando..." : "Guardar cambios"}
+                {isPending ? "Guardando..." : "Guardar movimiento"}
               </Button>
             </SheetFooter>
           </form>

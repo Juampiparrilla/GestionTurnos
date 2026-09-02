@@ -1,7 +1,6 @@
 import { redirect } from "next/navigation";
 import { getCurrentProfile } from "@/lib/auth/session";
 import { createClient } from "@/lib/supabase/server";
-import { MenuSecciones } from "@/components/caja/menu-secciones";
 import { DashboardView } from "@/components/caja/dashboard/dashboard-view";
 import type { Board } from "@/types/board";
 import type { ShiftConfiguration } from "@/types/shift";
@@ -36,10 +35,7 @@ export default async function CajaDashboardPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between gap-4">
-        <h1 className="text-xl font-semibold">Caja</h1>
-        <MenuSecciones isAdmin={isAdmin} />
-      </div>
+      <h1 className="text-xl font-semibold">Caja</h1>
       <DashboardView boards={boards} shifts={(shifts as ShiftConfiguration[] | null) ?? []} isAdmin={isAdmin} />
     </div>
   );

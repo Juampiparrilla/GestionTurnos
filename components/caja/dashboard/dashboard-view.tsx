@@ -32,7 +32,7 @@ export function DashboardView({
   shifts: ShiftConfiguration[];
   isAdmin: boolean;
 }) {
-  const [periodo, setPeriodo] = useState<PeriodoCaja>("hoy");
+  const [periodo, setPeriodo] = useState<PeriodoCaja>("este_mes");
   const [rangoPersonalizado, setRangoPersonalizado] = useState({ desde: "", hasta: "" });
   const [boardId, setBoardId] = useState("");
   const [turnoNombre, setTurnoNombre] = useState("");
@@ -41,7 +41,7 @@ export function DashboardView({
   const [loading, setLoading] = useState(true);
   const [filtrosOpen, setFiltrosOpen] = useState(false);
 
-  const hayFiltrosActivos = periodo !== "hoy" || boardId !== "" || turnoNombre !== "" || tipo !== "";
+  const hayFiltrosActivos = periodo !== "este_mes" || boardId !== "" || turnoNombre !== "" || tipo !== "";
   const shiftPorId = useMemo(() => new Map(shifts.map((s) => [s.id, s.name])), [shifts]);
 
   const rango = useMemo(() => {
@@ -125,7 +125,7 @@ export function DashboardView({
   const promedioDiario = chartData.length > 0 ? ingresos / chartData.length : 0;
 
   function limpiarFiltros() {
-    setPeriodo("hoy");
+    setPeriodo("este_mes");
     setRangoPersonalizado({ desde: "", hasta: "" });
     setBoardId("");
     setTurnoNombre("");
@@ -205,7 +205,7 @@ export function DashboardView({
 
         <div className="space-y-1.5">
           <Label htmlFor="periodo">Período</Label>
-          <Select value={periodo} onValueChange={(v) => setPeriodo((v as PeriodoCaja) ?? "hoy")}>
+          <Select value={periodo} onValueChange={(v) => setPeriodo((v as PeriodoCaja) ?? "este_mes")}>
             <SelectTrigger id="periodo" className="w-full">
               <SelectValue>{(v: PeriodoCaja) => PERIODO_LABEL[v]}</SelectValue>
             </SelectTrigger>

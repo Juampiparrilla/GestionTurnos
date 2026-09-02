@@ -47,7 +47,7 @@ export function ShiftsManagement({
   }
 
   return (
-    <div className="space-y-3 rounded-lg border border-zinc-300 bg-blue-50 p-4 dark:border-zinc-700 dark:bg-blue-950/20">
+    <div className="space-y-3 rounded-lg border border-zinc-300 bg-zinc-100 p-4 dark:border-zinc-700 dark:bg-zinc-800">
       <h2 className="font-medium">Turnos</h2>
 
       {sorted.length === 0 ? (

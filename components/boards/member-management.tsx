@@ -90,7 +90,7 @@ export function MemberManagement({
   }
 
   return (
-    <div className="space-y-3 rounded-lg border border-zinc-300 bg-violet-50 p-4 dark:border-zinc-700 dark:bg-violet-950/20">
+    <div className="space-y-3 rounded-lg border border-zinc-200 bg-zinc-50 p-4 dark:border-zinc-800 dark:bg-zinc-900">
       <PendingOverlay pending={isAdding || isRemoving} />
       <h2 className="font-medium">Personas asignadas</h2>
 

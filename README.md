@@ -10,6 +10,10 @@ El ícono de la sección en la que estás parado (Usuarios/Horarios/Productos/Ca
 
 Producción: [gestion-turnos-nu.vercel.app](https://gestion-turnos-nu.vercel.app)
 
+## Inicio
+
+Al loguearte, `/` muestra un dashboard con accesos directos a Horarios, Productos, Caja (y Usuarios si sos Super Administrador), quién trabaja hoy en cada local (o si ese turno está Feriado/Cerrado/Sin asignar) y un resumen de Ingresos/Egresos de Caja del día, con link al detalle.
+
 ## Cómo se organiza
 
 - Cada empresa (**organización**) tiene **Horarios** — un horario es un local o punto de trabajo (ej. "Magnolia II").

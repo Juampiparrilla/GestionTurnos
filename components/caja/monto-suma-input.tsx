@@ -88,7 +88,7 @@ export function MontoSumaInput({
         </span>
         <Input
           id={id}
-          inputMode="numeric"
+          inputMode="tel"
           required={required}
           value={formatearVisual(raw)}
           onChange={handleChange}

@@ -98,13 +98,13 @@ export function MovimientoRow({
             </>
           )}
         </div>
-        <div className="flex shrink-0 items-center gap-1">
+        <div className="flex shrink-0 items-center gap-2">
           <p className={`font-semibold ${movimiento.tipo === "ingreso" ? "text-emerald-600" : "text-rose-600"}`}>
             {signo} {formatMonto(movimiento.monto)}
           </p>
           <Button
             variant="ghost"
-            size="icon-sm"
+            size="icon"
             onClick={() => setExpanded((v) => !v)}
             aria-label={expanded ? "Ver menos" : "Ver más"}
           >
@@ -115,10 +115,10 @@ export function MovimientoRow({
             )}
           </Button>
           {puedeAnular && !anulado && (
-            <>
+            <div className="flex items-center gap-1.5 border-l pl-2">
               <Button
                 variant="ghost"
-                size="icon-sm"
+                size="icon"
                 aria-label="Editar movimiento"
                 onClick={() => setEditOpen(true)}
               >
@@ -126,7 +126,7 @@ export function MovimientoRow({
               </Button>
               <Button
                 variant="ghost"
-                size="icon-sm"
+                size="icon"
                 aria-label="Anular movimiento"
                 onClick={() => setOpen(true)}
               >
@@ -171,7 +171,7 @@ export function MovimientoRow({
                 </AlertDialogFooter>
               </AlertDialogContent>
               </AlertDialog>
-            </>
+            </div>
           )}
         </div>
       </div>

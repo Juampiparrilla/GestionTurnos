@@ -86,26 +86,28 @@ export function DeudaRow({
           <p className="font-semibold">{formatMonto(deuda.monto)}</p>
           {pendiente && (
             <>
-              <Button variant="ghost" size="icon-sm" aria-label="Editar deuda" onClick={() => setEditOpen(true)}>
+              <Button variant="ghost" size="icon" aria-label="Editar deuda" onClick={() => setEditOpen(true)}>
                 <Pencil className="size-4" aria-hidden="true" />
               </Button>
-              <Button
-                variant="ghost"
-                size="icon-sm"
-                aria-label="Marcar pagada"
-                onClick={marcarPagada}
-                disabled={isPending}
-              >
-                <Check className="size-4" aria-hidden="true" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon-sm"
-                aria-label="Anular deuda"
-                onClick={() => setAnularOpen(true)}
-              >
-                <Ban className="size-4" aria-hidden="true" />
-              </Button>
+              <div className="flex items-center gap-1.5 border-l pl-2">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  aria-label="Marcar pagada"
+                  onClick={marcarPagada}
+                  disabled={isPending}
+                >
+                  <Check className="size-4" aria-hidden="true" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  aria-label="Anular deuda"
+                  onClick={() => setAnularOpen(true)}
+                >
+                  <Ban className="size-4" aria-hidden="true" />
+                </Button>
+              </div>
               <EditDeudaSheet deuda={deuda} open={editOpen} onOpenChange={setEditOpen} onUpdated={onUpdated} />
               <AlertDialog open={anularOpen} onOpenChange={setAnularOpen}>
                 <AlertDialogContent>

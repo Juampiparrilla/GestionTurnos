@@ -213,7 +213,14 @@ export function EditProductoSheet({
               />
             </div>
 
-            <CostoUnitarioField costo={costo} onCostoChange={setCosto} unidadMedida={unidadMedida} />
+            <div className="border-t pt-4">
+              <p className="mb-3 text-xs font-semibold tracking-wide text-muted-foreground uppercase">Costo</p>
+              <CostoUnitarioField costo={costo} onCostoChange={setCosto} unidadMedida={unidadMedida} />
+            </div>
+
+            <p className="border-t pt-4 text-xs font-semibold tracking-wide text-muted-foreground uppercase">
+              Precios de venta
+            </p>
 
             <PriceTrackFields
               label={unidadMedida === "kg" ? "Bolsa cerrada" : "Precio unitario"}

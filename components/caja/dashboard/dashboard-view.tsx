@@ -18,6 +18,7 @@ import { ResumenCards } from "./resumen-cards";
 import { IngresosChart } from "./ingresos-chart";
 import { ResumenTurnos } from "./resumen-turnos";
 import { MejorPeorDia } from "./mejor-peor-dia";
+import { DashboardSkeleton } from "./dashboard-skeleton";
 import { FuncionalidadesDialog } from "@/components/caja/funcionalidades-dialog";
 
 const SIN_TURNO = "sin_turno";
@@ -294,7 +295,7 @@ export function DashboardView({
       )}
 
       {loading ? (
-        <p className="text-center text-sm text-muted-foreground">Cargando...</p>
+        <DashboardSkeleton />
       ) : (
         <>
           <ResumenCards ingresos={ingresos} egresos={egresos} balance={ingresos - egresos} promedioDiario={promedioDiario} />

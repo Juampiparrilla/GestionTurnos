@@ -65,35 +65,37 @@ export function EtiquetaRow({ etiqueta, enUso }: { etiqueta: CajaEtiqueta; enUso
             {!etiqueta.active && <Badge variant="outline">Inactiva</Badge>}
           </div>
         </div>
-        <div className="flex items-center gap-1">
-          <Button variant="ghost" size="icon-sm" onClick={() => setEditOpen(true)} aria-label="Editar">
+        <div className="flex items-center gap-2">
+          <Button variant="ghost" size="icon" onClick={() => setEditOpen(true)} aria-label="Editar">
             <Pencil className="size-4" aria-hidden="true" />
           </Button>
-          <Button
-            variant="ghost"
-            size="icon-sm"
-            onClick={toggleActive}
-            disabled={isPending}
-            aria-label={etiqueta.active ? "Desactivar" : "Reactivar"}
-          >
-            {etiqueta.active ? (
-              <Ban className="size-4" aria-hidden="true" />
-            ) : (
-              <RotateCcw className="size-4" aria-hidden="true" />
-            )}
-          </Button>
-          {!enUso && (
+          <div className="flex items-center gap-1.5 border-l pl-2">
             <Button
               variant="ghost"
-              size="icon-sm"
-              onClick={deleteForever}
+              size="icon"
+              onClick={toggleActive}
               disabled={isPending}
-              aria-label="Borrar definitivamente"
-              className="text-destructive hover:text-destructive"
+              aria-label={etiqueta.active ? "Desactivar" : "Reactivar"}
             >
-              <Trash2 className="size-4" aria-hidden="true" />
+              {etiqueta.active ? (
+                <Ban className="size-4" aria-hidden="true" />
+              ) : (
+                <RotateCcw className="size-4" aria-hidden="true" />
+              )}
             </Button>
-          )}
+            {!enUso && (
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={deleteForever}
+                disabled={isPending}
+                aria-label="Borrar definitivamente"
+                className="text-destructive hover:text-destructive"
+              >
+                <Trash2 className="size-4" aria-hidden="true" />
+              </Button>
+            )}
+          </div>
         </div>
       </div>
       <EditEtiquetaSheet etiqueta={etiqueta} enUso={enUso} open={editOpen} onOpenChange={setEditOpen} />

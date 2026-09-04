@@ -12,6 +12,7 @@ import { TIPO_MOVIMIENTO_LABEL, type CajaEtiqueta, type CajaMovimiento } from "@
 import type { Board, OrgDirectoryEntry } from "@/types/board";
 import type { ShiftConfiguration } from "@/types/shift";
 import { MovimientoRow } from "./movimiento-row";
+import { MovimientoRowSkeleton } from "./movimiento-row-skeleton";
 import { NuevoMovimientoSheet } from "@/components/caja/nuevo/nuevo-movimiento-sheet";
 
 const SIN_TURNO = "sin_turno";
@@ -245,7 +246,11 @@ export function MovimientosView({
       )}
 
       {loading ? (
-        <p className="text-center text-sm text-muted-foreground">Cargando...</p>
+        <div className="grid gap-2">
+          <MovimientoRowSkeleton />
+          <MovimientoRowSkeleton />
+          <MovimientoRowSkeleton />
+        </div>
       ) : movimientosFiltrados.length === 0 ? (
         <div className="rounded-lg border border-dashed p-8 text-center text-sm text-muted-foreground">
           No se encontraron movimientos con estos filtros.

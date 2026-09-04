@@ -1,12 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
-import { ArrowLeft, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { LinkPendingSpinner } from "@/components/link-pending-spinner";
 import { CreateSundaySheet } from "./create-sunday-sheet";
 import { EditSundaySheet } from "./edit-sunday-sheet";
+import { MenuSeccionesHorario } from "./menu-secciones-horario";
 import { formatDateOnly, formatDateTime } from "@/lib/format-date";
 import type { Board, BoardMember, OrgDirectoryEntry } from "@/types/board";
 import type { Sunday } from "@/types/sunday";
@@ -43,18 +42,12 @@ export function SundaysManagement({
 
   return (
     <div className="space-y-6">
-      <Link
-        href={`/tableros/${board.id}`}
-        className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
-      >
-        <ArrowLeft className="size-4" />
-        Volver al calendario
-        <LinkPendingSpinner />
-      </Link>
-
-      <div>
-        <h1 className="text-xl font-semibold">Domingos</h1>
-        <p className="text-sm text-muted-foreground">{board.name}</p>
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-xl font-semibold">Domingos</h1>
+          <p className="text-sm text-muted-foreground">{board.name}</p>
+        </div>
+        <MenuSeccionesHorario boardId={board.id} isAdmin={isAdmin} />
       </div>
       {isAdmin && (
         <Button onClick={() => setCreateOpen(true)} className="w-full">

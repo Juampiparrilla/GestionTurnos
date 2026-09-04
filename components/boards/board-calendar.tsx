@@ -3,10 +3,11 @@
 import { useRef, useState } from "react";
 import Link from "next/link";
 import { toPng } from "html-to-image";
-import { ArrowLeft, Download, Settings } from "lucide-react";
+import { Download, Settings } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { AssignmentSheet } from "./assignment-sheet";
+import { MenuSeccionesHorario } from "./menu-secciones-horario";
 import { LinkPendingSpinner } from "@/components/link-pending-spinner";
 import { PendingOverlay } from "@/components/pending-overlay";
 import { cn } from "@/lib/utils";
@@ -187,15 +188,7 @@ export function BoardCalendar({
               <LinkPendingSpinner />
             </Link>
           )}
-          <Link
-            href="/tableros"
-            aria-label="Volver a Horarios"
-            title="Volver a Horarios"
-            className={buttonVariants({ variant: "outline", size: "icon" })}
-          >
-            <ArrowLeft className="size-4" />
-            <LinkPendingSpinner />
-          </Link>
+          <MenuSeccionesHorario boardId={board.id} isAdmin={isAdmin} trigger="icon-button" />
         </div>
       </div>
 

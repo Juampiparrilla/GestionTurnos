@@ -1,14 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { LinkPendingSpinner } from "@/components/link-pending-spinner";
 import { EditBoardSheet } from "./edit-board-sheet";
 import { MemberManagement } from "./member-management";
 import { ShiftsManagement } from "./shifts-management";
+import { MenuSeccionesHorario } from "./menu-secciones-horario";
 import type { Board, BoardMember, OrgDirectoryEntry } from "@/types/board";
 import type { ShiftConfiguration } from "@/types/shift";
 
@@ -29,15 +27,6 @@ export function BoardDetail({
 
   return (
     <div className="space-y-6">
-      <Link
-        href={`/tableros/${board.id}`}
-        className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
-      >
-        <ArrowLeft className="size-4" />
-        Volver al calendario
-        <LinkPendingSpinner />
-      </Link>
-
       <div className="flex items-start justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
@@ -49,11 +38,14 @@ export function BoardDetail({
             <p className="mt-1 text-sm text-muted-foreground">{board.description}</p>
           )}
         </div>
-        {isAdmin && (
-          <Button variant="outline" onClick={() => setEditOpen(true)}>
-            Editar
-          </Button>
-        )}
+        <div className="flex shrink-0 items-center gap-2">
+          {isAdmin && (
+            <Button variant="outline" onClick={() => setEditOpen(true)}>
+              Editar
+            </Button>
+          )}
+          <MenuSeccionesHorario boardId={board.id} isAdmin={isAdmin} />
+        </div>
       </div>
 
       <ShiftsManagement boardId={board.id} shifts={shifts} isAdmin={isAdmin} />

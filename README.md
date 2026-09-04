@@ -21,6 +21,7 @@ Al loguearte, `/` muestra un dashboard con accesos directos a Horarios, Producto
 - Para cada turno y día de la semana se arma una **grilla semanal tipo** (recurrente, no fechas puntuales): quién trabaja, o si ese turno está Feriado, Cerrado o Sin asignar.
 - Aparte de la grilla semanal hay dos registros de **fechas reales** independientes — **Feriados** y **Domingos** — donde se anota fecha concreta + quién cubre ese día, con historial de quién hizo el último cambio y cuándo.
 - Un resumen por persona muestra cuántos turnos, domingos y feriados tiene cada uno. El horario se puede descargar como imagen para compartir por WhatsApp. La leyenda de Feriado/Cerrado solo aparece si ese horario efectivamente tiene algún día marcado así.
+- Desde el Calendario, Configuración, Domingos o Feriados de un local, la flecha de arriba abre un menú para saltar directo a cualquiera de esas cuatro pantallas de ese mismo local, sin volver primero al Calendario — mismo patrón que ya usan Productos y Caja para moverse entre sus secciones.
 - No hay registro público de usuarios: un admin crea la cuenta y genera un link de invitación que comparte manualmente (por WhatsApp), sin depender de email. Lo mismo para restablecer una contraseña olvidada.
 - Botón **Funcionalidades** en la lista de Horarios con el detalle de todo lo anterior, mismo patrón que Productos y Caja.
 - La configuración de un horario separa **Turnos** y **Personas asignadas** en dos tarjetas distintas para diferenciarlas de un vistazo.

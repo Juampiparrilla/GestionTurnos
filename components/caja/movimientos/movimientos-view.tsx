@@ -1,11 +1,12 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { ChevronDown, ChevronUp, Plus, X } from "lucide-react";
+import { ChevronDown, ChevronUp, List, Plus, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { EmptyState } from "@/components/empty-state";
 import { showErrorToast } from "@/lib/toast";
 import { resolverRangoPeriodo } from "@/lib/caja/periodos";
 import { TIPO_MOVIMIENTO_LABEL, type CajaEtiqueta, type CajaMovimiento } from "@/types/caja";
@@ -252,9 +253,7 @@ export function MovimientosView({
           <MovimientoRowSkeleton />
         </div>
       ) : movimientosFiltrados.length === 0 ? (
-        <div className="rounded-lg border border-dashed p-8 text-center text-sm text-muted-foreground">
-          No se encontraron movimientos con estos filtros.
-        </div>
+        <EmptyState icon={List}>No se encontraron movimientos con estos filtros.</EmptyState>
       ) : (
         <div className="grid gap-2">
           {movimientosFiltrados.map((m) => (

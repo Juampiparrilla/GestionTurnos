@@ -1,11 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronDown, ChevronUp, Plus } from "lucide-react";
+import { ChevronDown, ChevronUp, Package, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SearchInput } from "@/components/productos/search-input";
 import { useProductoFiltros } from "@/components/productos/use-producto-filtros";
 import { ProductoFiltrosPanel } from "@/components/productos/producto-filtros-panel";
+import { EmptyState } from "@/components/empty-state";
 import type { Marca } from "@/types/marca";
 import type { Categoria } from "@/types/categoria";
 import type { Proveedor } from "@/types/proveedor";
@@ -98,11 +99,11 @@ export function ProductosList({
       )}
 
       {filtrados.length === 0 ? (
-        <div className="rounded-lg border border-dashed p-8 text-center text-sm text-muted-foreground">
+        <EmptyState icon={Package}>
           {items.length === 0
             ? "Todavía no hay productos. Podés cargar uno a mano o importar un Excel."
             : "No se encontraron productos."}
-        </div>
+        </EmptyState>
       ) : (
         <div className="grid gap-3">
           {filtrados.map((producto, index) => (

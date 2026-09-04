@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { Plus } from "lucide-react";
+import { CalendarClock, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { EmptyState } from "@/components/empty-state";
 import { BoardCard } from "./board-card";
 import { CreateBoardSheet } from "./create-board-sheet";
 import { FuncionalidadesDialog } from "./funcionalidades-dialog";
@@ -29,11 +30,11 @@ export function BoardsList({
             Crear horario
           </Button>
         )}
-        <div className="rounded-lg border border-dashed p-8 text-center text-sm text-muted-foreground">
+        <EmptyState icon={CalendarClock}>
           {isAdmin
             ? "Todavía no tenés horarios. Creá tu primer horario para comenzar."
             : "No tenés horarios asignados todavía."}
-        </div>
+        </EmptyState>
         <CreateBoardSheet open={createOpen} onOpenChange={setCreateOpen} />
       </div>
     );

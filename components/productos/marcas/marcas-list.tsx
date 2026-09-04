@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { Plus } from "lucide-react";
+import { Plus, Tag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SearchInput } from "@/components/productos/search-input";
+import { EmptyState } from "@/components/empty-state";
 import type { Marca } from "@/types/marca";
 import { MarcaRow } from "./marca-row";
 import { CreateMarcaSheet } from "./create-marca-sheet";
@@ -23,9 +24,9 @@ export function MarcasList({ marcas, descripcion }: { marcas: Marca[]; descripci
       </Button>
       <SearchInput value={query} onChange={setQuery} placeholder="Buscar marca..." />
       {filtradas.length === 0 ? (
-        <div className="rounded-lg border border-dashed p-8 text-center text-sm text-muted-foreground">
+        <EmptyState icon={Tag}>
           {marcas.length === 0 ? "Todavía no hay marcas." : "No se encontraron marcas."}
-        </div>
+        </EmptyState>
       ) : (
         <div className="grid gap-3">
           {filtradas.map((marca, index) => (

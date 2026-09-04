@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { Plus } from "lucide-react";
+import { Plus, Tag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SearchInput } from "@/components/productos/search-input";
+import { EmptyState } from "@/components/empty-state";
 import type { CajaEtiqueta } from "@/types/caja";
 import { EtiquetaRow } from "./etiqueta-row";
 import { CreateEtiquetaSheet } from "./create-etiqueta-sheet";
@@ -32,9 +33,9 @@ export function EtiquetasList({
       </Button>
       <SearchInput value={query} onChange={setQuery} placeholder="Buscar etiqueta..." />
       {filtradas.length === 0 ? (
-        <div className="rounded-lg border border-dashed p-8 text-center text-sm text-muted-foreground">
+        <EmptyState icon={Tag}>
           {etiquetas.length === 0 ? "Todavía no hay etiquetas." : "No se encontraron etiquetas."}
-        </div>
+        </EmptyState>
       ) : (
         <div className="grid gap-2">
           {filtradas.map((etiqueta) => (

@@ -2,8 +2,10 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { ChevronDown, ChevronUp, Percent } from "lucide-react";
 import { PendingOverlay } from "@/components/pending-overlay";
+import { ConfirmDialog } from "@/components/confirm-dialog";
+import { EmptyState } from "@/components/empty-state";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
@@ -39,6 +41,7 @@ export function ActualizarCostosView({
   const [filtrosOpen, setFiltrosOpen] = useState(false);
   const [porcentaje, setPorcentaje] = useState(0);
   const [error, setError] = useState<string | null>(null);
+  const [confirmAjusteOpen, setConfirmAjusteOpen] = useState(false);
   // Los filtros solo acotan qué se ve en la lista -- lo que efectivamente
   // se ajusta es lo que se tilda a mano, así se puede buscar varias veces
   // (ej. "chizitos", después "agility") y armar la selección de a poco
@@ -80,7 +83,7 @@ export function ActualizarCostosView({
     setSeleccionados(new Set());
   }
 
-  function aplicarAjuste() {
+  function pedirConfirmacionAjuste() {
     setError(null);
 
     if (!porcentaje) {
@@ -92,10 +95,11 @@ export function ActualizarCostosView({
       return;
     }
 
+    setConfirmAjusteOpen(true);
+  }
+
+  function aplicarAjuste() {
     const ids = Array.from(seleccionados);
-    const signo = porcentaje > 0 ? "un aumento" : "una baja";
-    const pregunta = `¿Aplicar ${signo} del ${Math.abs(porcentaje)}% al costo de ${ids.length} ${ids.length === 1 ? "producto seleccionado" : "productos seleccionados"}? Los precios de venta se recalculan solos con el % de ganancia que ya tenga cada pista (no toca las que tenés fijadas manualmente).`;
-    if (!confirm(pregunta)) return;
 
     startTransition(async () => {
       const res = await fetch("/api/productos/ajustar-costo", {
@@ -165,7 +169,12 @@ export function ActualizarCostosView({
             {error}
           </p>
         )}
-        <Button type="button" className="w-full" disabled={isPending || seleccionados.size === 0} onClick={aplicarAjuste}>
+        <Button
+          type="button"
+          className="w-full"
+          disabled={isPending || seleccionados.size === 0}
+          onClick={pedirConfirmacionAjuste}
+        >
           {isPending
             ? "Aplicando..."
             : `Aplicar a ${seleccionados.size} ${seleccionados.size === 1 ? "producto seleccionado" : "productos seleccionados"}`}
@@ -204,9 +213,7 @@ export function ActualizarCostosView({
           </div>
         </div>
         {filtrados.length === 0 ? (
-          <div className="rounded-lg border border-dashed p-8 text-center text-sm text-muted-foreground">
-            No se encontraron productos con estos filtros.
-          </div>
+          <EmptyState icon={Percent}>No se encontraron productos con estos filtros.</EmptyState>
         ) : (
           <div className="grid gap-2">
             {filtrados.map((producto, index) => (
@@ -227,6 +234,18 @@ export function ActualizarCostosView({
           </div>
         )}
       </div>
+
+      <ConfirmDialog
+        open={confirmAjusteOpen}
+        onOpenChange={setConfirmAjusteOpen}
+        title="¿Aplicar el ajuste de costo?"
+        description={`Vas a aplicar ${porcentaje > 0 ? "un aumento" : "una baja"} del ${Math.abs(porcentaje)}% al costo de ${seleccionados.size} ${seleccionados.size === 1 ? "producto seleccionado" : "productos seleccionados"}. Los precios de venta se recalculan solos con el % de ganancia que ya tenga cada pista (no toca las que tenés fijadas manualmente).`}
+        confirmLabel="Aplicar"
+        onConfirm={() => {
+          setConfirmAjusteOpen(false);
+          aplicarAjuste();
+        }}
+      />
     </div>
   );
 }

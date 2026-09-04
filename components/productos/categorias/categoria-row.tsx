@@ -6,6 +6,7 @@ import { Ban, ChevronDown, ChevronUp, Pencil, RotateCcw, Trash2 } from "lucide-r
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { PendingOverlay } from "@/components/pending-overlay";
+import { ConfirmDialog } from "@/components/confirm-dialog";
 import { ProductosDeEntidad } from "@/components/productos/productos-de-entidad";
 import { showSuccessToast, showErrorToast } from "@/lib/toast";
 import type { Categoria } from "@/types/categoria";
@@ -23,14 +24,11 @@ export function CategoriaRow({
   const router = useRouter();
   const [editOpen, setEditOpen] = useState(false);
   const [expanded, setExpanded] = useState(false);
+  const [confirmToggleOpen, setConfirmToggleOpen] = useState(false);
+  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
 
   function toggleActive() {
-    const pregunta = categoria.active
-      ? `¿Desactivar la categoría "${categoria.nombre}"? Podés reactivarla después.`
-      : `¿Reactivar la categoría "${categoria.nombre}"?`;
-    if (!confirm(pregunta)) return;
-
     startTransition(async () => {
       const res = await fetch(`/api/categorias/${categoria.id}`, {
         method: "PATCH",
@@ -48,8 +46,6 @@ export function CategoriaRow({
   }
 
   function deleteForever() {
-    if (!confirm(`Esto borra "${categoria.nombre}" para siempre y no se puede deshacer. ¿Continuar?`)) return;
-
     startTransition(async () => {
       const res = await fetch(`/api/categorias/${categoria.id}`, { method: "DELETE" });
       if (!res.ok) {
@@ -95,7 +91,7 @@ export function CategoriaRow({
             <Button
               variant="ghost"
               size="icon-sm"
-              onClick={toggleActive}
+              onClick={() => setConfirmToggleOpen(true)}
               disabled={isPending}
               aria-label={categoria.active ? "Desactivar" : "Reactivar"}
             >
@@ -108,7 +104,7 @@ export function CategoriaRow({
             <Button
               variant="ghost"
               size="icon-sm"
-              onClick={deleteForever}
+              onClick={() => setConfirmDeleteOpen(true)}
               disabled={isPending}
               aria-label="Borrar definitivamente"
               className="text-destructive hover:text-destructive"
@@ -129,6 +125,33 @@ export function CategoriaRow({
         )}
       </div>
       <EditCategoriaSheet categoria={categoria} open={editOpen} onOpenChange={setEditOpen} />
+      <ConfirmDialog
+        open={confirmToggleOpen}
+        onOpenChange={setConfirmToggleOpen}
+        title={categoria.active ? "¿Desactivar esta categoría?" : "¿Reactivar esta categoría?"}
+        description={
+          categoria.active
+            ? `"${categoria.nombre}" podés reactivarla después.`
+            : `"${categoria.nombre}" vuelve a estar disponible.`
+        }
+        confirmLabel={categoria.active ? "Desactivar" : "Reactivar"}
+        onConfirm={() => {
+          setConfirmToggleOpen(false);
+          toggleActive();
+        }}
+      />
+      <ConfirmDialog
+        open={confirmDeleteOpen}
+        onOpenChange={setConfirmDeleteOpen}
+        title="¿Borrar esta categoría?"
+        description={`Esto borra "${categoria.nombre}" para siempre y no se puede deshacer.`}
+        confirmLabel="Borrar"
+        destructive
+        onConfirm={() => {
+          setConfirmDeleteOpen(false);
+          deleteForever();
+        }}
+      />
     </>
   );
 }

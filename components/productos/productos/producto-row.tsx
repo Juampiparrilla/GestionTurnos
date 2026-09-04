@@ -5,6 +5,7 @@ import { BadgePercent, Ban, ChevronDown, ChevronUp, Pencil, RotateCcw, Trash2 } 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { PendingOverlay } from "@/components/pending-overlay";
+import { ConfirmDialog } from "@/components/confirm-dialog";
 import type { Marca } from "@/types/marca";
 import type { Categoria } from "@/types/categoria";
 import type { Proveedor } from "@/types/proveedor";
@@ -43,6 +44,8 @@ export function ProductoRow({
 }) {
   const [editOpen, setEditOpen] = useState(false);
   const [expanded, setExpanded] = useState(false);
+  const [confirmToggleOpen, setConfirmToggleOpen] = useState(false);
+  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
   const detalleRef = useRef<HTMLDivElement>(null);
 
@@ -53,11 +56,6 @@ export function ProductoRow({
   }, [expanded]);
 
   function toggleActive() {
-    const pregunta = producto.active
-      ? `¿Desactivar "${producto.nombre}"? Podés reactivarlo después.`
-      : `¿Reactivar "${producto.nombre}"?`;
-    if (!confirm(pregunta)) return;
-
     startTransition(async () => {
       const res = await fetch(`/api/productos/${producto.id}`, {
         method: "PATCH",
@@ -75,8 +73,6 @@ export function ProductoRow({
   }
 
   function deleteForever() {
-    if (!confirm(`Esto borra "${producto.nombre}" para siempre y no se puede deshacer. ¿Continuar?`)) return;
-
     startTransition(async () => {
       const res = await fetch(`/api/productos/${producto.id}`, { method: "DELETE" });
       if (!res.ok) {
@@ -125,7 +121,7 @@ export function ProductoRow({
             <Button
               variant="ghost"
               size="icon-sm"
-              onClick={toggleActive}
+              onClick={() => setConfirmToggleOpen(true)}
               disabled={isPending}
               aria-label={producto.active ? "Desactivar" : "Reactivar"}
             >
@@ -138,7 +134,7 @@ export function ProductoRow({
             <Button
               variant="ghost"
               size="icon-sm"
-              onClick={deleteForever}
+              onClick={() => setConfirmDeleteOpen(true)}
               disabled={isPending}
               aria-label="Borrar definitivamente"
               className="text-destructive hover:text-destructive"
@@ -184,6 +180,33 @@ export function ProductoRow({
         proveedores={proveedores}
         nombresExistentes={nombresExistentes}
         onUpdated={onUpdated}
+      />
+      <ConfirmDialog
+        open={confirmToggleOpen}
+        onOpenChange={setConfirmToggleOpen}
+        title={producto.active ? "¿Desactivar este producto?" : "¿Reactivar este producto?"}
+        description={
+          producto.active
+            ? `"${producto.nombre}" podés reactivarlo después.`
+            : `"${producto.nombre}" vuelve a estar disponible.`
+        }
+        confirmLabel={producto.active ? "Desactivar" : "Reactivar"}
+        onConfirm={() => {
+          setConfirmToggleOpen(false);
+          toggleActive();
+        }}
+      />
+      <ConfirmDialog
+        open={confirmDeleteOpen}
+        onOpenChange={setConfirmDeleteOpen}
+        title="¿Borrar este producto?"
+        description={`Esto borra "${producto.nombre}" para siempre y no se puede deshacer.`}
+        confirmLabel="Borrar"
+        destructive
+        onConfirm={() => {
+          setConfirmDeleteOpen(false);
+          deleteForever();
+        }}
       />
     </>
   );

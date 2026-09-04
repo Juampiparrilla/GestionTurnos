@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { FileDown } from "lucide-react";
+import { FileDown, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { EmptyState } from "@/components/empty-state";
 import type { Marca } from "@/types/marca";
 import type { Categoria } from "@/types/categoria";
 import type { Proveedor } from "@/types/proveedor";
@@ -71,9 +72,7 @@ export function ReportesView({
           {filtrados.length} {filtrados.length === 1 ? "producto encontrado" : "productos encontrados"}
         </p>
         {filtrados.length === 0 ? (
-          <div className="rounded-lg border border-dashed p-8 text-center text-sm text-muted-foreground">
-            No se encontraron productos con estos filtros.
-          </div>
+          <EmptyState icon={FileText}>No se encontraron productos con estos filtros.</EmptyState>
         ) : (
           <div className="grid gap-2">
             {filtrados.map((producto, index) => (

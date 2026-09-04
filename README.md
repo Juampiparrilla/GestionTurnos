@@ -8,6 +8,8 @@ Si tenés una pestaña abierta en la compu y cargás algo desde el celular, no h
 
 El ícono de la sección en la que estás parado (Usuarios/Horarios/Productos/Caja, arriba a la derecha) se resalta en negro para ubicarte rápido. La app es mayormente blanco/gris/negro, sin colores de marca; el color se reserva para dar significado puntual (ej. verde/rojo para Ingreso/Egreso en Caja, o distinguir secciones dentro de una misma pantalla).
 
+Ninguna confirmación usa el popup nativo del navegador: desactivar/reactivar, borrar para siempre, anular, o un ajuste masivo de costos, todas muestran el mismo diálogo estilizado de la app. Y una lista vacía ("Todavía no hay...") siempre se ve con un ícono arriba del texto, no solo texto gris.
+
 Producción: [gestion-turnos-nu.vercel.app](https://gestion-turnos-nu.vercel.app)
 
 ## Inicio

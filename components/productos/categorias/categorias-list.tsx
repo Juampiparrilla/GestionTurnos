@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { Plus } from "lucide-react";
+import { LayoutGrid, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SearchInput } from "@/components/productos/search-input";
+import { EmptyState } from "@/components/empty-state";
 import type { Categoria } from "@/types/categoria";
 import { CategoriaRow } from "./categoria-row";
 import { CreateCategoriaSheet } from "./create-categoria-sheet";
@@ -23,9 +24,9 @@ export function CategoriasList({ categorias, descripcion }: { categorias: Catego
       </Button>
       <SearchInput value={query} onChange={setQuery} placeholder="Buscar categoría..." />
       {filtradas.length === 0 ? (
-        <div className="rounded-lg border border-dashed p-8 text-center text-sm text-muted-foreground">
+        <EmptyState icon={LayoutGrid}>
           {categorias.length === 0 ? "Todavía no hay categorías." : "No se encontraron categorías."}
-        </div>
+        </EmptyState>
       ) : (
         <div className="grid gap-3">
           {filtradas.map((categoria, index) => (

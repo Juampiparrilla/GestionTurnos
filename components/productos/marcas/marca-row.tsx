@@ -6,6 +6,7 @@ import { Ban, ChevronDown, ChevronUp, Pencil, RotateCcw, Trash2 } from "lucide-r
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { PendingOverlay } from "@/components/pending-overlay";
+import { ConfirmDialog } from "@/components/confirm-dialog";
 import { ProductosDeEntidad } from "@/components/productos/productos-de-entidad";
 import { showSuccessToast, showErrorToast } from "@/lib/toast";
 import type { Marca } from "@/types/marca";
@@ -15,14 +16,11 @@ export function MarcaRow({ marca, numero, marcas }: { marca: Marca; numero: numb
   const router = useRouter();
   const [editOpen, setEditOpen] = useState(false);
   const [expanded, setExpanded] = useState(false);
+  const [confirmToggleOpen, setConfirmToggleOpen] = useState(false);
+  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
 
   function toggleActive() {
-    const pregunta = marca.active
-      ? `¿Desactivar la marca "${marca.nombre}"? Podés reactivarla después.`
-      : `¿Reactivar la marca "${marca.nombre}"?`;
-    if (!confirm(pregunta)) return;
-
     startTransition(async () => {
       const res = await fetch(`/api/marcas/${marca.id}`, {
         method: "PATCH",
@@ -40,8 +38,6 @@ export function MarcaRow({ marca, numero, marcas }: { marca: Marca; numero: numb
   }
 
   function deleteForever() {
-    if (!confirm(`Esto borra "${marca.nombre}" para siempre y no se puede deshacer. ¿Continuar?`)) return;
-
     startTransition(async () => {
       const res = await fetch(`/api/marcas/${marca.id}`, { method: "DELETE" });
       if (!res.ok) {
@@ -82,7 +78,7 @@ export function MarcaRow({ marca, numero, marcas }: { marca: Marca; numero: numb
             <Button
               variant="ghost"
               size="icon-sm"
-              onClick={toggleActive}
+              onClick={() => setConfirmToggleOpen(true)}
               disabled={isPending}
               aria-label={marca.active ? "Desactivar" : "Reactivar"}
             >
@@ -95,7 +91,7 @@ export function MarcaRow({ marca, numero, marcas }: { marca: Marca; numero: numb
             <Button
               variant="ghost"
               size="icon-sm"
-              onClick={deleteForever}
+              onClick={() => setConfirmDeleteOpen(true)}
               disabled={isPending}
               aria-label="Borrar definitivamente"
               className="text-destructive hover:text-destructive"
@@ -116,6 +112,33 @@ export function MarcaRow({ marca, numero, marcas }: { marca: Marca; numero: numb
         )}
       </div>
       <EditMarcaSheet marca={marca} open={editOpen} onOpenChange={setEditOpen} />
+      <ConfirmDialog
+        open={confirmToggleOpen}
+        onOpenChange={setConfirmToggleOpen}
+        title={marca.active ? "¿Desactivar esta marca?" : "¿Reactivar esta marca?"}
+        description={
+          marca.active
+            ? `"${marca.nombre}" podés reactivarla después.`
+            : `"${marca.nombre}" vuelve a estar disponible.`
+        }
+        confirmLabel={marca.active ? "Desactivar" : "Reactivar"}
+        onConfirm={() => {
+          setConfirmToggleOpen(false);
+          toggleActive();
+        }}
+      />
+      <ConfirmDialog
+        open={confirmDeleteOpen}
+        onOpenChange={setConfirmDeleteOpen}
+        title="¿Borrar esta marca?"
+        description={`Esto borra "${marca.nombre}" para siempre y no se puede deshacer.`}
+        confirmLabel="Borrar"
+        destructive
+        onConfirm={() => {
+          setConfirmDeleteOpen(false);
+          deleteForever();
+        }}
+      />
     </>
   );
 }

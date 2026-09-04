@@ -6,6 +6,7 @@ import { Ban, ChevronDown, ChevronUp, Pencil, Percent, RotateCcw, Trash2 } from 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { PendingOverlay } from "@/components/pending-overlay";
+import { ConfirmDialog } from "@/components/confirm-dialog";
 import { ProductosDeEntidad } from "@/components/productos/productos-de-entidad";
 import { showSuccessToast, showErrorToast } from "@/lib/toast";
 import type { Proveedor } from "@/types/proveedor";
@@ -25,14 +26,11 @@ export function ProveedorRow({
   const [editOpen, setEditOpen] = useState(false);
   const [ajustarOpen, setAjustarOpen] = useState(false);
   const [expanded, setExpanded] = useState(false);
+  const [confirmToggleOpen, setConfirmToggleOpen] = useState(false);
+  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
 
   function toggleActive() {
-    const pregunta = proveedor.active
-      ? `¿Desactivar el proveedor "${proveedor.nombre}"? Podés reactivarlo después.`
-      : `¿Reactivar el proveedor "${proveedor.nombre}"?`;
-    if (!confirm(pregunta)) return;
-
     startTransition(async () => {
       const res = await fetch(`/api/proveedores/${proveedor.id}`, {
         method: "PATCH",
@@ -50,8 +48,6 @@ export function ProveedorRow({
   }
 
   function deleteForever() {
-    if (!confirm(`Esto borra "${proveedor.nombre}" para siempre y no se puede deshacer. ¿Continuar?`)) return;
-
     startTransition(async () => {
       const res = await fetch(`/api/proveedores/${proveedor.id}`, { method: "DELETE" });
       if (!res.ok) {
@@ -100,7 +96,7 @@ export function ProveedorRow({
             <Button
               variant="ghost"
               size="icon-sm"
-              onClick={toggleActive}
+              onClick={() => setConfirmToggleOpen(true)}
               disabled={isPending}
               aria-label={proveedor.active ? "Desactivar" : "Reactivar"}
             >
@@ -113,7 +109,7 @@ export function ProveedorRow({
             <Button
               variant="ghost"
               size="icon-sm"
-              onClick={deleteForever}
+              onClick={() => setConfirmDeleteOpen(true)}
               disabled={isPending}
               aria-label="Borrar definitivamente"
               className="text-destructive hover:text-destructive"
@@ -135,6 +131,33 @@ export function ProveedorRow({
       </div>
       <EditProveedorSheet proveedor={proveedor} open={editOpen} onOpenChange={setEditOpen} />
       <AjustarPorcentajeSheet proveedor={proveedor} open={ajustarOpen} onOpenChange={setAjustarOpen} />
+      <ConfirmDialog
+        open={confirmToggleOpen}
+        onOpenChange={setConfirmToggleOpen}
+        title={proveedor.active ? "¿Desactivar este proveedor?" : "¿Reactivar este proveedor?"}
+        description={
+          proveedor.active
+            ? `"${proveedor.nombre}" podés reactivarlo después.`
+            : `"${proveedor.nombre}" vuelve a estar disponible.`
+        }
+        confirmLabel={proveedor.active ? "Desactivar" : "Reactivar"}
+        onConfirm={() => {
+          setConfirmToggleOpen(false);
+          toggleActive();
+        }}
+      />
+      <ConfirmDialog
+        open={confirmDeleteOpen}
+        onOpenChange={setConfirmDeleteOpen}
+        title="¿Borrar este proveedor?"
+        description={`Esto borra "${proveedor.nombre}" para siempre y no se puede deshacer.`}
+        confirmLabel="Borrar"
+        destructive
+        onConfirm={() => {
+          setConfirmDeleteOpen(false);
+          deleteForever();
+        }}
+      />
     </>
   );
 }

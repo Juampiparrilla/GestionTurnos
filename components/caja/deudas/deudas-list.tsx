@@ -1,9 +1,10 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Plus } from "lucide-react";
+import { HandCoins, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { EmptyState } from "@/components/empty-state";
 import { ESTADO_DEUDA_LABEL, type CajaDeuda, type EstadoDeuda } from "@/types/caja";
 import { DeudaRow } from "./deuda-row";
 import { CreateDeudaSheet } from "./create-deuda-sheet";
@@ -52,9 +53,9 @@ export function DeudasList({ deudas: deudasIniciales }: { deudas: CajaDeuda[] })
       </div>
 
       {filtradas.length === 0 ? (
-        <div className="rounded-lg border border-dashed p-8 text-center text-sm text-muted-foreground">
+        <EmptyState icon={HandCoins}>
           {deudas.length === 0 ? "Todavía no hay deudas registradas." : "No se encontraron deudas."}
-        </div>
+        </EmptyState>
       ) : (
         <div className="grid gap-2">
           {filtradas.map((deuda) => (

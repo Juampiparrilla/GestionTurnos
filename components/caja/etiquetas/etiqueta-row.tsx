@@ -6,6 +6,7 @@ import { Ban, Pencil, RotateCcw, Trash2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { PendingOverlay } from "@/components/pending-overlay";
+import { ConfirmDialog } from "@/components/confirm-dialog";
 import { showSuccessToast, showErrorToast } from "@/lib/toast";
 import { TIPO_MOVIMIENTO_LABEL, type CajaEtiqueta } from "@/types/caja";
 import { EditEtiquetaSheet } from "./edit-etiqueta-sheet";
@@ -13,14 +14,11 @@ import { EditEtiquetaSheet } from "./edit-etiqueta-sheet";
 export function EtiquetaRow({ etiqueta, enUso }: { etiqueta: CajaEtiqueta; enUso: boolean }) {
   const router = useRouter();
   const [editOpen, setEditOpen] = useState(false);
+  const [confirmToggleOpen, setConfirmToggleOpen] = useState(false);
+  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
 
   function toggleActive() {
-    const pregunta = etiqueta.active
-      ? `¿Desactivar la etiqueta "${etiqueta.nombre}"? Podés reactivarla después.`
-      : `¿Reactivar la etiqueta "${etiqueta.nombre}"?`;
-    if (!confirm(pregunta)) return;
-
     startTransition(async () => {
       const res = await fetch(`/api/caja/etiquetas/${etiqueta.id}`, {
         method: "PATCH",
@@ -38,8 +36,6 @@ export function EtiquetaRow({ etiqueta, enUso }: { etiqueta: CajaEtiqueta; enUso
   }
 
   function deleteForever() {
-    if (!confirm(`Esto borra "${etiqueta.nombre}" para siempre y no se puede deshacer. ¿Continuar?`)) return;
-
     startTransition(async () => {
       const res = await fetch(`/api/caja/etiquetas/${etiqueta.id}`, { method: "DELETE" });
       if (!res.ok) {
@@ -73,7 +69,7 @@ export function EtiquetaRow({ etiqueta, enUso }: { etiqueta: CajaEtiqueta; enUso
             <Button
               variant="ghost"
               size="icon"
-              onClick={toggleActive}
+              onClick={() => setConfirmToggleOpen(true)}
               disabled={isPending}
               aria-label={etiqueta.active ? "Desactivar" : "Reactivar"}
             >
@@ -87,7 +83,7 @@ export function EtiquetaRow({ etiqueta, enUso }: { etiqueta: CajaEtiqueta; enUso
               <Button
                 variant="ghost"
                 size="icon"
-                onClick={deleteForever}
+                onClick={() => setConfirmDeleteOpen(true)}
                 disabled={isPending}
                 aria-label="Borrar definitivamente"
                 className="text-destructive hover:text-destructive"
@@ -99,6 +95,33 @@ export function EtiquetaRow({ etiqueta, enUso }: { etiqueta: CajaEtiqueta; enUso
         </div>
       </div>
       <EditEtiquetaSheet etiqueta={etiqueta} enUso={enUso} open={editOpen} onOpenChange={setEditOpen} />
+      <ConfirmDialog
+        open={confirmToggleOpen}
+        onOpenChange={setConfirmToggleOpen}
+        title={etiqueta.active ? "¿Desactivar esta etiqueta?" : "¿Reactivar esta etiqueta?"}
+        description={
+          etiqueta.active
+            ? `"${etiqueta.nombre}" deja de aparecer para nuevos movimientos. Podés reactivarla después.`
+            : `"${etiqueta.nombre}" vuelve a estar disponible para nuevos movimientos.`
+        }
+        confirmLabel={etiqueta.active ? "Desactivar" : "Reactivar"}
+        onConfirm={() => {
+          setConfirmToggleOpen(false);
+          toggleActive();
+        }}
+      />
+      <ConfirmDialog
+        open={confirmDeleteOpen}
+        onOpenChange={setConfirmDeleteOpen}
+        title="¿Borrar esta etiqueta?"
+        description={`Esto borra "${etiqueta.nombre}" para siempre y no se puede deshacer.`}
+        confirmLabel="Borrar"
+        destructive
+        onConfirm={() => {
+          setConfirmDeleteOpen(false);
+          deleteForever();
+        }}
+      />
     </>
   );
 }

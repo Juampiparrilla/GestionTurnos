@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { Plus } from "lucide-react";
+import { Plus, Truck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SearchInput } from "@/components/productos/search-input";
+import { EmptyState } from "@/components/empty-state";
 import type { Proveedor } from "@/types/proveedor";
 import { ProveedorRow } from "./proveedor-row";
 import { CreateProveedorSheet } from "./create-proveedor-sheet";
@@ -23,9 +24,9 @@ export function ProveedoresList({ proveedores, descripcion }: { proveedores: Pro
       </Button>
       <SearchInput value={query} onChange={setQuery} placeholder="Buscar proveedor..." />
       {filtrados.length === 0 ? (
-        <div className="rounded-lg border border-dashed p-8 text-center text-sm text-muted-foreground">
+        <EmptyState icon={Truck}>
           {proveedores.length === 0 ? "Todavía no hay proveedores." : "No se encontraron proveedores."}
-        </div>
+        </EmptyState>
       ) : (
         <div className="grid gap-3">
           {filtrados.map((proveedor, index) => (

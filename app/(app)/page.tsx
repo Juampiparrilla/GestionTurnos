@@ -77,6 +77,12 @@ export default async function HomePage() {
     { href: "/caja", label: "Caja", icon: DollarSign },
     ...(isSuperAdmin ? [{ href: "/usuarios", label: "Usuarios", icon: Users }] : []),
   ];
+  // Con cantidad impar de accesos, el último queda solo en la grilla de 2
+  // columnas y le sobra la mitad de la fila -- se saca y se muestra abajo
+  // ocupando todo el ancho, en vez de dejar un hueco vacío al lado.
+  const accesosImpares = accesos.length % 2 !== 0;
+  const accesosEnGrilla = accesosImpares ? accesos.slice(0, -1) : accesos;
+  const accesoSuelto = accesosImpares ? accesos[accesos.length - 1] : null;
 
   return (
     <div className="space-y-6">
@@ -86,7 +92,7 @@ export default async function HomePage() {
       </div>
 
       <div className="grid grid-cols-2 gap-3">
-        {accesos.map(({ href, label, icon: Icon }) => (
+        {accesosEnGrilla.map(({ href, label, icon: Icon }) => (
           <Link
             key={href}
             href={href}
@@ -98,6 +104,17 @@ export default async function HomePage() {
           </Link>
         ))}
       </div>
+
+      {accesoSuelto && (
+        <Link
+          href={accesoSuelto.href}
+          className="flex items-center justify-center gap-2 rounded-lg bg-zinc-900 p-4 text-center text-white shadow-sm transition-colors hover:bg-zinc-800"
+        >
+          <accesoSuelto.icon className="size-5" aria-hidden="true" />
+          <span className="font-medium">{accesoSuelto.label}</span>
+          <LinkPendingSpinner />
+        </Link>
+      )}
 
       <QuienTrabajaHoy
         boards={boards}

@@ -20,7 +20,11 @@ export function PendingOverlay({ pending }: { pending: boolean }) {
     // abierto -- con el mismo z-index, el portal del sheet se monta
     // después en el DOM y lo tapa. El Toaster usa el mismo z-100 por la
     // misma razón.
-    <div className="fixed inset-0 z-100 flex items-center justify-center bg-background/50 backdrop-blur-sm">
+    // Sin backdrop-blur: dos capas de blur animándose a la vez (esta +
+    // la del Sheet que se cierra abajo) es una causa conocida de choque
+    // del proceso de GPU en Chrome/Android en equipos con poca memoria,
+    // sobre todo con formularios pesados como "Nuevo movimiento".
+    <div className="fixed inset-0 z-100 flex items-center justify-center bg-background/70">
       <div className="flex items-center justify-center rounded-full bg-background p-4 shadow-lg ring-1 ring-border">
         <Loader2 className="size-8 animate-spin text-foreground" />
       </div>

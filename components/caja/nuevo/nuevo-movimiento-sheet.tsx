@@ -84,8 +84,7 @@ export function NuevoMovimientoSheet({
     setShiftConfigurationId(SIN_TURNO);
   }
 
-  function handleSubmit(event: React.FormEvent) {
-    event.preventDefault();
+  function handleSubmit() {
     setError(null);
 
     if (!etiquetaId) {
@@ -157,7 +156,7 @@ export function NuevoMovimientoSheet({
               </Button>
             </div>
           </SheetHeader>
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4 px-4">
+          <form action={handleSubmit} className="flex flex-col gap-4 px-4">
             <div className="space-y-2">
               <Label>Tipo</Label>
               <TipoSelector value={tipo} onChange={handleTipoChange} />

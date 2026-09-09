@@ -87,15 +87,12 @@ export function MovimientoRow({
             {anulado && <Badge variant="outline">Anulado</Badge>}
             <p className="truncate font-medium">{etiquetaNombre}</p>
           </div>
-          {expanded && (
-            <>
-              <p className="text-sm text-muted-foreground">
-                {formatDateOnly(movimiento.fecha)} · {boardNombre} · {turnoNombre} · {usuarioNombre}
-              </p>
-              {movimiento.observacion && (
-                <p className="mt-1 text-sm text-muted-foreground">{movimiento.observacion}</p>
-              )}
-            </>
+          <p className="text-sm text-muted-foreground">
+            {formatDateOnly(movimiento.fecha)}
+            {expanded && ` · ${boardNombre} · ${turnoNombre} · ${usuarioNombre}`}
+          </p>
+          {expanded && movimiento.observacion && (
+            <p className="mt-1 text-sm text-muted-foreground">{movimiento.observacion}</p>
           )}
         </div>
         <div className="flex shrink-0 items-center gap-2">

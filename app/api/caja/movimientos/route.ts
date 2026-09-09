@@ -72,7 +72,7 @@ export async function POST(request: Request) {
       observacion: d.observacion || null,
       created_by: actor.id,
     })
-    .select("id")
+    .select("*")
     .single();
 
   if (error) {
@@ -83,5 +83,5 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: message }, { status: error.code === "42501" ? 403 : 400 });
   }
 
-  return NextResponse.json({ ok: true, id: data.id });
+  return NextResponse.json({ ok: true, movimiento: data });
 }

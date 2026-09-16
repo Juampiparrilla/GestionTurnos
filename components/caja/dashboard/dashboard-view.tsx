@@ -60,6 +60,15 @@ export function DashboardView({
     }
   }, [periodo, rangoPersonalizado]);
 
+  // "Venta por semana" solo tiene sentido para un mes completo -- el mes se
+  // toma del inicio del rango ya resuelto (no de `new Date()`) para que
+  // también funcione con "Mes anterior".
+  const mesVentaPorSemana = useMemo(() => {
+    if (!rango || (periodo !== "este_mes" && periodo !== "mes_anterior")) return null;
+    const [anio, mes] = rango.desde.split("-").map(Number);
+    return { year: anio, month: mes - 1 };
+  }, [rango, periodo]);
+
   const turnosDelLocal = boardId ? shifts.filter((s) => s.board_id === boardId) : shifts;
   const nombresDeTurno = useMemo(
     () => Array.from(new Set(turnosDelLocal.map((s) => s.name).filter((n): n is string => Boolean(n)))),
@@ -301,7 +310,9 @@ export function DashboardView({
         <>
           <ResumenCards ingresos={ingresos} egresos={egresos} balance={ingresos - egresos} promedioDiario={promedioDiario} />
           <IngresosChart datos={chartData} />
-          {periodo === "este_mes" && <VentaPorSemana activos={activos} hoy={new Date()} />}
+          {mesVentaPorSemana && (
+            <VentaPorSemana activos={activos} year={mesVentaPorSemana.year} month={mesVentaPorSemana.month} />
+          )}
           <MejorPeorDia datos={chartData} />
           <ResumenTurnos resumen={resumenTurnos} />
         </>

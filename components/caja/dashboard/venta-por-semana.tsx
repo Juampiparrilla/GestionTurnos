@@ -4,13 +4,11 @@ import { toISODate } from "@/lib/caja/periodos";
 import { CollapsibleCard } from "./collapsible-card";
 import type { CajaMovimiento } from "@/types/caja";
 
-// Divide el mes en curso en 4 semanas fijas (1-7, 8-14, 15-21, 22-fin de
+// Divide el mes dado en 4 semanas fijas (1-7, 8-14, 15-21, 22-fin de
 // mes) -- no semanas de calendario (lunes a domingo), simplemente cuatro
 // bloques parejos que suman el mes completo, la 4ta se lleva los días que
-// sobran (28-31 según el mes).
-function semanasDelMes(hoy: Date) {
-  const year = hoy.getFullYear();
-  const month = hoy.getMonth();
+// sobran (28-31 según el mes). `month` es 0-indexado (convención Date).
+function semanasDelMes(year: number, month: number) {
   const ultimoDia = new Date(year, month + 1, 0).getDate();
 
   const rangos = [
@@ -29,8 +27,16 @@ function semanasDelMes(hoy: Date) {
   }));
 }
 
-export function VentaPorSemana({ activos, hoy }: { activos: CajaMovimiento[]; hoy: Date }) {
-  const semanas = semanasDelMes(hoy).map((semana) => {
+export function VentaPorSemana({
+  activos,
+  year,
+  month,
+}: {
+  activos: CajaMovimiento[];
+  year: number;
+  month: number;
+}) {
+  const semanas = semanasDelMes(year, month).map((semana) => {
     let ingresos = 0;
     let egresos = 0;
     for (const m of activos) {
@@ -42,24 +48,42 @@ export function VentaPorSemana({ activos, hoy }: { activos: CajaMovimiento[]; ho
     return { ...semana, ingresos, egresos };
   });
 
+  const promedioIngresos = semanas.reduce((acc, s) => acc + s.ingresos, 0) / semanas.length;
+  const promedioEgresos = semanas.reduce((acc, s) => acc + s.egresos, 0) / semanas.length;
+
   return (
     <CollapsibleCard title="Venta por semana">
-      <div className="space-y-2">
-        {semanas.map((semana) => (
-          <div key={semana.numero} className="rounded-lg bg-muted/30 p-3">
-            <p className="text-sm font-medium">
-              Semana {semana.numero} ({formatDateOnly(semana.desde)} al {formatDateOnly(semana.hasta)})
-            </p>
-            <div className="mt-1 flex items-center justify-between text-sm">
-              <span className="text-muted-foreground">Ingresos</span>
-              <span className="font-medium text-emerald-600">{formatMonto(semana.ingresos)}</span>
-            </div>
-            <div className="flex items-center justify-between text-sm">
-              <span className="text-muted-foreground">Egresos</span>
-              <span className="font-medium text-rose-600">{formatMonto(semana.egresos)}</span>
-            </div>
+      <div className="space-y-3">
+        <div className="rounded-lg bg-muted/50 p-3">
+          <p className="text-sm font-medium">Promedio semanal</p>
+          <div className="mt-1 flex items-center justify-between text-sm">
+            <span className="text-muted-foreground">Ingresos</span>
+            <span className="font-medium text-emerald-600">{formatMonto(promedioIngresos)}</span>
           </div>
-        ))}
+          <div className="flex items-center justify-between text-sm">
+            <span className="text-muted-foreground">Egresos</span>
+            <span className="font-medium text-rose-600">{formatMonto(promedioEgresos)}</span>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-2">
+          {semanas.map((semana) => (
+            <div key={semana.numero} className="rounded-lg bg-muted/30 p-3">
+              <p className="text-xs font-medium">Semana {semana.numero}</p>
+              <p className="text-[11px] text-muted-foreground">
+                {formatDateOnly(semana.desde)} al {formatDateOnly(semana.hasta)}
+              </p>
+              <div className="mt-1.5 flex items-center justify-between text-xs">
+                <span className="text-muted-foreground">Ingresos</span>
+                <span className="font-medium text-emerald-600">{formatMonto(semana.ingresos)}</span>
+              </div>
+              <div className="flex items-center justify-between text-xs">
+                <span className="text-muted-foreground">Egresos</span>
+                <span className="font-medium text-rose-600">{formatMonto(semana.egresos)}</span>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </CollapsibleCard>
   );

@@ -45,45 +45,35 @@ export function VentaPorSemana({
       if (m.tipo === "ingreso") ingresos += m.monto;
       else egresos += m.monto;
     }
-    return { ...semana, ingresos, egresos };
+    const dias = semana.diaFin - semana.diaInicio + 1;
+    return { ...semana, ingresos, egresos, promedio: ingresos / dias };
   });
-
-  const promedioIngresos = semanas.reduce((acc, s) => acc + s.ingresos, 0) / semanas.length;
-  const promedioEgresos = semanas.reduce((acc, s) => acc + s.egresos, 0) / semanas.length;
 
   return (
     <CollapsibleCard title="Venta por semana">
-      <div className="space-y-3">
-        <div className="rounded-lg bg-muted/50 p-3">
-          <p className="text-sm font-medium">Promedio semanal</p>
-          <div className="mt-1 flex items-center justify-between text-sm">
-            <span className="text-muted-foreground">Ingresos</span>
-            <span className="font-medium text-emerald-600">{formatMonto(promedioIngresos)}</span>
-          </div>
-          <div className="flex items-center justify-between text-sm">
-            <span className="text-muted-foreground">Egresos</span>
-            <span className="font-medium text-rose-600">{formatMonto(promedioEgresos)}</span>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-2 gap-2">
-          {semanas.map((semana) => (
-            <div key={semana.numero} className="rounded-lg bg-muted/30 p-3">
-              <p className="text-xs font-medium">Semana {semana.numero}</p>
-              <p className="text-[11px] text-muted-foreground">
-                {formatDateOnly(semana.desde)} al {formatDateOnly(semana.hasta)}
-              </p>
-              <div className="mt-1.5 flex items-center justify-between text-xs">
+      <div className="space-y-2">
+        {semanas.map((semana) => (
+          <div key={semana.numero} className="rounded-lg bg-muted/30 p-3">
+            <p className="text-sm font-medium">Semana {semana.numero}</p>
+            <p className="text-xs text-muted-foreground">
+              {formatDateOnly(semana.desde)} al {formatDateOnly(semana.hasta)}
+            </p>
+            <div className="mt-1.5 space-y-1 text-sm">
+              <div className="flex items-center justify-between">
                 <span className="text-muted-foreground">Ingresos</span>
                 <span className="font-medium text-emerald-600">{formatMonto(semana.ingresos)}</span>
               </div>
-              <div className="flex items-center justify-between text-xs">
+              <div className="flex items-center justify-between">
                 <span className="text-muted-foreground">Egresos</span>
                 <span className="font-medium text-rose-600">{formatMonto(semana.egresos)}</span>
               </div>
+              <div className="flex items-center justify-between">
+                <span className="text-muted-foreground">Promedio diario</span>
+                <span className="font-medium">{formatMonto(semana.promedio)}</span>
+              </div>
             </div>
-          ))}
-        </div>
+          </div>
+        ))}
       </div>
     </CollapsibleCard>
   );

@@ -43,14 +43,24 @@ export function DashboardView({
   const [loading, setLoading] = useState(true);
   const [filtrosOpen, setFiltrosOpen] = useState(false);
 
+  // "Hoy" se resuelve recién después de montar, nunca durante el render que
+  // se manda al servidor: el server corre en UTC y el navegador en hora
+  // local (Argentina), así que a la noche pueden "estar" en días de
+  // calendario distintos -- calcular la fecha en el render del servidor
+  // producía un mismatch de hidratación (React #418) en ese horario.
+  const [hoy, setHoy] = useState<Date | null>(null);
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- necesita correr después de montar (ver comentario arriba), no hay forma de evitarlo
+  useEffect(() => setHoy(new Date()), []);
+
   const hayFiltrosActivos = periodo !== "este_mes" || boardId !== "" || turnoNombre !== "" || tipo !== "";
   const shiftPorId = useMemo(() => new Map(shifts.map((s) => [s.id, s.name])), [shifts]);
 
   const rango = useMemo(() => {
+    if (!hoy) return null;
     try {
       return resolverRangoPeriodo(
         periodo,
-        new Date(),
+        hoy,
         periodo === "personalizado" && rangoPersonalizado.desde && rangoPersonalizado.hasta
           ? rangoPersonalizado
           : undefined,
@@ -58,7 +68,7 @@ export function DashboardView({
     } catch {
       return null;
     }
-  }, [periodo, rangoPersonalizado]);
+  }, [periodo, rangoPersonalizado, hoy]);
 
   // "Venta por semana" solo tiene sentido para un mes completo -- el mes se
   // toma del inicio del rango ya resuelto (no de `new Date()`) para que

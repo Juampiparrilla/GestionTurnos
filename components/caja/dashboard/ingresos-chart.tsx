@@ -21,6 +21,14 @@ export function IngresosChart({ datos }: { datos: { fecha: string; ingresos: num
             dataKey="fecha"
             tickFormatter={(v: string) => formatDateOnly(v).slice(0, 5)}
             tick={{ fontSize: 12 }}
+            // Por defecto Recharts calcula solas qué etiquetas mostrar
+            // (interval "preserveEnd") para que no se superpongan, y a veces
+            // eso descarta la etiqueta de un día que sí tiene datos (el punto
+            // y la línea igual se dibujan bien, solo desaparece el texto de
+            // esa fecha) -- con pocos días en el rango forzamos que se vean
+            // todas; con muchos (ej. "Este mes"), dejamos que Recharts las
+            // espacie para que no se amontonen.
+            interval={datos.length <= 15 ? 0 : "preserveEnd"}
             stroke="currentColor"
             className="text-muted-foreground"
           />

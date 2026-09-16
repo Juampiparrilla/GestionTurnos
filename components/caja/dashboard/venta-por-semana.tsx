@@ -50,10 +50,10 @@ export function VentaPorSemana({
   });
 
   return (
-    <CollapsibleCard title="Venta por semana">
+    <CollapsibleCard title="Venta por semana" defaultOpen={false}>
       <div className="space-y-2">
         {semanas.map((semana) => (
-          <div key={semana.numero} className="rounded-lg bg-muted/30 p-3">
+          <div key={semana.numero} className="rounded-lg border bg-muted/30 p-3">
             <p className="text-sm font-medium">Semana {semana.numero}</p>
             <p className="text-xs text-muted-foreground">
               {formatDateOnly(semana.desde)} al {formatDateOnly(semana.hasta)}

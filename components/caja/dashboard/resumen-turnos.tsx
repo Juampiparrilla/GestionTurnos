@@ -9,7 +9,7 @@ export function ResumenTurnos({ resumen }: { resumen: { turno: string; monto: nu
   }
 
   return (
-    <CollapsibleCard title="Ingresos por turno">
+    <CollapsibleCard title="Ingresos por turno" defaultOpen={false}>
       <div className="space-y-1">
         {resumen.map((r) => (
           <div key={r.turno} className="flex items-center justify-between text-sm">

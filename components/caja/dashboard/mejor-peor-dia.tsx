@@ -9,7 +9,7 @@ export function MejorPeorDia({ datos }: { datos: { fecha: string; ingresos: numb
   const peor = datos.reduce((min, d) => (d.ingresos < min.ingresos ? d : min), datos[0]);
 
   return (
-    <CollapsibleCard title="Mejor y peor día">
+    <CollapsibleCard title="Mejor y peor día" defaultOpen={false}>
       <div className="space-y-1 text-sm">
         <div className="flex items-center justify-between">
           <span className="text-muted-foreground">Más ingresos ({formatDateOnly(mejor.fecha)})</span>

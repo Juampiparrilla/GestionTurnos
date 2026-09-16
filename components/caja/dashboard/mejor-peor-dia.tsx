@@ -1,5 +1,6 @@
 import { formatDateOnly } from "@/lib/format-date";
 import { formatMonto } from "@/lib/caja/formato-moneda";
+import { CollapsibleCard } from "./collapsible-card";
 
 export function MejorPeorDia({ datos }: { datos: { fecha: string; ingresos: number }[] }) {
   if (datos.length < 2) return null;
@@ -8,8 +9,7 @@ export function MejorPeorDia({ datos }: { datos: { fecha: string; ingresos: numb
   const peor = datos.reduce((min, d) => (d.ingresos < min.ingresos ? d : min), datos[0]);
 
   return (
-    <div className="rounded-lg border bg-background p-4 shadow-sm">
-      <p className="mb-2 text-sm font-medium">Mejor y peor día</p>
+    <CollapsibleCard title="Mejor y peor día">
       <div className="space-y-1 text-sm">
         <div className="flex items-center justify-between">
           <span className="text-muted-foreground">Más ingresos ({formatDateOnly(mejor.fecha)})</span>
@@ -20,6 +20,6 @@ export function MejorPeorDia({ datos }: { datos: { fecha: string; ingresos: numb
           <span className="font-medium text-rose-600">{formatMonto(peor.ingresos)}</span>
         </div>
       </div>
-    </div>
+    </CollapsibleCard>
   );
 }

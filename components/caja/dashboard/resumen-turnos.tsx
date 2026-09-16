@@ -1,4 +1,5 @@
 import { formatMonto } from "@/lib/caja/formato-moneda";
+import { CollapsibleCard } from "./collapsible-card";
 
 export function ResumenTurnos({ resumen }: { resumen: { turno: string; monto: number }[] }) {
   const total = resumen.reduce((acc, r) => acc + r.monto, 0);
@@ -8,8 +9,7 @@ export function ResumenTurnos({ resumen }: { resumen: { turno: string; monto: nu
   }
 
   return (
-    <div className="rounded-lg border bg-background p-4 shadow-sm">
-      <p className="mb-2 text-sm font-medium">Ingresos por turno</p>
+    <CollapsibleCard title="Ingresos por turno">
       <div className="space-y-1">
         {resumen.map((r) => (
           <div key={r.turno} className="flex items-center justify-between text-sm">
@@ -22,6 +22,6 @@ export function ResumenTurnos({ resumen }: { resumen: { turno: string; monto: nu
           <span>{formatMonto(total)}</span>
         </div>
       </div>
-    </div>
+    </CollapsibleCard>
   );
 }

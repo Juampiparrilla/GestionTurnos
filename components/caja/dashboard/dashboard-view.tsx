@@ -18,6 +18,7 @@ import { ResumenCards } from "./resumen-cards";
 import { IngresosChart } from "./ingresos-chart";
 import { ResumenTurnos } from "./resumen-turnos";
 import { MejorPeorDia } from "./mejor-peor-dia";
+import { VentaPorSemana } from "./venta-por-semana";
 import { DashboardSkeleton } from "./dashboard-skeleton";
 import { FuncionalidadesDialog } from "@/components/caja/funcionalidades-dialog";
 
@@ -300,6 +301,7 @@ export function DashboardView({
         <>
           <ResumenCards ingresos={ingresos} egresos={egresos} balance={ingresos - egresos} promedioDiario={promedioDiario} />
           <IngresosChart datos={chartData} />
+          {periodo === "este_mes" && <VentaPorSemana activos={activos} hoy={new Date()} />}
           <MejorPeorDia datos={chartData} />
           <ResumenTurnos resumen={resumenTurnos} />
         </>

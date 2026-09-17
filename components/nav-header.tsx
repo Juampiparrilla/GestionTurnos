@@ -24,10 +24,11 @@ export function NavHeader({ profile }: { profile: Profile }) {
     <header className="border-b bg-background">
       <div className="mx-auto flex max-w-3xl items-center justify-between px-4 py-3">
         <div>
-          <Link href="/" className="font-semibold">
-            Mi Negocio
+          <Link href="/" className="inline-flex items-center rounded-lg bg-zinc-900 px-2 py-1">
+            {/* eslint-disable-next-line @next/next/no-img-element -- logo estático, no necesita la optimización de next/image */}
+            <img src="/logo-magnolia.png" alt="Magnolia Forrajería" className="h-8 w-auto" />
           </Link>
-          <p className="text-xs text-muted-foreground">
+          <p className="mt-1 text-xs text-muted-foreground">
             {profile.full_name} · {ROLE_LABEL[profile.role]}
           </p>
         </div>

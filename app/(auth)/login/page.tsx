@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState, useState } from "react";
-import { Eye, EyeOff, Store } from "lucide-react";
+import { Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -19,13 +19,11 @@ export default function LoginPage() {
       <PendingOverlay pending={isPending} />
       <div className="flex w-full max-w-sm flex-col items-center gap-8 rounded-2xl border border-zinc-200 bg-white p-8 shadow-sm shadow-zinc-200/60">
         <div className="flex flex-col items-center gap-3 text-center">
-          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-zinc-900">
-            <Store className="h-6 w-6 text-white" aria-hidden="true" />
+          <div className="flex items-center justify-center rounded-2xl bg-zinc-900 px-6 py-4">
+            {/* eslint-disable-next-line @next/next/no-img-element -- logo estático, no necesita la optimización de next/image */}
+            <img src="/logo-magnolia.png" alt="Magnolia Forrajería" className="h-20 w-auto" />
           </div>
-          <div className="flex flex-col gap-1">
-            <h1 className="text-2xl font-semibold text-zinc-900">Mi negocio</h1>
-            <p className="text-zinc-600">Iniciá sesión para continuar.</p>
-          </div>
+          <p className="text-zinc-600">Iniciá sesión para continuar.</p>
         </div>
 
         <form action={formAction} className="flex w-full flex-col gap-4">

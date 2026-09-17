@@ -38,7 +38,7 @@ export function IngresosChart({ datos }: { datos: { fecha: string; ingresos: num
   return (
     <div className="h-56 w-full rounded-lg border bg-background p-3 shadow-sm">
       <ResponsiveContainer width="100%" height="100%">
-        <LineChart data={datos} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
+        <LineChart data={datos} margin={{ top: 8, right: 24, left: 0, bottom: 0 }}>
           <XAxis
             dataKey="fecha"
             ticks={ticks}

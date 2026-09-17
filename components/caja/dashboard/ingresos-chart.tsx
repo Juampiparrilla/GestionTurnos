@@ -4,6 +4,26 @@ import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "rec
 import { formatDateOnly } from "@/lib/format-date";
 import { formatMonto } from "@/lib/caja/formato-moneda";
 
+// Cantidad máxima de fechas que se muestran en el eje X, sea cual sea el
+// largo del período -- en el celular no entran más de 5 o 6 sin superponerse.
+const MAX_TICKS = 5;
+
+// Elige hasta MAX_TICKS fechas espaciadas parejo dentro de las que ya tienen
+// datos (siempre incluye la primera y la última), en vez de dejar que
+// Recharts las calcule solo: eso a veces amontonaba todas las etiquetas
+// (interval 0 con muchos días) o descartaba la de un día que sí tenía datos
+// (interval "preserveEnd" por defecto).
+function elegirTicks(fechas: string[]): string[] {
+  if (fechas.length <= MAX_TICKS) return fechas;
+
+  const paso = (fechas.length - 1) / (MAX_TICKS - 1);
+  const indices = new Set<number>();
+  for (let i = 0; i < MAX_TICKS; i++) {
+    indices.add(Math.round(i * paso));
+  }
+  return Array.from(indices).map((i) => fechas[i]);
+}
+
 export function IngresosChart({ datos }: { datos: { fecha: string; ingresos: number }[] }) {
   if (datos.length === 0) {
     return (
@@ -13,22 +33,18 @@ export function IngresosChart({ datos }: { datos: { fecha: string; ingresos: num
     );
   }
 
+  const ticks = elegirTicks(datos.map((d) => d.fecha));
+
   return (
     <div className="h-56 w-full rounded-lg border bg-background p-3 shadow-sm">
       <ResponsiveContainer width="100%" height="100%">
         <LineChart data={datos} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
           <XAxis
             dataKey="fecha"
+            ticks={ticks}
             tickFormatter={(v: string) => formatDateOnly(v).slice(0, 5)}
             tick={{ fontSize: 12 }}
-            // Por defecto Recharts calcula solas qué etiquetas mostrar
-            // (interval "preserveEnd") para que no se superpongan, y a veces
-            // eso descarta la etiqueta de un día que sí tiene datos (el punto
-            // y la línea igual se dibujan bien, solo desaparece el texto de
-            // esa fecha) -- con pocos días en el rango forzamos que se vean
-            // todas; con muchos (ej. "Este mes"), dejamos que Recharts las
-            // espacie para que no se amontonen.
-            interval={datos.length <= 15 ? 0 : "preserveEnd"}
+            interval={0}
             stroke="currentColor"
             className="text-muted-foreground"
           />

@@ -6,7 +6,7 @@ Es **multi-tenant**: cada empresa que la usa está completamente aislada de las 
 
 Si tenés una pestaña abierta en la compu y cargás algo desde el celular, no hace falta apretar F5: al volver a esa pestaña (cambiar de ventana o app y volver) se actualiza sola.
 
-El ícono de la sección en la que estás parado (Usuarios/Horarios/Productos/Caja, arriba a la derecha) se resalta en negro para ubicarte rápido. La app es mayormente blanco/gris/negro, sin colores de marca; el color se reserva para dar significado puntual (ej. verde/rojo para Ingreso/Egreso en Caja, o distinguir secciones dentro de una misma pantalla).
+Abajo hay una barra fija con cinco secciones — Inicio, Horarios, Productos, Caja y Más (ahí están Usuarios, solo para Super Administrador, y Cerrar sesión) — y la sección en la que estás parado se resalta en negro y en negrita. Dentro de Horarios (de un local), Productos y Caja, arriba de cada pantalla hay pestañas para saltar directo a las demás pantallas de esa sección; si no entran todas se deslizan de costado. La app es mayormente blanco/gris/negro, sin colores de marca; el color se reserva para dar significado puntual (ej. verde/rojo para Ingreso/Egreso en Caja, o distinguir secciones dentro de una misma pantalla).
 
 Ninguna confirmación usa el popup nativo del navegador: desactivar/reactivar, borrar para siempre, anular, o un ajuste masivo de costos, todas muestran el mismo diálogo estilizado de la app. Y una lista vacía ("Todavía no hay...") siempre se ve con un ícono arriba del texto, no solo texto gris.
 
@@ -14,7 +14,7 @@ Producción: [gestion-turnos-nu.vercel.app](https://gestion-turnos-nu.vercel.app
 
 ## Inicio
 
-Al loguearte, `/` muestra un dashboard con accesos directos a Horarios, Productos, Caja (y Usuarios si sos Super Administrador), quién trabaja hoy en cada local (o si ese turno está Feriado/Cerrado/Sin asignar) y un resumen de Ingresos/Egresos de Caja del día, con link al detalle.
+Al loguearte, `/` muestra un dashboard con quién trabaja hoy en cada local (o si ese turno está Feriado/Cerrado/Sin asignar) y un resumen de Ingresos/Egresos de Caja del día, con link al detalle.
 
 ## Cómo se organiza
 
@@ -23,7 +23,7 @@ Al loguearte, `/` muestra un dashboard con accesos directos a Horarios, Producto
 - Para cada turno y día de la semana se arma una **grilla semanal tipo** (recurrente, no fechas puntuales): quién trabaja, o si ese turno está Feriado, Cerrado o Sin asignar.
 - Aparte de la grilla semanal hay dos registros de **fechas reales** independientes — **Feriados** y **Domingos** — donde se anota fecha concreta + quién cubre ese día, con historial de quién hizo el último cambio y cuándo.
 - Un resumen por persona muestra cuántos turnos, domingos y feriados tiene cada uno. El horario se puede descargar como imagen para compartir por WhatsApp. La leyenda de Feriado/Cerrado solo aparece si ese horario efectivamente tiene algún día marcado así.
-- Desde el Calendario, Configuración, Domingos o Feriados de un local, la flecha de arriba abre un menú para saltar directo a cualquiera de esas cuatro pantallas de ese mismo local, sin volver primero al Calendario — mismo patrón que ya usan Productos y Caja para moverse entre sus secciones.
+- Desde el Calendario, Configuración, Domingos o Feriados de un local, las pestañas de arriba (Calendario, Configuración —solo administradores—, Domingos, Feriados) llevan directo a cualquiera de esas pantallas de ese mismo local. Para volver a la lista de locales, se toca Horarios en la barra de abajo.
 - No hay registro público de usuarios: un admin crea la cuenta y genera un link de invitación que comparte manualmente (por WhatsApp), sin depender de email. Lo mismo para restablecer una contraseña olvidada.
 - Botón **Funcionalidades** en la lista de Horarios con el detalle de todo lo anterior, mismo patrón que Productos y Caja.
 - La configuración de un horario separa **Turnos** y **Personas asignadas** en dos tarjetas distintas para diferenciarlas de un vistazo.
@@ -44,7 +44,7 @@ Catálogo de productos del negocio, con **Marcas**, **Categorías** y **Proveedo
 - **Actualizar costos**: buscá o filtrá (mismos filtros que Reportes) para encontrar los productos y tildalos a mano -- de a uno o todos los que quedaron filtrados con un solo botón, la selección se mantiene entre búsquedas -- y aplicales de una un % de aumento (solo el número, ej. 15) o baja (con el signo "-" adelante, ej. -15) sobre el costo actual, por ejemplo cuando un proveedor sube toda su lista un 15%. Las tres pistas de precio se recalculan solas con el % de ganancia que ya tenía cada una, sin tocar las fijadas manualmente.
 - **Importar/actualizar por Excel**: se descarga una plantilla vacía (para crear varios productos de una) o el catálogo actual completo con un ID por fila (para editarlo y volver a subirlo) — cada fila con ID actualiza ese producto puntual sin tocar el resto, cada fila sin ID crea uno nuevo, todo por la misma planilla. Marca, categoría y proveedor se resuelven por nombre y se crean solas si no existen. Cada fila se valida por separado, así un error en una no frena a las demás.
 - **Reportes**: filtra el catálogo por categoría, proveedor, marca, cantidad y oferta (con selección múltiple en cada uno, y un botón para limpiar todos los filtros) y por un rango de precio sobre la bolsa cerrada. Genera un PDF horizontal con el resultado, con cada producto numerado en la primera columna, opcionalmente agrupado por categoría/marca/proveedor (cada grupo separado con una fila en negro que nunca queda sola al pie de una hoja, y con la numeración arrancando de nuevo en cada grupo), con marca de agua del nombre del negocio y encabezado con nombre y teléfono — completo para uso interno, o reducido a nombre + cantidad + los precios que elijas mostrar para compartir con un cliente (por WhatsApp o descarga directa), con una fecha de validez opcional (a tantos días desde hoy). Todo archivo descargado (PDF, plantilla, catálogo) lleva fecha y hora en el nombre, para no confundir descargas viejas con la última.
-- La flecha junto al título de cada pantalla (Productos, Marcas, Categorías, Proveedores, Actualizar costos, Reportes) abre un menú para saltar directo a cualquier otra sección o al inicio, sin volver primero al menú principal.
+- Pestañas arriba de cada pantalla (Productos, Categorías, Marcas, Proveedores, Costos, Reportes) para saltar directo a cualquier otra sección. Tocar Productos en la barra de abajo abre directamente el listado.
 - Botón **Funcionalidades** en la pantalla principal con el detalle de todo lo anterior.
 - Solo Administrador y Super Administrador gestionan y ven costos; el catálogo de solo consulta para Empleado todavía está pendiente.
 - El formulario de "Crear/Editar producto" separa Costo y Precios de venta con un título de sección, para no sentirse una lista interminable de campos.

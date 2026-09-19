@@ -5,7 +5,6 @@ import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CreateHolidaySheet } from "./create-holiday-sheet";
 import { EditHolidaySheet } from "./edit-holiday-sheet";
-import { MenuSeccionesHorario } from "./menu-secciones-horario";
 import { formatDateOnly, formatDateTime } from "@/lib/format-date";
 import type { Board, BoardMember, OrgDirectoryEntry } from "@/types/board";
 import type { Holiday } from "@/types/holiday";
@@ -47,7 +46,6 @@ export function HolidaysManagement({
           <h1 className="text-xl font-semibold">Feriados</h1>
           <p className="text-sm text-muted-foreground">{board.name}</p>
         </div>
-        <MenuSeccionesHorario boardId={board.id} isAdmin={isAdmin} />
       </div>
       {isAdmin && (
         <Button onClick={() => setCreateOpen(true)} className="w-full">

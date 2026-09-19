@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { getCurrentProfile } from "@/lib/auth/session";
 import { getCurrentPlatformAdmin } from "@/lib/auth/platform-session";
 import { signOut } from "@/lib/auth/actions";
-import { NavHeader } from "@/components/nav-header";
+import { BottomNav } from "@/components/bottom-nav";
 import { RefreshOnFocus } from "@/components/refresh-on-focus";
 
 export const runtime = "nodejs";
@@ -26,8 +26,8 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
   return (
     <div className="min-h-screen bg-muted/30">
       <RefreshOnFocus />
-      <NavHeader profile={profile} />
-      <main className="mx-auto max-w-3xl px-4 py-6">{children}</main>
+      <main className="mx-auto max-w-3xl px-4 pt-6 pb-28">{children}</main>
+      <BottomNav />
     </div>
   );
 }

@@ -65,7 +65,7 @@ const FUNCIONALIDADES = [
   {
     titulo: "Saltar entre secciones",
     descripcion:
-      "La flecha junto al título de cada pantalla (Productos, Marcas, Categorías, Proveedores, Actualizar costos, Reportes) abre un menú para ir directo a cualquier otra sección o al inicio, sin tener que volver primero al menú principal.",
+      "Arriba de cada pantalla de Productos hay pestañas (Productos, Categorías, Marcas, Proveedores, Costos, Reportes) para ir directo a cualquier otra sección con un toque. Se pueden deslizar de costado si no entran todas.",
   },
 ];
 

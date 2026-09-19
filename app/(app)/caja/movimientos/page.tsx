@@ -1,7 +1,6 @@
 import { redirect } from "next/navigation";
 import { getCurrentProfile } from "@/lib/auth/session";
 import { createClient } from "@/lib/supabase/server";
-import { MenuSecciones } from "@/components/caja/menu-secciones";
 import { MovimientosView } from "@/components/caja/movimientos/movimientos-view";
 import type { CajaEtiqueta } from "@/types/caja";
 import type { Board, OrgDirectoryEntry } from "@/types/board";
@@ -43,7 +42,6 @@ export default async function CajaMovimientosPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between gap-4">
         <h1 className="text-xl font-semibold">Movimientos de Caja</h1>
-        <MenuSecciones isAdmin={isAdmin} />
       </div>
       <MovimientosView
         boards={boards}

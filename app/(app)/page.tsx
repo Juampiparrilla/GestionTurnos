@@ -1,9 +1,6 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
-import { CalendarClock, DollarSign, Package, Users } from "lucide-react";
 import { getCurrentProfile } from "@/lib/auth/session";
 import { createClient } from "@/lib/supabase/server";
-import { LinkPendingSpinner } from "@/components/link-pending-spinner";
 import { QuienTrabajaHoy } from "@/components/home/quien-trabaja-hoy";
 import { CajaHoyCard } from "@/components/home/caja-hoy-card";
 import { hoyISO } from "@/lib/caja/periodos";
@@ -20,7 +17,6 @@ export default async function HomePage() {
   }
 
   const isAdmin = profile.role === "ADMIN" || profile.role === "SUPER_ADMIN";
-  const isSuperAdmin = profile.role === "SUPER_ADMIN";
   const supabase = await createClient();
 
   let boards: Board[] = [];
@@ -71,50 +67,12 @@ export default async function HomePage() {
     .filter((m) => m.tipo === "egreso")
     .reduce((acc, m) => acc + m.monto, 0);
 
-  const accesos = [
-    { href: "/tableros", label: "Horarios", icon: CalendarClock },
-    { href: "/productos", label: "Productos", icon: Package },
-    { href: "/caja", label: "Caja", icon: DollarSign },
-    ...(isSuperAdmin ? [{ href: "/usuarios", label: "Usuarios", icon: Users }] : []),
-  ];
-  // Con cantidad impar de accesos, el último queda solo en la grilla de 2
-  // columnas y le sobra la mitad de la fila -- se saca y se muestra abajo
-  // ocupando todo el ancho, en vez de dejar un hueco vacío al lado.
-  const accesosImpares = accesos.length % 2 !== 0;
-  const accesosEnGrilla = accesosImpares ? accesos.slice(0, -1) : accesos;
-  const accesoSuelto = accesosImpares ? accesos[accesos.length - 1] : null;
-
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-semibold">Hola, {profile.full_name}</h1>
         <p className="text-sm text-muted-foreground">{ROLE_LABEL[profile.role]}</p>
       </div>
-
-      <div className="grid grid-cols-2 gap-3">
-        {accesosEnGrilla.map(({ href, label, icon: Icon }) => (
-          <Link
-            key={href}
-            href={href}
-            className="flex flex-col items-center justify-center gap-2 rounded-lg bg-zinc-900 p-8 text-center text-white shadow-sm transition-colors hover:bg-zinc-800"
-          >
-            <Icon className="size-6" aria-hidden="true" />
-            <span className="font-medium">{label}</span>
-            <LinkPendingSpinner />
-          </Link>
-        ))}
-      </div>
-
-      {accesoSuelto && (
-        <Link
-          href={accesoSuelto.href}
-          className="flex items-center justify-center gap-2 rounded-lg bg-zinc-900 p-4 text-center text-white shadow-sm transition-colors hover:bg-zinc-800"
-        >
-          <accesoSuelto.icon className="size-5" aria-hidden="true" />
-          <span className="font-medium">{accesoSuelto.label}</span>
-          <LinkPendingSpinner />
-        </Link>
-      )}
 
       <QuienTrabajaHoy
         boards={boards}

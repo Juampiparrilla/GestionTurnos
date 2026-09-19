@@ -1,13 +1,11 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import Link from "next/link";
-import { ChevronDown, ChevronUp, HandCoins, List, Tag, X } from "lucide-react";
+import { ChevronDown, ChevronUp, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { LinkPendingSpinner } from "@/components/link-pending-spinner";
 import { showErrorToast } from "@/lib/toast";
 import { PERIODO_LABEL, resolverRangoPeriodo, type PeriodoCaja } from "@/lib/caja/periodos";
 import { formatDateOnly } from "@/lib/format-date";
@@ -25,15 +23,7 @@ import { FuncionalidadesDialog } from "@/components/caja/funcionalidades-dialog"
 const SIN_TURNO = "sin_turno";
 const PERIODOS: PeriodoCaja[] = ["hoy", "ayer", "ultimos_7", "ultimos_30", "este_mes", "mes_anterior", "personalizado"];
 
-export function DashboardView({
-  boards,
-  shifts,
-  isAdmin,
-}: {
-  boards: Board[];
-  shifts: ShiftConfiguration[];
-  isAdmin: boolean;
-}) {
+export function DashboardView({ boards, shifts }: { boards: Board[]; shifts: ShiftConfiguration[] }) {
   const [periodo, setPeriodo] = useState<PeriodoCaja>("este_mes");
   const [rangoPersonalizado, setRangoPersonalizado] = useState({ desde: "", hasta: "" });
   const [boardId, setBoardId] = useState("");
@@ -156,37 +146,6 @@ export function DashboardView({
   return (
     <div className="space-y-4">
       <FuncionalidadesDialog />
-
-      <div className="space-y-2">
-        <Link
-          href="/caja/movimientos"
-          className="flex items-center justify-center gap-2 rounded-lg bg-zinc-900 p-4 text-center text-white shadow-sm transition-colors hover:bg-zinc-800"
-        >
-          <List className="size-5" aria-hidden="true" />
-          <span className="font-medium">Movimientos</span>
-          <LinkPendingSpinner />
-        </Link>
-        {isAdmin && (
-          <div className="grid grid-cols-2 gap-2">
-            <Link
-              href="/caja/etiquetas"
-              className="flex flex-col items-center justify-center gap-1 rounded-lg bg-zinc-900 p-3 text-center text-white shadow-sm transition-colors hover:bg-zinc-800"
-            >
-              <Tag className="size-5" aria-hidden="true" />
-              <span className="text-sm font-medium">Etiqueta</span>
-              <LinkPendingSpinner />
-            </Link>
-            <Link
-              href="/caja/deudas"
-              className="flex flex-col items-center justify-center gap-1 rounded-lg bg-zinc-900 p-3 text-center text-white shadow-sm transition-colors hover:bg-zinc-800"
-            >
-              <HandCoins className="size-5" aria-hidden="true" />
-              <span className="text-sm font-medium">Deuda</span>
-              <LinkPendingSpinner />
-            </Link>
-          </div>
-        )}
-      </div>
 
       <Button
         type="button"

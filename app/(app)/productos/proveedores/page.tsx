@@ -2,7 +2,6 @@ import { redirect } from "next/navigation";
 import { requireAdmin } from "@/lib/auth/require-role";
 import { createClient } from "@/lib/supabase/server";
 import { ProveedoresList } from "@/components/productos/proveedores/proveedores-list";
-import { MenuSecciones } from "@/components/productos/menu-secciones";
 import type { Proveedor } from "@/types/proveedor";
 
 export default async function ProveedoresPage() {
@@ -18,7 +17,6 @@ export default async function ProveedoresPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between gap-4">
         <h1 className="text-xl font-semibold">Proveedores</h1>
-        <MenuSecciones />
       </div>
       <ProveedoresList
         proveedores={(proveedores as Proveedor[] | null) ?? []}

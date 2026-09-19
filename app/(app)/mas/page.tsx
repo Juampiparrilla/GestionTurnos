@@ -51,7 +51,7 @@ export default async function MasPage() {
 
       <div className="overflow-hidden rounded-2xl border bg-background shadow-sm">
         <form action={signOut}>
-          <SignOutButton />
+          <SignOutButton variant="row" />
         </form>
       </div>
     </div>

@@ -5,6 +5,7 @@ import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CreateSundaySheet } from "./create-sunday-sheet";
 import { EditSundaySheet } from "./edit-sunday-sheet";
+import { MenuSeccionesHorario } from "./menu-secciones-horario";
 import { formatDateOnly, formatDateTime } from "@/lib/format-date";
 import type { Board, BoardMember, OrgDirectoryEntry } from "@/types/board";
 import type { Sunday } from "@/types/sunday";
@@ -46,6 +47,7 @@ export function SundaysManagement({
           <h1 className="text-xl font-semibold">Domingos</h1>
           <p className="text-sm text-muted-foreground">{board.name}</p>
         </div>
+        <MenuSeccionesHorario boardId={board.id} isAdmin={isAdmin} />
       </div>
       {isAdmin && (
         <Button onClick={() => setCreateOpen(true)} className="w-full">

@@ -7,6 +7,7 @@ import { Download, Settings } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { AssignmentSheet } from "./assignment-sheet";
+import { MenuSeccionesHorario } from "./menu-secciones-horario";
 import { LinkPendingSpinner } from "@/components/link-pending-spinner";
 import { PendingOverlay } from "@/components/pending-overlay";
 import { cn } from "@/lib/utils";
@@ -187,6 +188,7 @@ export function BoardCalendar({
               <LinkPendingSpinner />
             </Link>
           )}
+          <MenuSeccionesHorario boardId={board.id} isAdmin={isAdmin} trigger="icon-button" />
         </div>
       </div>
 

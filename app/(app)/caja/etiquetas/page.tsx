@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { requireAdmin } from "@/lib/auth/require-role";
 import { createClient } from "@/lib/supabase/server";
+import { MenuSecciones } from "@/components/caja/menu-secciones";
 import { EtiquetasList } from "@/components/caja/etiquetas/etiquetas-list";
 import type { CajaEtiqueta } from "@/types/caja";
 
@@ -22,6 +23,7 @@ export default async function CajaEtiquetasPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between gap-4">
         <h1 className="text-xl font-semibold">Etiquetas de Caja</h1>
+        <MenuSecciones isAdmin />
       </div>
       <EtiquetasList etiquetas={(etiquetas as CajaEtiqueta[] | null) ?? []} etiquetasEnUso={etiquetasEnUso} />
     </div>

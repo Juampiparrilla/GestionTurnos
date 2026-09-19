@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { EditBoardSheet } from "./edit-board-sheet";
 import { MemberManagement } from "./member-management";
 import { ShiftsManagement } from "./shifts-management";
+import { MenuSeccionesHorario } from "./menu-secciones-horario";
 import type { Board, BoardMember, OrgDirectoryEntry } from "@/types/board";
 import type { ShiftConfiguration } from "@/types/shift";
 
@@ -43,6 +44,7 @@ export function BoardDetail({
               Editar
             </Button>
           )}
+          <MenuSeccionesHorario boardId={board.id} isAdmin={isAdmin} />
         </div>
       </div>
 

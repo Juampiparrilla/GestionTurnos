@@ -65,7 +65,7 @@ const FUNCIONALIDADES = [
   {
     titulo: "Saltar entre secciones",
     descripcion:
-      "Arriba de cada pantalla de Productos hay pestañas (Productos, Categorías, Marcas, Proveedores, Costos, Reportes) para ir directo a cualquier otra sección con un toque. Se pueden deslizar de costado si no entran todas.",
+      "En el celular, arriba de cada pantalla de Productos hay pestañas (Productos, Categorías, Marcas, Proveedores, Costos, Reportes) para ir directo a cualquier otra sección con un toque. En la compu, la flecha junto al título abre un menú para ir directo a cualquier otra sección o al inicio.",
   },
 ];
 

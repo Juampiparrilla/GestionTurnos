@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { getCurrentProfile } from "@/lib/auth/session";
 import { getCurrentPlatformAdmin } from "@/lib/auth/platform-session";
 import { signOut } from "@/lib/auth/actions";
+import { NavHeader } from "@/components/nav-header";
 import { BottomNav } from "@/components/bottom-nav";
 import { RefreshOnFocus } from "@/components/refresh-on-focus";
 
@@ -23,11 +24,18 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
     await signOut();
   }
 
+  const isAdmin = profile.role === "ADMIN" || profile.role === "SUPER_ADMIN";
+
+  // Celular (< 768 px): barra inferior + pestañas por sección. Compu: el
+  // encabezado con íconos y los menús de flecha de siempre.
   return (
     <div className="min-h-screen bg-muted/30">
       <RefreshOnFocus />
-      <main className="mx-auto max-w-3xl px-4 pt-6 pb-28">{children}</main>
-      <BottomNav />
+      <div className="max-md:hidden">
+        <NavHeader profile={profile} />
+      </div>
+      <main className="mx-auto max-w-3xl px-4 pt-6 pb-28 md:py-6">{children}</main>
+      <BottomNav isAdmin={isAdmin} />
     </div>
   );
 }

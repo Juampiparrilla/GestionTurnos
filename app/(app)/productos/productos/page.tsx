@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { requireAdmin } from "@/lib/auth/require-role";
 import { createClient } from "@/lib/supabase/server";
 import { ProductosList } from "@/components/productos/productos/productos-list";
+import { MenuSecciones } from "@/components/productos/menu-secciones";
 import { FuncionalidadesDialog } from "@/components/productos/funcionalidades-dialog";
 import { ImportarExcelSheet } from "@/components/productos/importar-excel-sheet";
 import type { Marca } from "@/types/marca";
@@ -25,8 +26,12 @@ export default async function ProductosPage() {
 
   return (
     <div className="space-y-6">
-      <div className="space-y-3">
+      <div className="flex items-center justify-between gap-4">
         <h1 className="text-xl font-semibold">Productos</h1>
+        <MenuSecciones />
+      </div>
+      {/* En el celular no hay hub de Productos (la barra de abajo va directo al listado): estas dos acciones viven acá. */}
+      <div className="space-y-3 md:hidden">
         <FuncionalidadesDialog />
         <ImportarExcelSheet />
       </div>

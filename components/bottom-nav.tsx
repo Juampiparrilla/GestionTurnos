@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { CalendarClock, DollarSign, House, Menu, Package } from "lucide-react";
 import { LinkPendingSpinner } from "@/components/link-pending-spinner";
@@ -22,11 +23,33 @@ const ITEMS = (isAdmin: boolean) => [
 
 export function BottomNav({ isAdmin }: { isAdmin: boolean }) {
   const pathname = usePathname();
+  const [escribiendo, setEscribiendo] = useState(false);
+
+  // Con el teclado abierto se esconde la barra: si no, queda apoyada arriba del
+  // teclado y le saca lugar al campo que se está escribiendo.
+  useEffect(() => {
+    const esCampo = (el: EventTarget | null) =>
+      el instanceof HTMLElement &&
+      el.matches("input:not([type=checkbox]):not([type=radio]):not([type=button]):not([type=submit]), textarea");
+    const alEntrar = (e: FocusEvent) => {
+      if (esCampo(e.target)) setEscribiendo(true);
+    };
+    const alSalir = () => setEscribiendo(false);
+    document.addEventListener("focusin", alEntrar);
+    document.addEventListener("focusout", alSalir);
+    return () => {
+      document.removeEventListener("focusin", alEntrar);
+      document.removeEventListener("focusout", alSalir);
+    };
+  }, []);
 
   return (
     <nav
       aria-label="Secciones"
-      className="fixed inset-x-0 bottom-0 z-40 border-t bg-background pb-[env(safe-area-inset-bottom)] md:hidden"
+      className={cn(
+        "fixed inset-x-0 bottom-0 z-40 border-t bg-background pb-[env(safe-area-inset-bottom)] md:hidden",
+        escribiendo && "max-md:hidden",
+      )}
     >
       <div className="mx-auto grid max-w-3xl grid-cols-5">
         {ITEMS(isAdmin).map(({ href, label, icon: Icon, activo }) => {

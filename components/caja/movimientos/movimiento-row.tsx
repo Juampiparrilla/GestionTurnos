@@ -78,7 +78,7 @@ export function MovimientoRow({
   return (
     <div className={`rounded-lg border bg-background p-3 shadow-sm ${anulado ? "opacity-60" : ""}`}>
       <PendingOverlay pending={isPending} />
-      <div className="flex items-start justify-between gap-2">
+      <div className="flex items-start justify-between gap-2 max-md:flex-col max-md:items-stretch">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
             <Badge variant={movimiento.tipo === "ingreso" ? "default" : "destructive"}>
@@ -95,8 +95,8 @@ export function MovimientoRow({
             <p className="mt-1 text-sm text-muted-foreground">{movimiento.observacion}</p>
           )}
         </div>
-        <div className="flex shrink-0 items-center gap-2">
-          <p className={`font-semibold ${movimiento.tipo === "ingreso" ? "text-emerald-600" : "text-rose-600"}`}>
+        <div className="flex shrink-0 items-center gap-2 max-md:w-full">
+          <p className={`font-semibold max-md:mr-auto ${movimiento.tipo === "ingreso" ? "text-emerald-600" : "text-rose-600"}`}>
             {signo} {formatMonto(movimiento.monto)}
           </p>
           <Button

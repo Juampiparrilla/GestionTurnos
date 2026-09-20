@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from "@/components/ui/toaster";
 import "./globals.css";
@@ -16,6 +16,14 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Mi Negocio",
   description: "Planificación de turnos de empleados por local",
+};
+
+// "resizes-content": cuando aparece el teclado en el celular, la pantalla se
+// achica en vez de quedar tapada, así el botón Guardar fijo queda arriba del teclado.
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  interactiveWidget: "resizes-content",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

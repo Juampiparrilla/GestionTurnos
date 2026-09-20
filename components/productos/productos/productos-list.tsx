@@ -77,7 +77,9 @@ export function ProductosList({
         </Button>
         <ProductosMasMenu />
       </div>
-      <SearchInput value={query} onChange={setQuery} placeholder="Buscar producto..." />
+      <div className="max-md:sticky max-md:top-0 max-md:z-30 max-md:-mx-4 max-md:bg-[color-mix(in_oklab,var(--muted)_30%,var(--background))] max-md:px-4 max-md:py-2">
+        <SearchInput value={query} onChange={setQuery} placeholder="Buscar producto..." />
+      </div>
 
       <Button
         type="button"

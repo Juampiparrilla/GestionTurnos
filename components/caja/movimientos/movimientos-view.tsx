@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { EmptyState } from "@/components/empty-state";
 import { showErrorToast } from "@/lib/toast";
+import { MOVIMIENTO_CREADO_EVENT } from "@/lib/caja/eventos";
 import { resolverRangoPeriodo } from "@/lib/caja/periodos";
 import { TIPO_MOVIMIENTO_LABEL, type CajaEtiqueta, type CajaMovimiento } from "@/types/caja";
 import type { Board, OrgDirectoryEntry } from "@/types/board";
@@ -52,6 +53,7 @@ export function MovimientosView({
   const [loading, setLoading] = useState(true);
   const [filtrosOpen, setFiltrosOpen] = useState(false);
   const [nuevoOpen, setNuevoOpen] = useState(false);
+  const [recarga, setRecarga] = useState(0);
 
   const porDefecto = filtrosPorDefecto();
   const hayFiltrosActivos =
@@ -68,6 +70,12 @@ export function MovimientosView({
   const usuarioPorId = useMemo(() => new Map(directory.map((d) => [d.id, d.full_name])), [directory]);
 
   useEffect(() => {
+    const alCrear = () => setRecarga((n) => n + 1);
+    window.addEventListener(MOVIMIENTO_CREADO_EVENT, alCrear);
+    return () => window.removeEventListener(MOVIMIENTO_CREADO_EVENT, alCrear);
+  }, []);
+
+  useEffect(() => {
     const params = new URLSearchParams();
     if (aplicados.desde) params.set("desde", aplicados.desde);
     if (aplicados.hasta) params.set("hasta", aplicados.hasta);
@@ -82,7 +90,7 @@ export function MovimientosView({
       .then((data) => setMovimientos(data.movimientos ?? []))
       .catch(() => showErrorToast("No se pudieron cargar los movimientos."))
       .finally(() => setLoading(false));
-  }, [aplicados]);
+  }, [aplicados, recarga]);
 
   // El turno se filtra por NOMBRE, no por id: dos locales pueden tener cada
   // uno su propio "Mañana" (filas distintas en shift_configurations) y con
@@ -113,7 +121,7 @@ export function MovimientosView({
 
   return (
     <div className="space-y-4">
-      <Button type="button" className="w-full" onClick={() => setNuevoOpen(true)}>
+      <Button type="button" className="w-full max-md:hidden" onClick={() => setNuevoOpen(true)}>
         <Plus className="size-4" aria-hidden="true" />
         Nuevo movimiento
       </Button>

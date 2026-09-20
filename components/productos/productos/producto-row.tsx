@@ -1,11 +1,18 @@
 "use client";
 
 import { useEffect, useRef, useState, useTransition } from "react";
-import { BadgePercent, Ban, ChevronDown, ChevronUp, Pencil, RotateCcw, Trash2 } from "lucide-react";
+import { BadgePercent, Ban, ChevronDown, ChevronUp, MoreHorizontal, Pencil, RotateCcw, Trash2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { PendingOverlay } from "@/components/pending-overlay";
 import { ConfirmDialog } from "@/components/confirm-dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import type { Marca } from "@/types/marca";
 import type { Categoria } from "@/types/categoria";
 import type { Proveedor } from "@/types/proveedor";
@@ -101,6 +108,12 @@ export function ProductoRow({
             )}
           </p>
           {producto.codigo && <p className="font-mono text-xs text-muted-foreground">{producto.codigo}</p>}
+          <p className="text-sm md:hidden">
+            <span className="text-muted-foreground">
+              {producto.unidad_medida === "kg" ? "Bolsa cerrada" : "Precio unitario"}{" "}
+            </span>
+            <span className="font-semibold">{currency(producto.precio_venta_cerrada)}</span>
+          </p>
           <div className="flex items-center justify-end gap-1">
             {!producto.active && <Badge variant="outline" className="mr-auto">Inactivo</Badge>}
             <Button
@@ -115,7 +128,7 @@ export function ProductoRow({
                 <ChevronDown className="size-4" aria-hidden="true" />
               )}
             </Button>
-            <Button variant="ghost" size="icon-sm" onClick={() => setEditOpen(true)} aria-label="Editar">
+            <Button variant="ghost" size="icon-sm" onClick={() => setEditOpen(true)} aria-label="Editar" className="max-md:hidden">
               <Pencil className="size-4" aria-hidden="true" />
             </Button>
             <Button
@@ -124,6 +137,7 @@ export function ProductoRow({
               onClick={() => setConfirmToggleOpen(true)}
               disabled={isPending}
               aria-label={producto.active ? "Desactivar" : "Reactivar"}
+              className="max-md:hidden"
             >
               {producto.active ? (
                 <Ban className="size-4" aria-hidden="true" />
@@ -137,10 +151,38 @@ export function ProductoRow({
               onClick={() => setConfirmDeleteOpen(true)}
               disabled={isPending}
               aria-label="Borrar definitivamente"
-              className="text-destructive hover:text-destructive"
+              className="text-destructive hover:text-destructive max-md:hidden"
             >
               <Trash2 className="size-4" aria-hidden="true" />
             </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger
+                render={
+                  <Button variant="ghost" size="icon-sm" aria-label="Más acciones" className="md:hidden">
+                    <MoreHorizontal className="size-4" aria-hidden="true" />
+                  </Button>
+                }
+              />
+              <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuItem onClick={() => setEditOpen(true)}>
+                  <Pencil className="size-4" aria-hidden="true" />
+                  Editar
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setConfirmToggleOpen(true)}>
+                  {producto.active ? (
+                    <Ban className="size-4" aria-hidden="true" />
+                  ) : (
+                    <RotateCcw className="size-4" aria-hidden="true" />
+                  )}
+                  {producto.active ? "Desactivar" : "Reactivar"}
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem variant="destructive" onClick={() => setConfirmDeleteOpen(true)}>
+                  <Trash2 className="size-4" aria-hidden="true" />
+                  Borrar definitivamente
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
         {expanded && (

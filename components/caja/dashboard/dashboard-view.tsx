@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { LinkPendingSpinner } from "@/components/link-pending-spinner";
 import { showErrorToast } from "@/lib/toast";
+import { MOVIMIENTO_CREADO_EVENT } from "@/lib/caja/eventos";
 import { PERIODO_LABEL, resolverRangoPeriodo, type PeriodoCaja } from "@/lib/caja/periodos";
 import { formatDateOnly } from "@/lib/format-date";
 import { TIPO_MOVIMIENTO_LABEL, type CajaMovimiento } from "@/types/caja";
@@ -42,6 +43,7 @@ export function DashboardView({
   const [movimientos, setMovimientos] = useState<CajaMovimiento[]>([]);
   const [loading, setLoading] = useState(true);
   const [filtrosOpen, setFiltrosOpen] = useState(false);
+  const [recarga, setRecarga] = useState(0);
 
   // "Hoy" se resuelve recién después de montar, nunca durante el render que
   // se manda al servidor: el server corre en UTC y el navegador en hora
@@ -86,6 +88,12 @@ export function DashboardView({
   );
 
   useEffect(() => {
+    const alCrear = () => setRecarga((n) => n + 1);
+    window.addEventListener(MOVIMIENTO_CREADO_EVENT, alCrear);
+    return () => window.removeEventListener(MOVIMIENTO_CREADO_EVENT, alCrear);
+  }, []);
+
+  useEffect(() => {
     if (!rango) return;
 
     const params = new URLSearchParams({ desde: rango.desde, hasta: rango.hasta });
@@ -99,7 +107,7 @@ export function DashboardView({
       .then((data) => setMovimientos(data.movimientos ?? []))
       .catch(() => showErrorToast("No se pudieron cargar los movimientos."))
       .finally(() => setLoading(false));
-  }, [rango, boardId, tipo]);
+  }, [rango, boardId, tipo, recarga]);
 
   // El turno se filtra por NOMBRE, no por id (ver misma nota en
   // MovimientosView): dos locales pueden tener cada uno su propio "Mañana".

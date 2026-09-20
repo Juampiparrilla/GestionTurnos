@@ -19,6 +19,41 @@ import type { Board } from "@/types/board";
 import type { ShiftConfiguration } from "@/types/shift";
 
 const SIN_TURNO = "sin_turno";
+const ULTIMO_LOCAL_KEY = "caja:ultimo-local";
+const ULTIMO_TURNO_KEY = "caja:ultimo-turno";
+
+function leerRecordado(key: string) {
+  try {
+    return localStorage.getItem(key);
+  } catch {
+    return null;
+  }
+}
+
+function guardarRecordado(key: string, value: string) {
+  try {
+    localStorage.setItem(key, value);
+  } catch {
+    // sin almacenamiento disponible: simplemente no se recuerda
+  }
+}
+
+// Local y turno del último movimiento cargado en este dispositivo (si siguen
+// existiendo): cargar varias ventas seguidas no obliga a elegirlos de nuevo.
+function localYTurnoIniciales(boards: Board[], shifts: ShiftConfiguration[]) {
+  const localRecordado = leerRecordado(ULTIMO_LOCAL_KEY);
+  const boardId = boards.some((b) => b.id === localRecordado)
+    ? (localRecordado as string)
+    : boards.length === 1
+      ? boards[0].id
+      : "";
+  const turnoRecordado = leerRecordado(ULTIMO_TURNO_KEY);
+  const turnoId =
+    boardId && turnoRecordado && shifts.some((s) => s.id === turnoRecordado && s.board_id === boardId)
+      ? turnoRecordado
+      : SIN_TURNO;
+  return { boardId, turnoId };
+}
 
 export function NuevoMovimientoSheet({
   open,
@@ -46,8 +81,8 @@ export function NuevoMovimientoSheet({
   const [etiquetaId, setEtiquetaId] = useState("");
   const [monto, setMonto] = useState(0);
   const [fecha, setFecha] = useState(hoyISO());
-  const [boardId, setBoardId] = useState(boards.length === 1 ? boards[0].id : "");
-  const [shiftConfigurationId, setShiftConfigurationId] = useState(SIN_TURNO);
+  const [boardId, setBoardId] = useState(() => localYTurnoIniciales(boards, shifts).boardId);
+  const [shiftConfigurationId, setShiftConfigurationId] = useState(() => localYTurnoIniciales(boards, shifts).turnoId);
   const [observacion, setObservacion] = useState("");
   const [montoFieldKey, setMontoFieldKey] = useState(0);
 
@@ -59,14 +94,23 @@ export function NuevoMovimientoSheet({
     setEtiquetaId("");
     setMonto(0);
     setFecha(hoyISO());
-    setBoardId(boards.length === 1 ? boards[0].id : "");
-    setShiftConfigurationId(SIN_TURNO);
+    const { boardId: localInicial, turnoId: turnoInicial } = localYTurnoIniciales(boards, shifts);
+    setBoardId(localInicial);
+    setShiftConfigurationId(turnoInicial);
     setObservacion("");
     setError(null);
     // MontoSumaInput guarda su propia expresión interna ("5000+3000") --
     // sin remontarlo, al anclar y cargar varios movimientos seguidos
     // quedaría pegada la suma del anterior.
     setMontoFieldKey((k) => k + 1);
+  }
+
+  // Cada vez que se abre (ej. desde el botón flotante, que lo mantiene
+  // montado) arranca limpio: fecha de hoy y el último local y turno usados.
+  const [prevOpen, setPrevOpen] = useState(open);
+  if (open !== prevOpen) {
+    setPrevOpen(open);
+    if (open) resetForm();
   }
 
   function handleOpenChange(next: boolean) {
@@ -125,6 +169,8 @@ export function NuevoMovimientoSheet({
       }
 
       onCreated(data.movimiento);
+      guardarRecordado(ULTIMO_LOCAL_KEY, boardId);
+      guardarRecordado(ULTIMO_TURNO_KEY, shiftConfigurationId);
       resetForm();
       if (!anclado) onOpenChange(false);
       showSuccessToast("Movimiento registrado con éxito");

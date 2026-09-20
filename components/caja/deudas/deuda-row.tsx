@@ -73,7 +73,7 @@ export function DeudaRow({
   return (
     <div className={`rounded-lg border bg-background p-3 shadow-sm ${!pendiente ? "opacity-70" : ""}`}>
       <PendingOverlay pending={isPending} />
-      <div className="flex items-start justify-between gap-2">
+      <div className="flex items-start justify-between gap-2 max-md:flex-col max-md:items-stretch">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
             <Badge variant={badgeVariant}>{ESTADO_DEUDA_LABEL[deuda.estado]}</Badge>
@@ -82,8 +82,8 @@ export function DeudaRow({
           <p className="text-sm text-muted-foreground">{formatDateOnly(deuda.fecha)}</p>
           {deuda.observacion && <p className="mt-1 text-sm text-muted-foreground">{deuda.observacion}</p>}
         </div>
-        <div className="flex shrink-0 items-center gap-2">
-          <p className="font-semibold">{formatMonto(deuda.monto)}</p>
+        <div className="flex shrink-0 items-center gap-2 max-md:w-full">
+          <p className="font-semibold max-md:mr-auto">{formatMonto(deuda.monto)}</p>
           {pendiente && (
             <>
               <Button variant="ghost" size="icon" aria-label="Editar deuda" onClick={() => setEditOpen(true)}>

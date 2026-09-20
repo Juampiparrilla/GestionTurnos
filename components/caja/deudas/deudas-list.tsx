@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { HandCoins, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { FuncionalidadesDialog } from "@/components/caja/funcionalidades-dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { EmptyState } from "@/components/empty-state";
 import { ESTADO_DEUDA_LABEL, type CajaDeuda, type EstadoDeuda } from "@/types/caja";
@@ -33,10 +34,13 @@ export function DeudasList({ deudas: deudasIniciales }: { deudas: CajaDeuda[] })
         Plata que le prestaron al negocio (ej. para pagar el alquiler) — no cuenta como ingreso ni egreso en el
         Dashboard.
       </p>
-      <Button onClick={() => setCreateOpen(true)} className="w-full">
-        <Plus className="size-4" aria-hidden="true" />
-        Registrar deuda
-      </Button>
+      <div className="flex gap-2">
+        <Button onClick={() => setCreateOpen(true)} className="flex-1">
+          <Plus className="size-4" aria-hidden="true" />
+          Registrar deuda
+        </Button>
+        <FuncionalidadesDialog triggerClassName="md:hidden" />
+      </div>
 
       <div className="space-y-1.5">
         <Select value={filtroEstado} onValueChange={(v) => setFiltroEstado(v ?? "")}>

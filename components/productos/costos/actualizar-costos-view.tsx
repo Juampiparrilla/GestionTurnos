@@ -7,6 +7,7 @@ import { PendingOverlay } from "@/components/pending-overlay";
 import { ConfirmDialog } from "@/components/confirm-dialog";
 import { EmptyState } from "@/components/empty-state";
 import { Button } from "@/components/ui/button";
+import { FuncionalidadesDialog } from "@/components/productos/funcionalidades-dialog";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -129,9 +130,10 @@ export function ActualizarCostosView({
 
       <SearchInput value={query} onChange={setQuery} placeholder="Buscar producto..." />
 
+      <div className="flex gap-2">
       <Button
         type="button"
-        className="w-full justify-between max-md:border max-md:border-input max-md:bg-background max-md:text-foreground max-md:hover:bg-muted"
+        className="min-w-0 flex-1 justify-between max-md:border max-md:border-input max-md:bg-background max-md:text-foreground max-md:hover:bg-muted"
         onClick={() => setFiltrosOpen((v) => !v)}
       >
         <span>Aplicar filtros{filtros.hayFiltrosActivos ? " (activos)" : ""}</span>
@@ -141,6 +143,8 @@ export function ActualizarCostosView({
           <ChevronDown className="size-4" aria-hidden="true" />
         )}
       </Button>
+        <FuncionalidadesDialog triggerClassName="md:hidden" />
+      </div>
 
       {filtrosOpen && (
         <ProductoFiltrosPanel

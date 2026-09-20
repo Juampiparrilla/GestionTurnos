@@ -14,6 +14,23 @@ Ninguna confirmación usa el popup nativo del navegador: desactivar/reactivar, b
 
 Producción: [gestion-turnos-nu.vercel.app](https://gestion-turnos-nu.vercel.app)
 
+
+## Vista de celular y de compu
+
+La app tiene dos vistas según el ancho de la pantalla: **celular** (menos de 768 px) y **compu** (768 px o más). En el celular está pensada para usar con una mano y cargar cosas rápido; en la compu se mantiene la vista de siempre. Los cambios de celular no tocan la compu.
+
+| | Celular | Compu |
+|---|---|---|
+| **Navegación principal** | Barra fija abajo: Inicio, Horarios, Productos, Caja y Más (Usuarios, solo Super Administrador, y Cerrar sesión). La sección actual va en negrita con una marca terracota. | Encabezado arriba con íconos de Usuarios, Horarios, Productos y Caja (el actual en negro) y Salir. |
+| **Moverse dentro de una sección** | Pestañas livianas arriba (solo texto, con raya abajo en la activa): Caja (Resumen, Movimientos, Etiquetas, Deudas), Productos (Productos, Categorías, Marcas, Proveedores), y cada Horario (Calendario, Configuración, Domingos, Feriados). | Flecha junto al título que abre un menú con las demás pantallas de la sección. |
+| **Inicio** | Solo "Quién trabaja hoy" y "Caja de hoy". | Además, accesos directos a Horarios, Productos, Caja y Usuarios. |
+| **Colores** | Azul petróleo y arena, con un toque terracota en lo activo. | Blanco, gris y negro. |
+| **Ayuda** | Ícono ⓘ a la derecha del botón principal (Crear…, Filtros…), que abre "Funcionalidades". | Botón "Funcionalidades" de ancho completo. |
+| **Botones y campos** | Más altos (40–44 px) para tocarlos sin errar; filtros como botón con borde y un solo botón fuerte por pantalla. | Tamaño normal. |
+| **Formularios (paneles laterales)** | Botón Guardar fijo abajo, arriba del teclado; la barra inferior se esconde mientras se escribe. | Botón al final del formulario. |
+| **Productos** | El listado arranca vacío con la tarjeta "Sin filtros aplicados" (o "Ver todos los productos"); cada fila muestra el precio, con Editar, Desactivar y Borrar en un menú ⋯; buscador fijo arriba; menú ⋯ junto a Crear producto con Importar Excel, Actualizar costos y Reportes. | Listado completo, acciones en cada fila y hub con accesos a Marcas, Categorías, Proveedores, Actualizar costos, Reportes e Importar Excel. |
+| **Caja** | Botón flotante "Nuevo movimiento" en todas las pantallas (recuerda el último local y turno usados); Resumen y Movimientos se actualizan solos al guardar. | Botón "Nuevo movimiento" arriba de Movimientos y botones Movimientos, Etiqueta y Deuda en el Resumen. |
+
 ## Inicio
 
 Al loguearte, `/` muestra un dashboard con accesos directos a Horarios, Productos, Caja (y Usuarios si sos Super Administrador; solo en la compu, en el celular los reemplaza la barra de abajo), quién trabaja hoy en cada local (o si ese turno está Feriado/Cerrado/Sin asignar) y un resumen de Ingresos/Egresos de Caja del día, con link al detalle.

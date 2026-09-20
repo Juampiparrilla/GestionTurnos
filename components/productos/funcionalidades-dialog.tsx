@@ -2,6 +2,7 @@
 
 import { Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import {
   Dialog,
   DialogContent,
@@ -73,18 +74,24 @@ export function FuncionalidadesDialog({
   open,
   onOpenChange,
   hideTrigger = false,
+  triggerClassName,
 }: {
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
   hideTrigger?: boolean;
+  triggerClassName?: string;
 } = {}) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       {!hideTrigger && (
         <DialogTrigger render={
-          <Button variant="outline" className="w-full">
+          <Button
+            variant="outline"
+            aria-label="Funcionalidades"
+            className={cn("w-full max-md:size-11 max-md:shrink-0 max-md:px-0", triggerClassName)}
+          >
             <Info className="size-4" aria-hidden="true" />
-            Funcionalidades
+            <span className="max-md:sr-only">Funcionalidades</span>
           </Button>
         } />
       )}

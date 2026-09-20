@@ -199,7 +199,7 @@ export function DashboardView({
       <div className="flex gap-2">
       <Button
         type="button"
-        className="w-full min-w-0 justify-between max-md:border max-md:border-input max-md:bg-background max-md:text-foreground max-md:hover:bg-muted"
+        className="min-w-0 flex-1 justify-between max-md:border max-md:border-input max-md:bg-background max-md:text-foreground max-md:hover:bg-muted"
         onClick={() => setFiltrosOpen((v) => !v)}
       >
         <span>Filtros{hayFiltrosActivos ? " (activos)" : ""}</span>

@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { ChevronDown, ChevronUp, List, Plus, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { FuncionalidadesDialog } from "@/components/caja/funcionalidades-dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -126,9 +127,10 @@ export function MovimientosView({
         Nuevo movimiento
       </Button>
 
+      <div className="flex gap-2">
       <Button
         type="button"
-        className="w-full justify-between max-md:border max-md:border-input max-md:bg-background max-md:text-foreground max-md:hover:bg-muted"
+        className="min-w-0 flex-1 justify-between max-md:border max-md:border-input max-md:bg-background max-md:text-foreground max-md:hover:bg-muted"
         onClick={() => setFiltrosOpen((v) => !v)}
       >
         <span>Filtros{hayFiltrosActivos ? " (activos)" : ""}</span>
@@ -138,6 +140,8 @@ export function MovimientosView({
           <ChevronDown className="size-4" aria-hidden="true" />
         )}
       </Button>
+        <FuncionalidadesDialog triggerClassName="md:hidden" />
+      </div>
 
       {filtrosOpen && (
       <div className="grid gap-3 rounded-lg border border-zinc-300 bg-zinc-100 max-md:border-border max-md:bg-card p-3 dark:border-zinc-700 dark:bg-zinc-800">

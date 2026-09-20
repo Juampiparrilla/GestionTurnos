@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Plus, Truck } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { FuncionalidadesDialog } from "@/components/productos/funcionalidades-dialog";
 import { SearchInput } from "@/components/productos/search-input";
 import { EmptyState } from "@/components/empty-state";
 import type { Proveedor } from "@/types/proveedor";
@@ -18,10 +19,13 @@ export function ProveedoresList({ proveedores, descripcion }: { proveedores: Pro
   return (
     <div className="space-y-4">
       <p className="text-sm text-muted-foreground">{descripcion}</p>
-      <Button onClick={() => setCreateOpen(true)} className="w-full">
-        <Plus className="size-4" aria-hidden="true" />
-        Crear proveedor
-      </Button>
+      <div className="flex gap-2">
+        <Button onClick={() => setCreateOpen(true)} className="flex-1">
+          <Plus className="size-4" aria-hidden="true" />
+          Crear proveedor
+        </Button>
+        <FuncionalidadesDialog triggerClassName="md:hidden" />
+      </div>
       <SearchInput value={query} onChange={setQuery} placeholder="Buscar proveedor..." />
       {filtrados.length === 0 ? (
         <EmptyState icon={Truck}>

@@ -44,7 +44,7 @@ export default async function CajaLayout({ children }: { children: ReactNode }) 
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 max-md:pb-16">
       <SectionTabs
         label="Secciones de Caja"
         tabs={[

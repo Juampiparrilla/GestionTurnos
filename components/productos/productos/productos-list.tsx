@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { ChevronDown, ChevronUp, Package, Plus, SlidersHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { FuncionalidadesDialog } from "@/components/productos/funcionalidades-dialog";
 import { SearchInput } from "@/components/productos/search-input";
 import { useProductoFiltros } from "@/components/productos/use-producto-filtros";
 import { ProductoFiltrosPanel } from "@/components/productos/producto-filtros-panel";
@@ -82,6 +83,7 @@ export function ProductosList({
           <Plus className="size-4" aria-hidden="true" />
           Crear producto
         </Button>
+        <FuncionalidadesDialog triggerClassName="md:hidden" />
         <ProductosMasMenu />
       </div>
       <div className="max-md:sticky max-md:top-0 max-md:z-30 max-md:-mx-4 max-md:bg-[color-mix(in_oklab,var(--muted)_30%,var(--background))] max-md:px-4 max-md:py-2">

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Plus, Tag } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { FuncionalidadesDialog } from "@/components/caja/funcionalidades-dialog";
 import { SearchInput } from "@/components/productos/search-input";
 import { EmptyState } from "@/components/empty-state";
 import type { CajaEtiqueta } from "@/types/caja";
@@ -27,10 +28,13 @@ export function EtiquetasList({
         Las etiquetas clasifican los movimientos de Caja. Una etiqueta ya usada en movimientos no se puede borrar ni
         cambiar de tipo — se desactiva en su lugar.
       </p>
-      <Button onClick={() => setCreateOpen(true)} className="w-full">
-        <Plus className="size-4" aria-hidden="true" />
-        Crear etiqueta
-      </Button>
+      <div className="flex gap-2">
+        <Button onClick={() => setCreateOpen(true)} className="flex-1">
+          <Plus className="size-4" aria-hidden="true" />
+          Crear etiqueta
+        </Button>
+        <FuncionalidadesDialog triggerClassName="md:hidden" />
+      </div>
       <SearchInput value={query} onChange={setQuery} placeholder="Buscar etiqueta..." />
       {filtradas.length === 0 ? (
         <EmptyState icon={Tag}>

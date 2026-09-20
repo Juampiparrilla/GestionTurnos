@@ -7,6 +7,7 @@ import { EditBoardSheet } from "./edit-board-sheet";
 import { MemberManagement } from "./member-management";
 import { ShiftsManagement } from "./shifts-management";
 import { MenuSeccionesHorario } from "./menu-secciones-horario";
+import { FuncionalidadesDialog } from "./funcionalidades-dialog";
 import type { Board, BoardMember, OrgDirectoryEntry } from "@/types/board";
 import type { ShiftConfiguration } from "@/types/shift";
 
@@ -44,6 +45,7 @@ export function BoardDetail({
               Editar
             </Button>
           )}
+          <FuncionalidadesDialog triggerClassName="md:hidden" />
           <MenuSeccionesHorario boardId={board.id} isAdmin={isAdmin} />
         </div>
       </div>

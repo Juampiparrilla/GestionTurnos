@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Plus, Tag } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { FuncionalidadesDialog } from "@/components/productos/funcionalidades-dialog";
 import { SearchInput } from "@/components/productos/search-input";
 import { EmptyState } from "@/components/empty-state";
 import type { Marca } from "@/types/marca";
@@ -18,10 +19,13 @@ export function MarcasList({ marcas, descripcion }: { marcas: Marca[]; descripci
   return (
     <div className="space-y-4">
       <p className="text-sm text-muted-foreground">{descripcion}</p>
-      <Button onClick={() => setCreateOpen(true)} className="w-full">
-        <Plus className="size-4" aria-hidden="true" />
-        Crear marca
-      </Button>
+      <div className="flex gap-2">
+        <Button onClick={() => setCreateOpen(true)} className="flex-1">
+          <Plus className="size-4" aria-hidden="true" />
+          Crear marca
+        </Button>
+        <FuncionalidadesDialog triggerClassName="md:hidden" />
+      </div>
       <SearchInput value={query} onChange={setQuery} placeholder="Buscar marca..." />
       {filtradas.length === 0 ? (
         <EmptyState icon={Tag}>

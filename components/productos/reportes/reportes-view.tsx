@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { FileDown, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { FuncionalidadesDialog } from "@/components/productos/funcionalidades-dialog";
 import { EmptyState } from "@/components/empty-state";
 import type { Marca } from "@/types/marca";
 import type { Categoria } from "@/types/categoria";
@@ -62,10 +63,13 @@ export function ReportesView({
         filtros={filtros}
       />
 
-      <Button onClick={() => setPdfOpen(true)} className="w-full" disabled={filtrados.length === 0}>
-        <FileDown className="size-4" aria-hidden="true" />
-        Generar PDF ({filtrados.length})
-      </Button>
+      <div className="flex gap-2">
+        <Button onClick={() => setPdfOpen(true)} className="flex-1" disabled={filtrados.length === 0}>
+          <FileDown className="size-4" aria-hidden="true" />
+          Generar PDF ({filtrados.length})
+        </Button>
+        <FuncionalidadesDialog triggerClassName="md:hidden" />
+      </div>
 
       <div className="space-y-2">
         <p className="text-sm text-muted-foreground">

@@ -1,4 +1,4 @@
-# Gestión de Turnos
+# Gestión de tu Negocio
 
 Aplicación web para que negocios con uno o varios locales organicen los turnos de trabajo de sus empleados: quién trabaja qué día, en qué horario, y quién cubre feriados y domingos. Reemplaza la planilla o el cuaderno que se usa hoy para armar los turnos. También incluye un módulo de **Productos** para llevar el catálogo, los costos y los precios de venta del negocio, y un módulo de **Caja** para registrar ingresos y egresos de dinero por local y turno.
 

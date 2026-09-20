@@ -3,12 +3,15 @@
 import { useMemo, useState } from "react";
 import { HandCoins, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { FuncionalidadesDialog } from "@/components/caja/funcionalidades-dialog";
+import { InfoPantalla } from "@/components/info-pantalla";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { EmptyState } from "@/components/empty-state";
 import { ESTADO_DEUDA_LABEL, type CajaDeuda, type EstadoDeuda } from "@/types/caja";
 import { DeudaRow } from "./deuda-row";
 import { CreateDeudaSheet } from "./create-deuda-sheet";
+
+const DESCRIPCION =
+  "Plata que le prestaron al negocio (ej. para pagar el alquiler) — no cuenta como ingreso ni egreso en el Dashboard.";
 
 export function DeudasList({ deudas: deudasIniciales }: { deudas: CajaDeuda[] }) {
   const [deudas, setDeudas] = useState(deudasIniciales);
@@ -30,16 +33,13 @@ export function DeudasList({ deudas: deudasIniciales }: { deudas: CajaDeuda[] })
 
   return (
     <div className="space-y-4">
-      <p className="text-sm text-muted-foreground">
-        Plata que le prestaron al negocio (ej. para pagar el alquiler) — no cuenta como ingreso ni egreso en el
-        Dashboard.
-      </p>
+      <p className="text-sm text-muted-foreground max-md:hidden">{DESCRIPCION}</p>
       <div className="flex gap-2">
         <Button onClick={() => setCreateOpen(true)} className="flex-1">
           <Plus className="size-4" aria-hidden="true" />
           Registrar deuda
         </Button>
-        <FuncionalidadesDialog triggerClassName="md:hidden" />
+        <InfoPantalla titulo="Deudas" texto={DESCRIPCION} />
       </div>
 
       <div className="space-y-1.5">

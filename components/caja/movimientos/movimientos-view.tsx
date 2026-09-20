@@ -3,7 +3,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { ChevronDown, ChevronUp, List, Plus, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { FuncionalidadesDialog } from "@/components/caja/funcionalidades-dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -140,7 +139,6 @@ export function MovimientosView({
           <ChevronDown className="size-4" aria-hidden="true" />
         )}
       </Button>
-        <FuncionalidadesDialog triggerClassName="md:hidden" />
       </div>
 
       {filtrosOpen && (

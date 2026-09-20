@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { FuncionalidadesDialog } from "./funcionalidades-dialog";
 import { CreateHolidaySheet } from "./create-holiday-sheet";
 import { EditHolidaySheet } from "./edit-holiday-sheet";
 import { MenuSeccionesHorario } from "./menu-secciones-horario";
@@ -56,7 +55,6 @@ export function HolidaysManagement({
           <Plus className="size-4" aria-hidden="true" />
           Asignar feriado
         </Button>
-        <FuncionalidadesDialog triggerClassName="md:hidden" />
         </div>
       )}
 

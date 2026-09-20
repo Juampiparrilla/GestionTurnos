@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { FuncionalidadesDialog } from "./funcionalidades-dialog";
 import { CreateSundaySheet } from "./create-sunday-sheet";
 import { EditSundaySheet } from "./edit-sunday-sheet";
 import { MenuSeccionesHorario } from "./menu-secciones-horario";
@@ -56,7 +55,6 @@ export function SundaysManagement({
           <Plus className="size-4" aria-hidden="true" />
           Asignar domingo
         </Button>
-        <FuncionalidadesDialog triggerClassName="md:hidden" />
         </div>
       )}
 

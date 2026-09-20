@@ -3,12 +3,15 @@
 import { useState } from "react";
 import { Plus, Tag } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { FuncionalidadesDialog } from "@/components/caja/funcionalidades-dialog";
+import { InfoPantalla } from "@/components/info-pantalla";
 import { SearchInput } from "@/components/productos/search-input";
 import { EmptyState } from "@/components/empty-state";
 import type { CajaEtiqueta } from "@/types/caja";
 import { EtiquetaRow } from "./etiqueta-row";
 import { CreateEtiquetaSheet } from "./create-etiqueta-sheet";
+
+const DESCRIPCION =
+  "Las etiquetas clasifican los movimientos de Caja. Una etiqueta ya usada en movimientos no se puede borrar ni cambiar de tipo — se desactiva en su lugar.";
 
 export function EtiquetasList({
   etiquetas,
@@ -24,16 +27,13 @@ export function EtiquetasList({
 
   return (
     <div className="space-y-4">
-      <p className="text-sm text-muted-foreground">
-        Las etiquetas clasifican los movimientos de Caja. Una etiqueta ya usada en movimientos no se puede borrar ni
-        cambiar de tipo — se desactiva en su lugar.
-      </p>
+      <p className="text-sm text-muted-foreground max-md:hidden">{DESCRIPCION}</p>
       <div className="flex gap-2">
         <Button onClick={() => setCreateOpen(true)} className="flex-1">
           <Plus className="size-4" aria-hidden="true" />
           Crear etiqueta
         </Button>
-        <FuncionalidadesDialog triggerClassName="md:hidden" />
+        <InfoPantalla titulo="Etiquetas" texto={DESCRIPCION} />
       </div>
       <SearchInput value={query} onChange={setQuery} placeholder="Buscar etiqueta..." />
       {filtradas.length === 0 ? (

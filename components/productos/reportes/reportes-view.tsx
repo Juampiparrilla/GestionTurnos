@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { FileDown, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { FuncionalidadesDialog } from "@/components/productos/funcionalidades-dialog";
+import { InfoPantalla } from "@/components/info-pantalla";
 import { EmptyState } from "@/components/empty-state";
 import type { Marca } from "@/types/marca";
 import type { Categoria } from "@/types/categoria";
@@ -51,7 +51,7 @@ export function ReportesView({
 
   return (
     <div className="space-y-4">
-      <p className="text-sm text-muted-foreground">{descripcion}</p>
+      <p className="text-sm text-muted-foreground max-md:hidden">{descripcion}</p>
 
       <OrganizationContactCard organization={organization} onUpdated={setOrganization} />
 
@@ -68,7 +68,7 @@ export function ReportesView({
           <FileDown className="size-4" aria-hidden="true" />
           Generar PDF ({filtrados.length})
         </Button>
-        <FuncionalidadesDialog triggerClassName="md:hidden" />
+        <InfoPantalla titulo="Reportes" texto={descripcion} />
       </div>
 
       <div className="space-y-2">

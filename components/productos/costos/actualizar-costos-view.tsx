@@ -7,7 +7,7 @@ import { PendingOverlay } from "@/components/pending-overlay";
 import { ConfirmDialog } from "@/components/confirm-dialog";
 import { EmptyState } from "@/components/empty-state";
 import { Button } from "@/components/ui/button";
-import { FuncionalidadesDialog } from "@/components/productos/funcionalidades-dialog";
+import { InfoPantalla } from "@/components/info-pantalla";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -126,7 +126,7 @@ export function ActualizarCostosView({
   return (
     <div className="space-y-4">
       <PendingOverlay pending={isPending} />
-      <p className="text-sm text-muted-foreground">{descripcion}</p>
+      <p className="text-sm text-muted-foreground max-md:hidden">{descripcion}</p>
 
       <SearchInput value={query} onChange={setQuery} placeholder="Buscar producto..." />
 
@@ -143,7 +143,7 @@ export function ActualizarCostosView({
           <ChevronDown className="size-4" aria-hidden="true" />
         )}
       </Button>
-        <FuncionalidadesDialog triggerClassName="md:hidden" />
+        <InfoPantalla titulo="Actualizar costos" texto={descripcion} />
       </div>
 
       {filtrosOpen && (

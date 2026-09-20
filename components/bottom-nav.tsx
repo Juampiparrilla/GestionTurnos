@@ -38,7 +38,9 @@ export function BottomNav({ isAdmin }: { isAdmin: boolean }) {
               aria-current={activa ? "page" : undefined}
               className={cn(
                 "flex flex-col items-center justify-center gap-1 py-2 text-[11px] transition-colors",
-                activa ? "font-bold text-foreground" : "font-medium text-muted-foreground hover:text-foreground",
+                activa
+                  ? "font-bold text-foreground shadow-[inset_0_3px_0_var(--brand-accent)]"
+                  : "font-medium text-muted-foreground hover:text-foreground",
               )}
             >
               <Icon className="size-[22px]" aria-hidden="true" />

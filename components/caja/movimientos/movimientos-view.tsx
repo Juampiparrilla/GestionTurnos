@@ -120,7 +120,7 @@ export function MovimientosView({
 
       <Button
         type="button"
-        className="w-full justify-between"
+        className="w-full justify-between max-md:border max-md:border-input max-md:bg-background max-md:text-foreground max-md:hover:bg-muted"
         onClick={() => setFiltrosOpen((v) => !v)}
       >
         <span>Filtros{hayFiltrosActivos ? " (activos)" : ""}</span>
@@ -132,7 +132,7 @@ export function MovimientosView({
       </Button>
 
       {filtrosOpen && (
-      <div className="grid gap-3 rounded-lg border border-zinc-300 bg-zinc-100 p-3 dark:border-zinc-700 dark:bg-zinc-800">
+      <div className="grid gap-3 rounded-lg border border-zinc-300 bg-zinc-100 max-md:border-input max-md:bg-muted p-3 dark:border-zinc-700 dark:bg-zinc-800">
         <div className="flex items-center justify-between">
           <p className="text-sm font-medium">Filtros</p>
           <Button

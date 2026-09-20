@@ -5,6 +5,7 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
+  --color-brand-accent: var(--brand-accent);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
@@ -115,6 +116,34 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
+}
+
+/* Azul petróleo y arena: solo en celular (< 768 px). En la compu se mantiene
+   la paleta blanco/gris/negro de siempre. */
+:root {
+  --brand-accent: #d9622b;
+}
+
+@media (width < 48rem) {
+  :root {
+    --background: #fffefb;
+    --foreground: #14252e;
+    --card: #fffefb;
+    --card-foreground: #14252e;
+    --popover: #fffefb;
+    --popover-foreground: #14252e;
+    --primary: #0f4c5c;
+    --primary-foreground: #ffffff;
+    --secondary: #ece7dc;
+    --secondary-foreground: #14252e;
+    --muted: #ece7dc;
+    --muted-foreground: #65727a;
+    --accent: #ece7dc;
+    --accent-foreground: #14252e;
+    --border: #e3ddd0;
+    --input: #d0c8b8;
+    --ring: #5f8b96;
+  }
 }
 
 @layer base {

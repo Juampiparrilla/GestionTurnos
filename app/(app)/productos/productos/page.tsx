@@ -3,8 +3,6 @@ import { requireAdmin } from "@/lib/auth/require-role";
 import { createClient } from "@/lib/supabase/server";
 import { ProductosList } from "@/components/productos/productos/productos-list";
 import { MenuSecciones } from "@/components/productos/menu-secciones";
-import { FuncionalidadesDialog } from "@/components/productos/funcionalidades-dialog";
-import { ImportarExcelSheet } from "@/components/productos/importar-excel-sheet";
 import type { Marca } from "@/types/marca";
 import type { Categoria } from "@/types/categoria";
 import type { Proveedor } from "@/types/proveedor";
@@ -26,14 +24,9 @@ export default async function ProductosPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between gap-4">
+      <div className="flex items-center justify-between gap-4 max-md:hidden">
         <h1 className="text-xl font-semibold">Productos</h1>
         <MenuSecciones />
-      </div>
-      {/* En el celular no hay hub de Productos (la barra de abajo va directo al listado): estas dos acciones viven acá. */}
-      <div className="space-y-3 md:hidden">
-        <FuncionalidadesDialog />
-        <ImportarExcelSheet />
       </div>
       <ProductosList
         productos={(productos as Producto[] | null) ?? []}

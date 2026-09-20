@@ -16,16 +16,26 @@ type ResultadoImportacion = {
   errores: { fila: number; mensaje: string }[];
 };
 
-export function ImportarExcelSheet() {
+export function ImportarExcelSheet({
+  open: openExterno,
+  onOpenChange,
+  hideTrigger = false,
+}: {
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  hideTrigger?: boolean;
+} = {}) {
   const router = useRouter();
-  const [open, setOpen] = useState(false);
+  const [openInterno, setOpenInterno] = useState(false);
+  const open = openExterno ?? openInterno;
   const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [resultado, setResultado] = useState<ResultadoImportacion | null>(null);
   const [nombreArchivo, setNombreArchivo] = useState<string | null>(null);
 
   function handleOpenChange(next: boolean) {
-    setOpen(next);
+    setOpenInterno(next);
+    onOpenChange?.(next);
     if (next) {
       setError(null);
       setResultado(null);
@@ -76,14 +86,16 @@ export function ImportarExcelSheet() {
   return (
     <>
       <PendingOverlay pending={isUploading} />
-      <button
-        type="button"
-        onClick={() => handleOpenChange(true)}
-        className="flex w-full items-center justify-center gap-2 rounded-lg bg-zinc-900 p-4 text-center text-white shadow-sm transition-colors hover:bg-zinc-800"
-      >
-        <FileSpreadsheet className="size-5" aria-hidden="true" />
-        <span className="font-medium">Importar / Actualizar Excel</span>
-      </button>
+      {!hideTrigger && (
+        <button
+          type="button"
+          onClick={() => handleOpenChange(true)}
+          className="flex w-full items-center justify-center gap-2 rounded-lg bg-zinc-900 p-4 text-center text-white shadow-sm transition-colors hover:bg-zinc-800"
+        >
+          <FileSpreadsheet className="size-5" aria-hidden="true" />
+          <span className="font-medium">Importar / Actualizar Excel</span>
+        </button>
+      )}
 
       <Sheet open={open} onOpenChange={handleOpenChange}>
         <SheetContent side="right" className="w-full sm:max-w-md">
@@ -113,7 +125,7 @@ export function ImportarExcelSheet() {
               </a>
             </div>
 
-            <div className="space-y-2 rounded-lg border border-zinc-300 bg-zinc-100 p-3 dark:border-zinc-700 dark:bg-zinc-800">
+            <div className="space-y-2 rounded-lg border border-zinc-300 bg-zinc-100 max-md:border-input max-md:bg-muted p-3 dark:border-zinc-700 dark:bg-zinc-800">
               <p className="text-sm font-medium">Actualizar productos existentes</p>
               <p className="text-xs text-muted-foreground">
                 Descargá tu catálogo actual (ya viene con el ID de cada producto), editá lo que necesites y subilo de

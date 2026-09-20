@@ -7,16 +7,14 @@ import { cn } from "@/lib/utils";
 
 export type SectionTab = { href: string; label: string; exact?: boolean };
 
-// Pestañas de las pantallas de una sección (Caja, Productos, un Horario):
-// reemplazan al menú de la flecha para saltar entre pantallas hermanas. Van en
-// grilla (no en una fila que se desliza) para que se vean todas de un vistazo:
-// hasta 3 en una fila, 4 en 2x2, y más de 4 en filas de 3.
+// Pestañas livianas (solo texto, con una raya abajo en la activa) para saltar
+// entre las pantallas de una sección (Caja, Productos, un Horario). Solo se
+// muestran en el celular: en la compu se usa el menú de la flecha de siempre.
 export function SectionTabs({ label, tabs }: { label: string; tabs: SectionTab[] }) {
   const pathname = usePathname();
-  const columnas = tabs.length <= 3 ? tabs.length : tabs.length === 4 ? 2 : 3;
 
   return (
-    <nav aria-label={label} className="grid gap-2 md:hidden" style={{ gridTemplateColumns: `repeat(${columnas}, minmax(0, 1fr))` }}>
+    <nav aria-label={label} className="flex justify-between border-b md:hidden">
       {tabs.map(({ href, label: texto, exact }) => {
         const activa = exact ? pathname === href : pathname === href || pathname.startsWith(`${href}/`);
         return (
@@ -25,10 +23,10 @@ export function SectionTabs({ label, tabs }: { label: string; tabs: SectionTab[]
             href={href}
             aria-current={activa ? "page" : undefined}
             className={cn(
-              "inline-flex h-9 items-center justify-center rounded-full border px-2 text-sm font-medium whitespace-nowrap transition-colors",
+              "-mb-px border-b-2 px-0.5 py-3 text-sm whitespace-nowrap transition-colors",
               activa
-                ? "border-foreground bg-foreground text-background"
-                : "border-border bg-background text-foreground/80 hover:bg-muted",
+                ? "border-brand-accent font-semibold text-foreground"
+                : "border-transparent font-medium text-muted-foreground hover:text-foreground",
             )}
           >
             {texto}

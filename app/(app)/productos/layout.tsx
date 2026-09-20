@@ -19,8 +19,6 @@ export default async function ProductosLayout({ children }: { children: ReactNod
           { href: "/productos/categorias", label: "Categorías" },
           { href: "/productos/marcas", label: "Marcas" },
           { href: "/productos/proveedores", label: "Proveedores" },
-          { href: "/productos/actualizar-costos", label: "Costos" },
-          { href: "/productos/reportes", label: "Reportes" },
         ]}
       />
       {children}

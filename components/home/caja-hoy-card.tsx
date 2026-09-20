@@ -7,7 +7,7 @@ export function CajaHoyCard({ ingresos, egresos }: { ingresos: number; egresos: 
   return (
     <Link
       href="/caja"
-      className="block rounded-lg border border-zinc-200 bg-zinc-50 p-4 shadow-sm transition-colors hover:bg-zinc-100 dark:border-zinc-800 dark:bg-zinc-900 dark:hover:bg-zinc-800"
+      className="block rounded-lg border border-zinc-200 bg-zinc-50 max-md:border-border max-md:bg-card p-4 shadow-sm transition-colors hover:bg-zinc-100 dark:border-zinc-800 dark:bg-zinc-900 dark:hover:bg-zinc-800"
     >
       <div className="flex items-center justify-between">
         <p className="text-sm font-medium">Caja de hoy</p>

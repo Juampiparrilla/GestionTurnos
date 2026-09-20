@@ -90,7 +90,7 @@ export function QuienTrabajaHoy({
   const colorByPersonId = buildPersonColorMap(Array.from(new Set(personaIds)));
 
   return (
-    <div className="rounded-lg border border-zinc-200 bg-zinc-50 p-4 dark:border-zinc-800 dark:bg-zinc-900">
+    <div className="rounded-lg border border-zinc-200 bg-zinc-50 max-md:border-border max-md:bg-card p-4 dark:border-zinc-800 dark:bg-zinc-900">
       <p className="mb-3 text-sm font-medium">Quién trabaja hoy</p>
       <div className="space-y-3">
         {boardsConTurnos.map(({ board, turnos }) => (

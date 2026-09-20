@@ -16,7 +16,7 @@ export default async function ProveedoresPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between gap-4">
+      <div className="flex items-center justify-between gap-4 max-md:hidden">
         <h1 className="text-xl font-semibold">Proveedores</h1>
         <MenuSecciones />
       </div>

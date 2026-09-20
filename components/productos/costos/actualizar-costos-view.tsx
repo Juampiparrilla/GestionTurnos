@@ -131,7 +131,7 @@ export function ActualizarCostosView({
 
       <Button
         type="button"
-        className="w-full justify-between"
+        className="w-full justify-between max-md:border max-md:border-input max-md:bg-background max-md:text-foreground max-md:hover:bg-muted"
         onClick={() => setFiltrosOpen((v) => !v)}
       >
         <span>Aplicar filtros{filtros.hayFiltrosActivos ? " (activos)" : ""}</span>

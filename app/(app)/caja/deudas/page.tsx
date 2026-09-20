@@ -20,7 +20,7 @@ export default async function CajaDeudasPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between gap-4">
+      <div className="flex items-center justify-between gap-4 max-md:hidden">
         <h1 className="text-xl font-semibold">Deudas</h1>
         <MenuSecciones isAdmin />
       </div>

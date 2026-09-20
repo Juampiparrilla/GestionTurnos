@@ -42,7 +42,7 @@ export function PriceTrackFields({
     kgPorBolsa && kgPorBolsa > 0 ? Math.round((precioFinal / kgPorBolsa) * 100) / 100 : null;
 
   return (
-    <fieldset className="flex flex-col gap-3 rounded-lg border border-zinc-300 bg-zinc-100 p-3 dark:border-zinc-700 dark:bg-zinc-800">
+    <fieldset className="flex flex-col gap-3 rounded-lg border border-zinc-300 bg-zinc-100 max-md:border-input max-md:bg-muted p-3 dark:border-zinc-700 dark:bg-zinc-800">
       <legend className="px-1 text-sm font-medium">{label}</legend>
 
       <div className="flex items-center justify-between">

@@ -19,8 +19,8 @@ export default function LoginPage() {
       <PendingOverlay pending={isPending} />
       <div className="flex w-full max-w-sm flex-col items-center gap-8 rounded-2xl border border-zinc-200 bg-white p-8 shadow-sm shadow-zinc-200/60">
         <div className="flex flex-col items-center gap-3 text-center">
-          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-zinc-900">
-            <Store className="h-6 w-6 text-white" aria-hidden="true" />
+          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary">
+            <Store className="h-6 w-6 text-primary-foreground" aria-hidden="true" />
           </div>
           <div className="flex flex-col gap-1">
             <h1 className="text-2xl font-semibold text-zinc-900">Mi negocio</h1>
@@ -79,7 +79,7 @@ export default function LoginPage() {
           <Button
             type="submit"
             disabled={isPending}
-            className="h-12 w-full rounded-lg bg-zinc-900 text-base font-semibold hover:bg-zinc-800"
+            className="h-12 w-full rounded-lg bg-primary text-base font-semibold hover:bg-primary/90"
           >
             {isPending ? "Ingresando..." : "Ingresar"}
           </Button>

@@ -35,7 +35,7 @@ export default async function CajaDashboardPage() {
 
   return (
     <div className="space-y-6">
-      <div>
+      <div className="max-md:hidden">
         <h1 className="text-xl font-semibold">Caja</h1>
         <p className="text-sm text-muted-foreground">Ingresos, egresos y deudas de tu negocio, por local y turno.</p>
       </div>

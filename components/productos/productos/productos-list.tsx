@@ -11,6 +11,7 @@ import type { Marca } from "@/types/marca";
 import type { Categoria } from "@/types/categoria";
 import type { Proveedor } from "@/types/proveedor";
 import type { Producto } from "@/types/producto";
+import { ProductosMasMenu } from "@/components/productos/productos-mas-menu";
 import { ProductoRow } from "./producto-row";
 import { CreateProductoSheet } from "./create-producto-sheet";
 
@@ -68,16 +69,19 @@ export function ProductosList({
 
   return (
     <div className="space-y-4">
-      <p className="text-sm text-muted-foreground">{descripcion}</p>
-      <Button onClick={() => setCreateOpen(true)} className="w-full">
-        <Plus className="size-4" aria-hidden="true" />
-        Crear producto
-      </Button>
+      <p className="text-sm text-muted-foreground max-md:hidden">{descripcion}</p>
+      <div className="flex gap-2">
+        <Button onClick={() => setCreateOpen(true)} className="flex-1">
+          <Plus className="size-4" aria-hidden="true" />
+          Crear producto
+        </Button>
+        <ProductosMasMenu />
+      </div>
       <SearchInput value={query} onChange={setQuery} placeholder="Buscar producto..." />
 
       <Button
         type="button"
-        className="w-full justify-between"
+        className="w-full justify-between max-md:border max-md:border-input max-md:bg-background max-md:text-foreground max-md:hover:bg-muted"
         onClick={() => setFiltrosOpen((v) => !v)}
       >
         <span>Aplicar filtros{filtros.hayFiltrosActivos ? " (activos)" : ""}</span>

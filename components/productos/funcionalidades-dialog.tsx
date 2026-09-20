@@ -65,19 +65,29 @@ const FUNCIONALIDADES = [
   {
     titulo: "Saltar entre secciones",
     descripcion:
-      "En el celular, arriba de cada pantalla de Productos hay pestañas (Productos, Categorías, Marcas, Proveedores, Costos, Reportes) para ir directo a cualquier otra sección con un toque. En la compu, la flecha junto al título abre un menú para ir directo a cualquier otra sección o al inicio.",
+      "En el celular, arriba de cada pantalla de Productos hay pestañas (Productos, Categorías, Marcas, Proveedores) para ir directo a cualquier otra sección con un toque, y el menú ⋯ al lado de Crear producto lleva a Importar Excel, Actualizar costos, Reportes y Funcionalidades. En la compu, la flecha junto al título abre un menú para ir directo a cualquier otra sección o al inicio.",
   },
 ];
 
-export function FuncionalidadesDialog() {
+export function FuncionalidadesDialog({
+  open,
+  onOpenChange,
+  hideTrigger = false,
+}: {
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  hideTrigger?: boolean;
+} = {}) {
   return (
-    <Dialog>
-      <DialogTrigger render={
-        <Button variant="outline" className="w-full">
-          <Info className="size-4" aria-hidden="true" />
-          Funcionalidades
-        </Button>
-      } />
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      {!hideTrigger && (
+        <DialogTrigger render={
+          <Button variant="outline" className="w-full">
+            <Info className="size-4" aria-hidden="true" />
+            Funcionalidades
+          </Button>
+        } />
+      )}
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Funcionalidades de Productos</DialogTitle>

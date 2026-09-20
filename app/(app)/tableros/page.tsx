@@ -33,7 +33,7 @@ export default async function TablerosPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-xl font-semibold">{isAdmin ? "Horarios" : "Mis horarios"}</h1>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-sm text-muted-foreground max-md:hidden">
           {isAdmin
             ? "Gestioná los locales de tu organización."
             : "Los horarios a los que estás asignado."}

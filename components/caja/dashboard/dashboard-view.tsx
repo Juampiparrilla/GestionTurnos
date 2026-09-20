@@ -163,7 +163,7 @@ export function DashboardView({
 
   return (
     <div className="space-y-4">
-      <FuncionalidadesDialog />
+      <FuncionalidadesDialog triggerClassName="max-md:hidden" />
 
       <div className="space-y-2 max-md:hidden">
         <Link
@@ -196,9 +196,10 @@ export function DashboardView({
         )}
       </div>
 
+      <div className="flex gap-2">
       <Button
         type="button"
-        className="w-full justify-between max-md:border max-md:border-input max-md:bg-background max-md:text-foreground max-md:hover:bg-muted"
+        className="w-full min-w-0 justify-between max-md:border max-md:border-input max-md:bg-background max-md:text-foreground max-md:hover:bg-muted"
         onClick={() => setFiltrosOpen((v) => !v)}
       >
         <span>Filtros{hayFiltrosActivos ? " (activos)" : ""}</span>
@@ -208,6 +209,8 @@ export function DashboardView({
           <ChevronDown className="size-4" aria-hidden="true" />
         )}
       </Button>
+        <FuncionalidadesDialog triggerClassName="md:hidden" />
+      </div>
 
       {rango && (
         <p className="text-xs text-muted-foreground">

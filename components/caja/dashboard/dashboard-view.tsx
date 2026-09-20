@@ -216,7 +216,7 @@ export function DashboardView({
       )}
 
       {filtrosOpen && (
-      <div className="grid gap-3 rounded-lg border border-zinc-300 bg-zinc-100 max-md:border-input max-md:bg-muted p-3 dark:border-zinc-700 dark:bg-zinc-800">
+      <div className="grid gap-3 rounded-lg border border-zinc-300 bg-zinc-100 max-md:border-border max-md:bg-card p-3 dark:border-zinc-700 dark:bg-zinc-800">
         <div className="flex items-center justify-between">
           <p className="text-sm font-medium">Filtros</p>
           <Button

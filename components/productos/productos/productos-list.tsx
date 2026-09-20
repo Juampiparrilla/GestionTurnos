@@ -1,12 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronDown, ChevronUp, Package, Plus } from "lucide-react";
+import { ChevronDown, ChevronUp, Package, Plus, SlidersHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SearchInput } from "@/components/productos/search-input";
 import { useProductoFiltros } from "@/components/productos/use-producto-filtros";
 import { ProductoFiltrosPanel } from "@/components/productos/producto-filtros-panel";
 import { EmptyState } from "@/components/empty-state";
+import { cn } from "@/lib/utils";
 import type { Marca } from "@/types/marca";
 import type { Categoria } from "@/types/categoria";
 import type { Proveedor } from "@/types/proveedor";
@@ -32,6 +33,7 @@ export function ProductosList({
   const [createOpen, setCreateOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [filtrosOpen, setFiltrosOpen] = useState(false);
+  const [verTodos, setVerTodos] = useState(false);
 
   // Si el servidor manda una lista nueva (ej. RefreshOnFocus trajo cambios
   // cargados desde otro dispositivo), se refleja acá -- sin esto la copia
@@ -48,6 +50,11 @@ export function ProductosList({
   const filtrados = filtros.filtrados.filter((p) =>
     p.nombre.toLowerCase().includes(query.trim().toLowerCase()),
   );
+
+  // En el celular el listado arranca vacío (son muchos productos para scrollear):
+  // hasta que se busca, se filtra o se toca "Ver todos" se muestra una tarjeta.
+  // En la compu la lista siempre se ve completa.
+  const sinFiltro = !verTodos && query.trim() === "" && !filtros.hayFiltrosActivos && items.length > 0;
 
   const marcaPorId = new Map(marcas.map((m) => [m.id, m.nombre]));
   const categoriaPorId = new Map(categorias.map((c) => [c.id, c.nombre]));
@@ -104,6 +111,21 @@ export function ProductosList({
         />
       )}
 
+      {sinFiltro && (
+        <div className="md:hidden">
+          <EmptyState icon={SlidersHorizontal}>
+            <p className="font-medium text-foreground">Sin filtros aplicados</p>
+            <p className="mt-1">
+              Buscá un producto por nombre o aplicá filtros para ver el listado. Hay {items.length} productos cargados.
+            </p>
+            <Button type="button" variant="outline" className="mt-4" onClick={() => setVerTodos(true)}>
+              Ver todos los productos
+            </Button>
+          </EmptyState>
+        </div>
+      )}
+
+      <div className={cn(sinFiltro && "max-md:hidden")}>
       {filtrados.length === 0 ? (
         <EmptyState icon={Package}>
           {items.length === 0
@@ -130,6 +152,7 @@ export function ProductosList({
           ))}
         </div>
       )}
+      </div>
       <CreateProductoSheet
         open={createOpen}
         onOpenChange={setCreateOpen}

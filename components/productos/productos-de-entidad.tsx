@@ -91,7 +91,7 @@ export function ProductosDeEntidad({
                       <ArrowRightLeft className="size-3.5" aria-hidden="true" />
                       <SelectValue>{() => placeholder}</SelectValue>
                     </SelectTrigger>
-                    <SelectContent className="border border-zinc-300 bg-zinc-100 max-md:border-input max-md:bg-muted dark:border-zinc-700 dark:bg-zinc-800">
+                    <SelectContent className="border border-zinc-300 bg-zinc-100 max-md:border-border max-md:bg-card dark:border-zinc-700 dark:bg-zinc-800">
                       {opciones.map((opcion) => (
                         <SelectItem key={opcion.value} value={opcion.value}>
                           {opcion.label}

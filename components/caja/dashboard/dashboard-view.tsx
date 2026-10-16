@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label";
 import { LinkPendingSpinner } from "@/components/link-pending-spinner";
 import { showErrorToast } from "@/lib/toast";
 import { MOVIMIENTO_CREADO_EVENT } from "@/lib/caja/eventos";
-import { PERIODO_LABEL, resolverRangoPeriodo, type PeriodoCaja } from "@/lib/caja/periodos";
+import { MESES, PERIODO_LABEL, resolverRangoPeriodo, type MesElegido, type PeriodoCaja } from "@/lib/caja/periodos";
 import { formatDateOnly } from "@/lib/format-date";
 import { TIPO_MOVIMIENTO_LABEL, type CajaMovimiento } from "@/types/caja";
 import type { Board } from "@/types/board";
@@ -24,7 +24,16 @@ import { DashboardSkeleton } from "./dashboard-skeleton";
 import { FuncionalidadesDialog } from "@/components/caja/funcionalidades-dialog";
 
 const SIN_TURNO = "sin_turno";
-const PERIODOS: PeriodoCaja[] = ["hoy", "ayer", "ultimos_7", "ultimos_30", "este_mes", "mes_anterior", "personalizado"];
+const PERIODOS: PeriodoCaja[] = [
+  "hoy",
+  "ayer",
+  "ultimos_7",
+  "ultimos_30",
+  "este_mes",
+  "mes_anterior",
+  "mes_elegido",
+  "personalizado",
+];
 
 export function DashboardView({
   boards,
@@ -37,6 +46,7 @@ export function DashboardView({
 }) {
   const [periodo, setPeriodo] = useState<PeriodoCaja>("este_mes");
   const [rangoPersonalizado, setRangoPersonalizado] = useState({ desde: "", hasta: "" });
+  const [mesElegido, setMesElegido] = useState<MesElegido | null>(null);
   const [boardId, setBoardId] = useState("");
   const [turnoNombre, setTurnoNombre] = useState("");
   const [tipo, setTipo] = useState("");
@@ -66,17 +76,18 @@ export function DashboardView({
         periodo === "personalizado" && rangoPersonalizado.desde && rangoPersonalizado.hasta
           ? rangoPersonalizado
           : undefined,
+        periodo === "mes_elegido" && mesElegido ? mesElegido : undefined,
       );
     } catch {
       return null;
     }
-  }, [periodo, rangoPersonalizado, hoy]);
+  }, [periodo, rangoPersonalizado, mesElegido, hoy]);
 
   // "Venta por semana" solo tiene sentido para un mes completo -- el mes se
   // toma del inicio del rango ya resuelto (no de `new Date()`) para que
   // también funcione con "Mes anterior".
   const mesVentaPorSemana = useMemo(() => {
-    if (!rango || (periodo !== "este_mes" && periodo !== "mes_anterior")) return null;
+    if (!rango || (periodo !== "este_mes" && periodo !== "mes_anterior" && periodo !== "mes_elegido")) return null;
     const [anio, mes] = rango.desde.split("-").map(Number);
     return { year: anio, month: mes - 1 };
   }, [rango, periodo]);
@@ -156,6 +167,7 @@ export function DashboardView({
   function limpiarFiltros() {
     setPeriodo("este_mes");
     setRangoPersonalizado({ desde: "", hasta: "" });
+    setMesElegido(null);
     setBoardId("");
     setTurnoNombre("");
     setTipo("");
@@ -237,7 +249,17 @@ export function DashboardView({
 
         <div className="space-y-1.5">
           <Label htmlFor="periodo">Período</Label>
-          <Select value={periodo} onValueChange={(v) => setPeriodo((v as PeriodoCaja) ?? "este_mes")}>
+          <Select
+            value={periodo}
+            onValueChange={(v) => {
+              const nuevo = (v as PeriodoCaja) ?? "este_mes";
+              setPeriodo(nuevo);
+              // Al elegir "Elegir mes" arranca en el mes actual (ya cargado y listo para cambiar).
+              if (nuevo === "mes_elegido" && !mesElegido && hoy) {
+                setMesElegido({ year: hoy.getFullYear(), month: hoy.getMonth() + 1 });
+              }
+            }}
+          >
             <SelectTrigger id="periodo" className="w-full">
               <SelectValue>{(v: PeriodoCaja) => PERIODO_LABEL[v]}</SelectValue>
             </SelectTrigger>
@@ -250,6 +272,50 @@ export function DashboardView({
             </SelectContent>
           </Select>
         </div>
+
+        {periodo === "mes_elegido" && mesElegido && hoy && (
+          <div className="grid grid-cols-[minmax(0,1fr)_7rem] gap-3">
+            <div className="space-y-1.5">
+              <Label htmlFor="mes-elegido">Mes</Label>
+              <Select
+                value={String(mesElegido.month)}
+                onValueChange={(v) => setMesElegido((m) => (m ? { ...m, month: Number(v) } : m))}
+              >
+                <SelectTrigger id="mes-elegido" className="w-full">
+                  <SelectValue>{(v: string) => MESES[Number(v) - 1]}</SelectValue>
+                </SelectTrigger>
+                <SelectContent>
+                  {MESES.map((nombre, i) => (
+                    <SelectItem key={nombre} value={String(i + 1)}>
+                      {nombre}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="anio-elegido">Año</Label>
+              <Select
+                value={String(mesElegido.year)}
+                onValueChange={(v) => setMesElegido((m) => (m ? { ...m, year: Number(v) } : m))}
+              >
+                <SelectTrigger id="anio-elegido" className="w-full">
+                  <SelectValue>{(v: string) => v}</SelectValue>
+                </SelectTrigger>
+                <SelectContent>
+                  {[0, 1, 2, 3].map((atras) => {
+                    const anio = hoy.getFullYear() - atras;
+                    return (
+                      <SelectItem key={anio} value={String(anio)}>
+                        {anio}
+                      </SelectItem>
+                    );
+                  })}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+        )}
 
         {periodo === "personalizado" && (
           <div className="grid grid-cols-2 gap-3">

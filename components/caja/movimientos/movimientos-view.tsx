@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { EmptyState } from "@/components/empty-state";
 import { showErrorToast } from "@/lib/toast";
 import { MOVIMIENTO_CREADO_EVENT } from "@/lib/caja/eventos";
-import { resolverRangoPeriodo } from "@/lib/caja/periodos";
+import { MESES, rangoDeMes, resolverRangoPeriodo } from "@/lib/caja/periodos";
 import { TIPO_MOVIMIENTO_LABEL, type CajaEtiqueta, type CajaMovimiento } from "@/types/caja";
 import type { Board, OrgDirectoryEntry } from "@/types/board";
 import type { ShiftConfiguration } from "@/types/shift";
@@ -63,6 +63,27 @@ export function MovimientosView({
     aplicados.turnoNombre !== "" ||
     aplicados.tipo !== "" ||
     aplicados.etiquetaId !== "";
+
+  // Últimos 24 meses para elegir uno entero sin escribir las dos fechas. Se calcula
+  // recién cuando se abre el panel de filtros (ya en el cliente, sin mismatch de hidratación).
+  const mesesDisponibles = useMemo(() => {
+    if (!filtrosOpen) return [];
+    const ahora = new Date();
+    return Array.from({ length: 24 }, (_, i) => {
+      const fecha = new Date(ahora.getFullYear(), ahora.getMonth() - i, 1);
+      const mes = { year: fecha.getFullYear(), month: fecha.getMonth() + 1 };
+      return { key: `${mes.year}-${mes.month}`, label: `${MESES[mes.month - 1]} ${mes.year}`, ...rangoDeMes(mes) };
+    });
+  }, [filtrosOpen]);
+  const mesDelDraft = mesesDisponibles.find((m) => m.desde === draft.desde && m.hasta === draft.hasta)?.key ?? "";
+
+  function elegirMes(key: string) {
+    const mes = mesesDisponibles.find((m) => m.key === key);
+    if (!mes) return;
+    const nuevo = { ...draft, desde: mes.desde, hasta: mes.hasta };
+    setDraft(nuevo);
+    setAplicados(nuevo);
+  }
 
   const etiquetaPorId = useMemo(() => new Map(etiquetas.map((e) => [e.id, e.nombre])), [etiquetas]);
   const boardPorId = useMemo(() => new Map(boards.map((b) => [b.id, b.name])), [boards]);
@@ -155,6 +176,22 @@ export function MovimientosView({
             <X className="size-3.5" aria-hidden="true" />
             Limpiar filtros
           </Button>
+        </div>
+
+        <div className="space-y-1.5">
+          <Label htmlFor="filtro-mes">Mes</Label>
+          <Select value={mesDelDraft} onValueChange={(v) => elegirMes(v ?? "")}>
+            <SelectTrigger id="filtro-mes" className="w-full">
+              <SelectValue>{(v: string) => mesesDisponibles.find((m) => m.key === v)?.label ?? "Elegir un mes entero..."}</SelectValue>
+            </SelectTrigger>
+            <SelectContent>
+              {mesesDisponibles.map((m) => (
+                <SelectItem key={m.key} value={m.key}>
+                  {m.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
         <div className="grid grid-cols-2 gap-3">

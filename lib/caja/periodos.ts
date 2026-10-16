@@ -5,6 +5,7 @@ export type PeriodoCaja =
   | "ultimos_30"
   | "este_mes"
   | "mes_anterior"
+  | "mes_elegido"
   | "personalizado";
 
 export const PERIODO_LABEL: Record<PeriodoCaja, string> = {
@@ -14,8 +15,36 @@ export const PERIODO_LABEL: Record<PeriodoCaja, string> = {
   ultimos_30: "Últimos 30 días",
   este_mes: "Este mes",
   mes_anterior: "Mes anterior",
+  mes_elegido: "Elegir mes",
   personalizado: "Personalizado",
 };
+
+export const MESES = [
+  "Enero",
+  "Febrero",
+  "Marzo",
+  "Abril",
+  "Mayo",
+  "Junio",
+  "Julio",
+  "Agosto",
+  "Septiembre",
+  "Octubre",
+  "Noviembre",
+  "Diciembre",
+];
+
+// Un mes elegido a mano: `month` va de 1 (enero) a 12 (diciembre).
+export type MesElegido = { year: number; month: number };
+
+// Mes calendario completo (del día 1 al último) -- sirve para elegir "Enero"
+// sin tener que escribir las dos fechas.
+export function rangoDeMes({ year, month }: MesElegido) {
+  return {
+    desde: toISODate(new Date(year, month - 1, 1)),
+    hasta: toISODate(new Date(year, month, 0)),
+  };
+}
 
 export function toISODate(date: Date) {
   const year = date.getFullYear();
@@ -43,6 +72,7 @@ export function resolverRangoPeriodo(
   periodo: PeriodoCaja,
   hoy: Date,
   personalizado?: { desde: string; hasta: string },
+  mesElegido?: MesElegido,
 ): { desde: string; hasta: string } {
   switch (periodo) {
     case "hoy": {
@@ -66,6 +96,9 @@ export function resolverRangoPeriodo(
       const fin = new Date(hoy.getFullYear(), hoy.getMonth(), 0);
       return { desde: toISODate(inicio), hasta: toISODate(fin) };
     }
+    case "mes_elegido":
+      if (!mesElegido) throw new Error("Falta el mes elegido.");
+      return rangoDeMes(mesElegido);
     case "personalizado":
       if (!personalizado) throw new Error("Falta el rango personalizado.");
       return personalizado;

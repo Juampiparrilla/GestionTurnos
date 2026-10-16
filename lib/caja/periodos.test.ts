@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { resolverRangoPeriodo } from "@/lib/caja/periodos";
+import { rangoDeMes, resolverRangoPeriodo } from "@/lib/caja/periodos";
 
 // Miércoles 2026-09-16, para tener un "este mes" con días de sobra.
 const HOY = new Date(2026, 8, 16);
@@ -32,6 +32,26 @@ describe("resolverRangoPeriodo", () => {
   it("mes_anterior cruza de año en enero", () => {
     const enero = new Date(2026, 0, 10);
     expect(resolverRangoPeriodo("mes_anterior", enero)).toEqual({ desde: "2025-12-01", hasta: "2025-12-31" });
+  });
+
+  it("mes_elegido: mes calendario completo (enero)", () => {
+    expect(resolverRangoPeriodo("mes_elegido", HOY, undefined, { year: 2026, month: 1 })).toEqual({
+      desde: "2026-01-01",
+      hasta: "2026-01-31",
+    });
+  });
+
+  it("mes_elegido: febrero de año bisiesto y no bisiesto", () => {
+    expect(rangoDeMes({ year: 2024, month: 2 }).hasta).toBe("2024-02-29");
+    expect(rangoDeMes({ year: 2026, month: 2 }).hasta).toBe("2026-02-28");
+  });
+
+  it("mes_elegido: diciembre termina el 31 sin pasarse de año", () => {
+    expect(rangoDeMes({ year: 2025, month: 12 })).toEqual({ desde: "2025-12-01", hasta: "2025-12-31" });
+  });
+
+  it("mes_elegido sin mes: tira error", () => {
+    expect(() => resolverRangoPeriodo("mes_elegido", HOY)).toThrow();
   });
 
   it("personalizado: devuelve el rango recibido tal cual", () => {
